@@ -1,0 +1,8 @@
+name: DiscordText
+version: 1.0
+main: discord_text.Main
+depend: [ProtocolLib]
+commands:
+  v:
+    description: Vanish
+    usage: /v
