@@ -1,18 +1,19 @@
 package discord_text;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
 
 public class Main extends JavaPlugin implements Listener {
+
+    private static Economy econ = null;
 
     @Override
     public void onEnable() {
@@ -22,6 +23,14 @@ public class Main extends JavaPlugin implements Listener {
         } catch (LoginException e) {
             e.printStackTrace();
         }
+        getServer().getPluginManager().registerEvents(this, this);
+        setupEconomy();
+        this.getCommand("randomitem").setExecutor(new RandomItem());
+    }
+
+    @EventHandler
+    public void test(){
+        System.out.println("asda");
     }
 
     @Override
@@ -42,10 +51,27 @@ public class Main extends JavaPlugin implements Listener {
         LatchDiscord.setChannelDescription(true);
     }
 
-    @EventHandler
-    public void onPlayerMessage(AsyncPlayerChatEvent event) {
-        LatchDiscord.logPlayerMessage(event);
+    public void setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return;
+        }
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return;
+        }
+        econ = rsp.getProvider();
+        setEconomy(econ);
+
     }
+
+    public void setEconomy(Economy value) {
+        econ = value;
+    }
+//    @EventHandler
+//    public void onPlayerMessage(AsyncPlayerChatEvent event) {
+//        LatchDiscord.logPlayerMessage(event);
+//    }
+
 
 }
 
