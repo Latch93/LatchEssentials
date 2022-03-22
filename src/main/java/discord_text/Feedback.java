@@ -32,9 +32,10 @@ public class Feedback extends ListenerAdapter {
         applicationQuestions.add("2.) What country do you live in?");
         applicationQuestions.add("3.) What timezone do you live in?");
         applicationQuestions.add("4.) What server are you applying for? Discord/Minecraft/Both");
-        applicationQuestions.add("5.) What qualifications do you have?");
-        applicationQuestions.add("6.) Why do you think you would be a good staff member?");
-        applicationQuestions.add("7.) How many hours per week are you able to be active on Discord?");
+        applicationQuestions.add("5.) What role are you applying for? Mod/Builder");
+        applicationQuestions.add("6.) What qualifications do you have?");
+        applicationQuestions.add("7.) Why do you think you would be a good staff member?");
+        applicationQuestions.add("8.) How many hours per week are you able to be active on Discord?");
         applicationAnswers.add(event.getMessage().getContentRaw());
         if (counter <= applicationQuestions.size()-1){
             event.getChannel().sendMessage(applicationQuestions.get(counter)).queue();
@@ -44,7 +45,6 @@ public class Feedback extends ListenerAdapter {
             counter = 1;
             event.getChannel().sendMessage("\n-------------------\nThanks for applying! Latch will review your information and if \n he approves AND is in need of new staff, he will reach out to you. :smile:").queue();
             int appCounter = 0;
-            applicationSubmittedChannel.sendMessage("Application Submitted: [Username :" + event.getAuthor().getName() + "]").queue();
             StringBuilder application = new StringBuilder();
             application.append("Application Submitted: [Username :").append(event.getAuthor().getName()).append("] \n");
             for (String str : applicationAnswers){

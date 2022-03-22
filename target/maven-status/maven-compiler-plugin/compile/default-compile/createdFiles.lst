@@ -1,4 +1,7 @@
-discord_text\LatchDiscord.class
 discord_text\Feedback.class
-discord_text\Main.class
+discord_text\QuickSmelt.class
 discord_text\RandomItem.class
+discord_text\LatchDiscord.class
+discord_text\QuickBrew.class
+discord_text\ExperienceManager.class
+discord_text\Main.class

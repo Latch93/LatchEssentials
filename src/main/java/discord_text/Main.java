@@ -1,20 +1,25 @@
 package discord_text;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
+import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
 
     private static Economy econ = null;
-
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
@@ -25,12 +30,6 @@ public class Main extends JavaPlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(this, this);
         setupEconomy();
-        this.getCommand("randomitem").setExecutor(new RandomItem());
-    }
-
-    @EventHandler
-    public void test(){
-        System.out.println("asda");
     }
 
     @Override
@@ -50,6 +49,23 @@ public class Main extends JavaPlugin implements Listener {
         LatchDiscord.sendPlayerLogoutMessage(event);
         LatchDiscord.setChannelDescription(true);
     }
+    @EventHandler
+    public void onPull(PlayerInteractEvent event) {
+        try {
+            RandomItem.getRandomItem(event);
+            QuickSmelt.quickSmelt(event.getPlayer(), econ, event);
+            QuickBrew.quickBrew(event.getPlayer(), econ, event);
+        } catch (NullPointerException ignored){
+
+        }
+
+
+    }
+
+    @EventHandler
+    public void onPlayerChestItemRemove(InventoryClickEvent event) {
+        LatchDiscord.banPlayerStealing(event);
+    }
 
     public void setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -67,10 +83,6 @@ public class Main extends JavaPlugin implements Listener {
     public void setEconomy(Economy value) {
         econ = value;
     }
-//    @EventHandler
-//    public void onPlayerMessage(AsyncPlayerChatEvent event) {
-//        LatchDiscord.logPlayerMessage(event);
-//    }
 
 
 }

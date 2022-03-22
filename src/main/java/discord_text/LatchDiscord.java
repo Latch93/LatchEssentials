@@ -9,9 +9,13 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -29,8 +33,8 @@ import java.util.Objects;
 public class LatchDiscord extends ListenerAdapter implements Listener {
 
 
-    public static final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("discord_text");
-    public static final String DISCORD_BOT_TOKEN = "OTUwNDc4ODc1NDg4NTc5NjU1.YiZgbg.z_UZPZ9wixwxyk0WjZsJvCwrGbk";
+    public static final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("DiscordText");
+    public static final String DISCORD_BOT_TOKEN = "OTUwNDc4ODc1NDg4NTc5NjU1.YiZgbg.r7FPU7eY7Dif0c3hsrG7_dQI1UA";
     public static final String USERNAME_DOES_NOT_EXIST_MESSAGE = "Username does not exist. Please try again.";
     public static final String ADDED_TO_WHITELIST_MESSAGE = "You were added to the whitelist. Happy Mining!!!";
     public static final String USER_EXISTS_ON_WHITELIST_MESSAGE = "You are already added to the whitelist. :smile:";
@@ -46,11 +50,10 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     public static final String CLEAR_ALL_COMMAND = "!pineapple";
     public static final String SERVER_OWNER_NAME = "latch93";
     public static final String SERVER_OWNER_ID = "460463941542215691";
+    public static final String ANNOUNCEMENT_CHANNEL_ID = "631301990210732042";
     public static String username = "";
     public static String userId = "";
-    public static String staffAppChannelId = "";
-    public static String staffAppSubmittedChannelId = "";
-    public static String whitelistChannelId = "";
+    public static String staffAppSubmittedChannelId = "951562494344847390";
     private long channelId = 0;
     private long authorId = 0;
     public static boolean isTesting = true;
@@ -113,8 +116,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     return privateChannel.sendMessage("Please enter your application information line by line. \n Press enter after each question response. \n 1.) How old are you?");
                 }).queue();
             }
-            if (WHITELIST_CHANNEL_ID.equalsIgnoreCase(channel.getId()) && !username.equalsIgnoreCase("LatchDCBot")){
-                runWhitelistTest(channel, username, messageId, message, WHITELIST_CHANNEL_ID);
+            if (setTestingChannel(WHITELIST_CHANNEL_ID).equalsIgnoreCase(channel.getId()) && !username.equalsIgnoreCase("LatchDCBot")){
+                runWhitelistTest(channel, username, messageId, message, setTestingChannel(WHITELIST_CHANNEL_ID));
             }
 
         } catch (NullPointerException e){
@@ -256,7 +259,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
 
     public static void sendPlayerOnJoinMessage(PlayerJoinEvent onPlayerJoinEvent) {
-        String discordUserName = getDiscordUserName(onPlayerJoinEvent, null, null);
+        String discordUserName = getDiscordUserName(onPlayerJoinEvent.getPlayer().getName());
         EmbedBuilder eb = new EmbedBuilder();
         eb.setThumbnail("https://minotar.net/avatar/" + onPlayerJoinEvent.getPlayer().getName() + ".png?size=50");
         if (Boolean.TRUE.equals(onPlayerJoinEvent.getPlayer().hasPlayedBefore())){
@@ -274,7 +277,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
     public static void sendPlayerLogoutMessage(PlayerQuitEvent onPlayerQuitEvent) {
         EmbedBuilder eb = new EmbedBuilder();
-        String discordUserName = getDiscordUserName(null, onPlayerQuitEvent, null);
+        String discordUserName = getDiscordUserName(onPlayerQuitEvent.getPlayer().getName());
         eb.setThumbnail("https://minotar.net/avatar/" + onPlayerQuitEvent.getPlayer().getName()+ ".png?size=50");
         eb.setTitle("Discord Username: " + discordUserName + "\nMinecraft Username: " + onPlayerQuitEvent.getPlayer().getName() +" \nDisconnected from the server", null);
         eb.setColor(new Color(0xD0FF3F3F, true));
@@ -285,22 +288,14 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         }
     }
 
-    public static String getDiscordUserName(PlayerJoinEvent onPlayerJoinEvent, PlayerQuitEvent onPlayerQuitEvent, AsyncPlayerChatEvent onPlayerMessageEvent){
+    public static String getDiscordUserName(String playerName){
         TextChannel whitelistChannel = jda.getTextChannelById(setTestingChannel(WHITELIST_CHANNEL_ID));
         assert whitelistChannel != null;
         MessageHistory history = MessageHistory.getHistoryFromBeginning(whitelistChannel).complete();
         List<Message> messageHistory = history.getRetrievedHistory();
-        String minecraftUserName = "";
         String discordUserName = "";
-        if (onPlayerJoinEvent != null){
-            minecraftUserName = onPlayerJoinEvent.getPlayer().getName();
-        } else if (onPlayerQuitEvent != null){
-            minecraftUserName = onPlayerQuitEvent.getPlayer().getName();
-        } else {
-            minecraftUserName = onPlayerMessageEvent.getPlayer().getName();
-        }
         for (Message message : messageHistory){
-            if (minecraftUserName.equalsIgnoreCase(message.getContentRaw())){
+            if (playerName.equalsIgnoreCase(message.getContentRaw())){
                 discordUserName = message.getAuthor().getName();
             }
         }
@@ -325,8 +320,29 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     public static void logPlayerMessage(AsyncPlayerChatEvent event){
         TextChannel testChannel = jda.getTextChannelById(TEST_CHANNEL_ID);
         assert testChannel != null;
-        String discordUsername = getDiscordUserName(null, null, event);
+        String discordUsername = getDiscordUserName(event.getPlayer().getName());
         testChannel.sendMessage("DUName: " + discordUsername + " | MCUName: " + event.getPlayer().getDisplayName() + " » " + event.getMessage()).queue();
+    }
+
+    public static void banPlayerStealing(InventoryClickEvent event){
+        String playerName = event.getWhoClicked().getName();
+        Location chestLocation = new Location(event.getWhoClicked().getWorld(), 9997, 68, 10004);
+
+        String chestMaterial = "";
+
+        try {
+            chestMaterial = Objects.requireNonNull(event.getClickedInventory()).getType().toString();
+            if (chestMaterial.equalsIgnoreCase("CHEST") && chestLocation.equals(event.getClickedInventory().getLocation())){
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "ban " +playerName + " stole from bigboi's chest");
+                String discordUserName = getDiscordUserName(playerName);
+                TextChannel announcementChannel = jda.getTextChannelById(setTestingChannel(ANNOUNCEMENT_CHANNEL_ID));
+                assert announcementChannel != null;
+                announcementChannel.sendMessage(discordUserName + " will be banned :). Their MC username is: " + playerName).queue();
+            }
+        } catch (NullPointerException ignored){
+
+        }
+
     }
 
 
