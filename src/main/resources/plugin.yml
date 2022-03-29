@@ -4,6 +4,7 @@ main: discord_text.Main
 api-version: 1.18
 depend: [ProtocolLib, Vault]
 commands:
-  randomitem:
-    description: "Gets a random Item"
-    usage: /randomitem
+  bp:
+    description: "BackPack"
+  ps:
+    description: "Player Shop"

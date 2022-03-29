@@ -48,6 +48,7 @@ public class RandomItem{
                     Location dropLocation = new Location(event.getPlayer().getWorld(), 10006, 70, 9998 );
                     try {
                         world.dropItem(dropLocation,is);
+                        //world.playSound()
                         econ.withdrawPlayer(op, RANDOM_ITEM_COST);
                         player.sendMessage(ChatColor.GREEN + "You received a " + ChatColor.GOLD + m[n]);
                         EmbedBuilder eb = new EmbedBuilder();

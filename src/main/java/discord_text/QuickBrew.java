@@ -11,24 +11,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.meta.PotionMeta;
 
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class QuickBrew {
     public static void quickBrew(Player player, Economy econ, PlayerInteractEvent event){
         if (event.getPlayer().getInventory().getItemInMainHand().getEnchantments().toString().contains("aqua") && event.getAction().toString().equals("LEFT_CLICK_BLOCK") && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK) && event.getClickedBlock().getType().equals(Material.BREWING_STAND)){
-            OfflinePlayer offlinePlayer = null;
-            for (OfflinePlayer p : Bukkit.getWhitelistedPlayers()){
-                if (event.getPlayer().getUniqueId().equals(p.getUniqueId())){
-                    offlinePlayer = event.getPlayer();
-                }
-            }
-            double playerBalance = econ.getBalance(player);
-            if (playerBalance >= 50){
+            double totalExp = ExperienceManager.getTotalXP(player.getLevel());
+            double totalXPToNextLevel = ExperienceManager.getTotalXpRequiredForNextLevel(player.getLevel());
+            double totalPlayerXPCalculated = Math.round((totalXPToNextLevel * player.getExp()) + totalExp);
+            if (totalPlayerXPCalculated >= 5){
                 BrewingStand brewingStand = (BrewingStand) Objects.requireNonNull(event.getClickedBlock()).getState();
                 if (brewingStand.getInventory().getIngredient() == null){
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "No items available to brew"));
@@ -37,11 +29,12 @@ public class QuickBrew {
                 } else {
                     brewingStand.setBrewingTime(1);
                     brewingStand.update(true);
-                    econ.withdrawPlayer(offlinePlayer, 50);
-                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "Your potion(s) are brewed. Remaining balance: " + ChatColor.GOLD + "$" + econ.getBalance(offlinePlayer)));
+                    player.setLevel(ExperienceManager.getPlayerLevel(event, 35));
+                    player.setExp(ExperienceManager.getPlayerXP(event));
+                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "Your potion(s) are brewed. Remaining XP: " + ChatColor.GOLD + (totalPlayerXPCalculated - 35)));
                 }
             } else {
-                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("You don't have enough money to quick brew"));
+                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("You don't have enough XP to quick brew"));
             }
         }
     }
