@@ -1,0 +1,11 @@
+
+S
+java:S1128"8Remove this unused import 'javafx.application.Platform'.(§“óùÿÿÿÿ
+D
+java:S1128".Remove this unused import 'org.bukkit.Bukkit'.(Ø­æ
+P
+java:S1128"5Remove this unused import 'org.bukkit.OfflinePlayer'.(ƒØ¤¥şÿÿÿÿ
+P
+java:S1118":Add a private constructor to hide the implicit public one.(‘¦Í
+A
+java:S1172"+Remove this unused method parameter "econ".(ßÁŞ¾
