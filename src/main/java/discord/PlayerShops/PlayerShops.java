@@ -160,10 +160,12 @@ public class PlayerShops {
                     player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
                 } else {
                     ItemStack im = e.getCurrentItem();
-                    im.setAmount(1);
-                    im.setItemMeta(itemMeta);
-                    player.getInventory().addItem(im);
-                    e.getClickedInventory().setItem(e.getSlot(), new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount() - 1));
+                    ItemStack test = e.getCurrentItem();
+                    im.setAmount(im.getAmount() - 1);
+                    e.getClickedInventory().setItem(e.getSlot(), im);
+                    test.setAmount(1);
+                    test.setItemMeta(itemMeta);
+                    player.getInventory().addItem(test);
                     econ.withdrawPlayer(offlineBuyer, itemCost);
                     econ.depositPlayer(offlineSeller, itemCost);
                     player.updateInventory();
@@ -176,10 +178,12 @@ public class PlayerShops {
                         player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
                     } else {
                         ItemStack im = e.getCurrentItem();
-                        im.setAmount(10);
-                        im.setItemMeta(itemMeta);
-                        player.getInventory().addItem(im);
-                        e.getClickedInventory().setItem(e.getSlot(), new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount() - 10));
+                        ItemStack test = e.getCurrentItem();
+                        im.setAmount(im.getAmount() - 10);
+                        e.getClickedInventory().setItem(e.getSlot(), im);
+                        test.setAmount(10);
+                        test.setItemMeta(itemMeta);
+                        player.getInventory().addItem(test);
                         econ.withdrawPlayer(offlineBuyer, itemTotalCost);
                         econ.depositPlayer(offlineSeller, itemTotalCost);
                         player.updateInventory();
@@ -192,10 +196,12 @@ public class PlayerShops {
                 } else {
                     int itemTotalCost = itemCost * totalAmount;
                     ItemStack im = e.getCurrentItem();
-                    im.setAmount(totalAmount);
-                    im.setItemMeta(itemMeta);
-                    player.getInventory().addItem(im);
-                    e.getClickedInventory().setItem(e.getSlot(), new ItemStack(e.getCurrentItem().getType(), e.getCurrentItem().getAmount() - totalAmount));
+                    ItemStack test = e.getCurrentItem();
+                    im.setAmount(im.getAmount() - totalAmount);
+                    e.getClickedInventory().setItem(e.getSlot(), im);
+                    test.setAmount(totalAmount);
+                    test.setItemMeta(itemMeta);
+                    player.getInventory().addItem(test);
                     econ.withdrawPlayer(offlineBuyer, itemTotalCost);
                     econ.depositPlayer(offlineSeller, itemTotalCost);
                     player.updateInventory();

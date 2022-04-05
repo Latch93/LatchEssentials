@@ -186,7 +186,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerChestItemRemove(InventoryClickEvent event) {
-        LatchDiscord.banPlayerStealing(event);
+       LatchDiscord.banPlayerStealing(event);
     }
 
     public void setupEconomy() {
