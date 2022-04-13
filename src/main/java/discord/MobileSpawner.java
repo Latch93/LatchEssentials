@@ -1,11 +1,10 @@
 package discord;
 
 import net.milkbowl.vault.economy.Economy;
+
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+
+import org.bukkit.*;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -30,7 +29,6 @@ public class MobileSpawner {
         if(event.getBlock().getState() instanceof CreatureSpawner) {
             Map<Enchantment, Integer> itemEnchants = event.getPlayer().getInventory().getItemInMainHand().getEnchantments();
             Iterator it = itemEnchants.entrySet().iterator();
-            int i = 0;
             while (it.hasNext()) {
                 // get the pair
                 Map.Entry pair = (Map.Entry)it.next();
@@ -47,7 +45,9 @@ public class MobileSpawner {
                         meta.setDisplayName(WordUtils.capitalizeFully(t.name()) + " Spawner");
                     }
                     item.setItemMeta(meta);
-                    event.getPlayer().getInventory().addItem(item);
+                    Location location = event.getPlayer().getLocation();
+                    World world = event.getPlayer().getWorld();
+                    world.dropItem(location, item);
                     break;
                 }
             }

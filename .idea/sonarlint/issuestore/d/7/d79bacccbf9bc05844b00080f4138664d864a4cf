@@ -1,5 +1,0 @@
-
-o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(øÒ»Ñ
-f
-java:S3252"KUse static access with "org.bukkit.plugin.java.JavaPlugin" for "getPlugin".(ïû±Áùÿÿÿÿ
-C	java:S108#")Either remove or fill this block of code.(ç»òÿÿÿÿÿ

@@ -8,3 +8,7 @@ commands:
     description: "BackPack"
   ps:
     description: "Player Shop"
+  am:
+    description: "Auto Miner"
+  dt:
+    description: "Discord Text"
