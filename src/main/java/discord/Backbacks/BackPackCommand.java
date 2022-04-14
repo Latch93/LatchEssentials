@@ -37,12 +37,12 @@ public class BackPackCommand implements CommandExecutor {
             }
             if (args.length == 1){
                 if (args[0].equalsIgnoreCase(Constants.BACKPACK_UPGRADE_COMMAND)) {
-                    if (backPackCfg.get(player.getUniqueId() + Constants.YML_SIZE) != null){
-                        int numberOfSlots = backPackCfg.getInt(player.getUniqueId() + Constants.YML_SIZE);
+                    if (backPackCfg.get(player.getName() + Constants.YML_SIZE) != null){
+                        int numberOfSlots = backPackCfg.getInt(player.getName() + Constants.YML_SIZE);
                         double balance = econ.getBalance(offlinePlayer);
                         if (numberOfSlots == 9){
                             if (balance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_2)){
-                                backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 18);
+                                backPackCfg.set(player.getName() + Constants.YML_SIZE, 18);
                                 player.sendMessage(ChatColor.GREEN + Constants.YML_BACKPACK_LEVEL_IS_NOW + ChatColor.GOLD + "2" + ChatColor.GREEN + Constants.YML_OUT_OF +ChatColor.GOLD + " 6" +ChatColor.GREEN + Constants.YML_BACKPACK_NOW_HOLDS + ChatColor.GOLD + "18 " + ChatColor.GREEN + Constants.YML_ITEMS);
                                 econ.withdrawPlayer(offlinePlayer, backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_2));
                             } else {
@@ -50,7 +50,7 @@ public class BackPackCommand implements CommandExecutor {
                             }
                         } else if (numberOfSlots == 18){
                             if (balance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_3)) {
-                                backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 27);
+                                backPackCfg.set(player.getName() + Constants.YML_SIZE, 27);
                                 player.sendMessage(ChatColor.GREEN + Constants.YML_BACKPACK_LEVEL_IS_NOW + ChatColor.GOLD + "3" + ChatColor.GREEN + Constants.YML_OUT_OF +ChatColor.GOLD + " 6" +ChatColor.GREEN + Constants.YML_BACKPACK_NOW_HOLDS + ChatColor.GOLD + "27 " + ChatColor.GREEN + Constants.YML_ITEMS);
                                 econ.withdrawPlayer(offlinePlayer, backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_3));
                             } else {
@@ -58,7 +58,7 @@ public class BackPackCommand implements CommandExecutor {
                             }
                         } else if (numberOfSlots == 27){
                             if (balance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_4)) {
-                                backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 36);
+                                backPackCfg.set(player.getName() + Constants.YML_SIZE, 36);
                                 player.sendMessage(ChatColor.GREEN + Constants.YML_BACKPACK_LEVEL_IS_NOW + ChatColor.GOLD + "4" + ChatColor.GREEN + Constants.YML_OUT_OF +ChatColor.GOLD + " 6" +ChatColor.GREEN + Constants.YML_BACKPACK_NOW_HOLDS + ChatColor.GOLD + "36 " + ChatColor.GREEN + Constants.YML_ITEMS);
                                 econ.withdrawPlayer(offlinePlayer, backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_4));
                             } else {
@@ -66,7 +66,7 @@ public class BackPackCommand implements CommandExecutor {
                             }
                         } else if (numberOfSlots == 36){
                             if (balance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_5)) {
-                                backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 45);
+                                backPackCfg.set(player.getName() + Constants.YML_SIZE, 45);
                                 player.sendMessage(ChatColor.GREEN + Constants.YML_BACKPACK_LEVEL_IS_NOW + ChatColor.GOLD + "5" + ChatColor.GREEN + Constants.YML_OUT_OF +ChatColor.GOLD + " 6" +ChatColor.GREEN + Constants.YML_BACKPACK_NOW_HOLDS + ChatColor.GOLD + "45 " + ChatColor.GREEN + Constants.YML_ITEMS);
                                 econ.withdrawPlayer(offlinePlayer, backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_5));
                             } else {
@@ -74,7 +74,7 @@ public class BackPackCommand implements CommandExecutor {
                             }
                         } else if (numberOfSlots == 45){
                             if (balance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_6)){
-                                backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 54);
+                                backPackCfg.set(player.getName() + Constants.YML_SIZE, 54);
                                 player.sendMessage(ChatColor.GREEN + Constants.YML_BACKPACK_LEVEL_IS_NOW + ChatColor.GOLD + "6" + ChatColor.GREEN + Constants.YML_OUT_OF +ChatColor.GOLD + " 6" +ChatColor.GREEN + Constants.YML_BACKPACK_NOW_HOLDS + ChatColor.GOLD + "54 " + ChatColor.GREEN + Constants.YML_ITEMS);
                                 econ.withdrawPlayer(offlinePlayer, backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_6));
                             } else {
@@ -89,9 +89,9 @@ public class BackPackCommand implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase(Constants.BACKPACK_BUY_COMMAND)){
                     double playerBalance = econ.getBalance(offlinePlayer);
-                    if (backPackCfg.get(player.getUniqueId() + Constants.YML_SIZE) == null){
+                    if (backPackCfg.get(player.getName() + Constants.YML_SIZE) == null){
                         if (playerBalance >= backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_1)){
-                            backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 9);
+                            backPackCfg.set(player.getName() + Constants.YML_SIZE, 9);
                             player.sendMessage(ChatColor.GREEN + "You just purchased a " + ChatColor.GOLD + "Level 1 Backpack" + ChatColor.GREEN + ". You can store " + ChatColor.GOLD + "9" + ChatColor.GREEN + " items.");
                         } else {
                             player.sendMessage(ChatColor.RED + Constants.YML_YOU_NEED_AT_LEAST + ChatColor.GOLD + "$" + backPackCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_1) + ChatColor.RED + " to purchase a backpack.");
@@ -101,7 +101,7 @@ public class BackPackCommand implements CommandExecutor {
                     }
                 }
                 if (args[0].equalsIgnoreCase(Constants.OPEN_COMMAND)) {
-                    BackPacks.setInventoryWhenOpened(player, Main.backPackFile, backPackCfg.getInt(player.getUniqueId() + ".size"), invTitle);
+                    Objects.requireNonNull(player.getPlayer()).openInventory(BackPacks.setInventoryWhenOpened(player, Constants.YML_BACK_PACK_FILE_NAME, backPackCfg.getInt(player.getName() + ".size"), invTitle, player.getName()));
                 }
             }
             try {

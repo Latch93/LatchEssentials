@@ -2,7 +2,7 @@ package discord;
 
 public class Constants {
 
-    public static final String DISCORD_BOT_TOKEN = "OTUwNDc4ODc1NDg4NTc5NjU1.YiZgbg.FS-GH54fXWUKC4IYkyyRBLJX-yk";
+    public static final String DISCORD_BOT_TOKEN = "";
     public static final String PLUGIN_NAME = "DiscordText";
     public static final String SERVER_OWNER_NAME = "latch93";
 

@@ -3,10 +3,7 @@ package discord.Backbacks;
 import discord.Constants;
 import discord.Main;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -18,25 +15,27 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class BackPacks {
-    public static void saveBackPack(InventoryCloseEvent e, File configFile) throws IOException {
+    public static void saveCustomInventory(InventoryCloseEvent e, File configFile) throws IOException {
         FileConfiguration inventoryCfg = Main.getFileConfiguration(configFile);
         UUID playerUUID = e.getPlayer().getUniqueId();
         String playerName = e.getPlayer().getName();
+        for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()){
+            if (inventoryCfg.isSet(olp.getName() + Constants.YML_SIZE) && e.getView().getTitle().contains(olp.getName())){
+                playerName = olp.getName();
+            }
+        }
         for (int i = 0; i < e.getInventory().getSize(); i++){
             if (e.getInventory().getItem(i) != null){
                 String itemName = Objects.requireNonNull(e.getInventory().getItem(i)).getType().toString();
-                String itemAmount = String.valueOf(Objects.requireNonNull(e.getInventory().getItem(i)).getAmount());
-                inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + ".material", itemName);
-                inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + ".amount", itemAmount);
+                int itemAmount = Objects.requireNonNull(e.getInventory().getItem(i)).getAmount();
+                inventoryCfg.set(playerName + Constants.YML_SLOTS + i + ".material", itemName);
+                inventoryCfg.set(playerName + Constants.YML_SLOTS + i + ".amount", itemAmount);
                 ItemMeta im = Objects.requireNonNull(e.getInventory().getItem(i)).getItemMeta();
                 assert im != null;
-                inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + ".displayName", im.getDisplayName());
+                inventoryCfg.set(playerName + Constants.YML_SLOTS + i + ".displayName", im.getDisplayName());
                 Map<Enchantment, Integer> enchants;
                 if (itemName.equalsIgnoreCase("ENCHANTED_BOOK")){
                     EnchantmentStorageMeta meta =(EnchantmentStorageMeta) e.getInventory().getItem(i).getItemMeta();
@@ -49,8 +48,8 @@ public class BackPacks {
                         holder = holder.replace(" ", "");
                         holder = holder.replace("]", "");
                         String[] arr = holder.split(",");
-                        inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".enchant", arr[0]);
-                        inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".level", pair.getValue());
+                        inventoryCfg.set(playerName + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".enchant", arr[0]);
+                        inventoryCfg.set(playerName + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".level", pair.getValue());
                         count++;
                     }
 
@@ -65,61 +64,98 @@ public class BackPacks {
                         // the pair's key would be the Enchantment object and the value would be the level in the map.
                         // you can probably use some util online if you wanna convert that int to a roman number
                         Enchantment enchantment = (Enchantment)  pair.getKey();
-                        inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".enchant", enchantment.getKey().getKey());
-                        inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".level", pair.getValue());
+                        inventoryCfg.set(playerName + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".enchant", enchantment.getKey().getKey());
+                        inventoryCfg.set(playerName + Constants.YML_SLOTS + i + Constants.YML_ENCHANTS +count + ".level", pair.getValue());
                         count++;
                     }
                 }
             } else {
-                inventoryCfg.set(playerUUID + Constants.YML_SLOTS + i, null);
+                inventoryCfg.set(playerName + Constants.YML_SLOTS + i, null);
             }
         }
-        if (inventoryCfg.get(playerUUID + Constants.YML_SIZE) == null){
-            inventoryCfg.set(playerUUID + Constants.YML_SIZE, e.getInventory().getSize());
+        if (inventoryCfg.get(playerName + Constants.YML_SIZE) == null){
+            inventoryCfg.set(playerName + Constants.YML_SIZE, e.getInventory().getSize());
         } else {
-            inventoryCfg.set(playerUUID + Constants.YML_SIZE, inventoryCfg.getInt(playerUUID + Constants.YML_SIZE));
+            inventoryCfg.set(playerName + Constants.YML_SIZE, inventoryCfg.getInt(playerName + Constants.YML_SIZE));
         }
-        inventoryCfg.set(playerUUID + ".name", playerName);
+        inventoryCfg.set(playerName + ".name", playerName);
         inventoryCfg.save(configFile);
     }
 
-    public static void setInventoryWhenOpened(Player player, File configFile, int slots, String invTitle){
-        FileConfiguration inventoryConfig = Main.getFileConfiguration(configFile);
-        Inventory inv;
-        if (inventoryConfig.get(player.getUniqueId() + Constants.YML_SIZE) != null) {
-            //int numberOfSlots = inventoryConfig.getInt(player.getUniqueId() + Constants.YML_SIZE);
-            System.out.println("fgasd: " + slots);
+    public static Inventory setInventoryWhenOpened(Player player, String fileName, int slots, String invTitle, String playerShopToOpen){
+        FileConfiguration inventoryConfig = Main.loadConfig(fileName);
+        Inventory inv = null;
+        String playerName = "";
+        if (playerShopToOpen == null || playerShopToOpen.equalsIgnoreCase(player.getName())){
+            playerName = player.getName();
+        } else {
+            playerName = playerShopToOpen;
+        }
+        if (inventoryConfig.get(playerName + Constants.YML_SIZE) != null) {
             inv = Bukkit.createInventory(null, slots, invTitle);
-            if ((inventoryConfig.get(player.getUniqueId() + ".slots") != null)){
-                for(String users : inventoryConfig.getConfigurationSection(player.getUniqueId() + ".slots").getKeys(false)) {
-                    ItemStack is = new ItemStack(Material.valueOf(inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + ".material")),  Integer.parseInt(inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + ".amount")));
+            if ((inventoryConfig.get(playerName + ".slots") != null)){
+                for(String users : inventoryConfig.getConfigurationSection(playerName + ".slots").getKeys(false)) {
+                    ItemStack is = new ItemStack(Material.valueOf(inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + ".material")),  Integer.parseInt(inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + ".amount")));
                     ItemMeta im = is.getItemMeta();
-                    if (inventoryConfig.isSet(player.getUniqueId() + Constants.YML_SLOTS + users + ".enchants")) {
-                        for(String test : inventoryConfig.getConfigurationSection(player.getUniqueId() + Constants.YML_SLOTS + users + ".enchants").getKeys(false)) {
+                    if (inventoryConfig.isSet(playerName + Constants.YML_SLOTS + users + ".enchants")) {
+                        for(String test : inventoryConfig.getConfigurationSection(playerName + Constants.YML_SLOTS + users + ".enchants").getKeys(false)) {
                             assert im != null;
-                            if (inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant") != null && inventoryConfig.getInt(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level") != 0 ){
+                            if (inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant") != null && inventoryConfig.getInt(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level") != 0 ){
                                 if (is.getType().equals(Material.ENCHANTED_BOOK)){
                                     EnchantmentStorageMeta esm = (EnchantmentStorageMeta) im;
-                                    esm.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(NamespacedKey.minecraft(Objects.requireNonNull(inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant"))))), inventoryConfig.getInt(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level"), true);
+                                    esm.addStoredEnchant(Objects.requireNonNull(Enchantment.getByKey(NamespacedKey.minecraft(Objects.requireNonNull(inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant"))))), inventoryConfig.getInt(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level"), true);
                                     is.setItemMeta(esm);
                                 } else {
-                                    im.addEnchant(Objects.requireNonNull(Enchantment.getByKey(NamespacedKey.minecraft(Objects.requireNonNull(inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant"))))), inventoryConfig.getInt(player.getUniqueId() + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level"), true );
+                                    im.addEnchant(Objects.requireNonNull(Enchantment.getByKey(NamespacedKey.minecraft(Objects.requireNonNull(inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".enchant"))))), inventoryConfig.getInt(playerName + Constants.YML_SLOTS + users + Constants.YML_ENCHANTS + test + ".level"), true );
                                 }
                             }
                         }
                     }
                     assert im != null;
-                    if (inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + ".displayName") != null ){
-                        im.setDisplayName(inventoryConfig.getString(player.getUniqueId() + Constants.YML_SLOTS + users + ".displayName"));
+                    if (inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + ".displayName") != null ){
+                        im.setDisplayName(inventoryConfig.getString(playerName + Constants.YML_SLOTS + users + ".displayName"));
                         is.setItemMeta(im);
                     }
                     inv.setItem(Integer.parseInt(users), is);
                 }
             }
-            Objects.requireNonNull(player.getPlayer()).openInventory(inv);
-        } else {
+        } else if (invTitle.toLowerCase().contains("backpack")){
             player.sendMessage(ChatColor.RED + "You need to purchase a backpack before you use this command");
         }
+        return inv;
+    }
+
+    public static String getItemWorthString(ItemStack itemStack){
+        return "{"+itemStack.getType() + "-" + itemStack.getItemMeta() +"}";
+    }
+
+
+    public static Inventory setLoreInPlayerShop(String playerShopToOpen, Inventory inv, String playerName){
+        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        for (int i = 0; i < inv.getSize(); i++){
+            ItemStack itemStack = inv.getItem(i);
+            if (itemStack != null && playerShopCfg.isSet(playerShopToOpen + ".itemWorth." + BackPacks.getItemWorthString(itemStack))) {
+                List<String> loreList = new ArrayList<>();
+                ItemMeta im = Objects.requireNonNull(inv.getItem(i)).getItemMeta();
+                int totalAmount = playerShopCfg.getInt(playerShopToOpen + Constants.YML_SLOTS + i + ".amount");
+                int itemWorth = playerShopCfg.getInt(playerShopToOpen + ".itemWorth." + BackPacks.getItemWorthString(itemStack));
+                int totalWorth = totalAmount * itemWorth;
+                if (!playerShopToOpen.equalsIgnoreCase(playerName)){
+                    loreList.add(ChatColor.GREEN + "Cost per item " + ChatColor.GOLD + "$" + itemWorth);
+                    loreList.add(ChatColor.GREEN + "Left click to purchase " + ChatColor.GOLD + "1" + ChatColor.GREEN + " item.");
+                    if (totalAmount > 9) {
+                        loreList.add(ChatColor.GREEN + "Right click to purchase " + ChatColor.GOLD + "10" + ChatColor.GREEN + " items. Total cost: " + ChatColor.GOLD + "$" + Math.multiplyExact(10,itemWorth));
+                    }
+                    loreList.add(ChatColor.GREEN + "Middle click to purchase all items. Total cost: " + ChatColor.GOLD + "$" + totalWorth);
+                } else {
+                    loreList.add(ChatColor.GREEN + "Cost per item: " + ChatColor.GOLD + "$" + itemWorth );
+                }
+                assert im != null;
+                im.setLore(loreList);
+                itemStack.setItemMeta(im);
+            }
+        }
+        return inv;
     }
 
 }

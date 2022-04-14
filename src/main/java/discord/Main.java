@@ -15,16 +15,10 @@ import discord.PlayerShops.PlayerShopsInventoryConfig;
 import discord.PlayerShops.PlayerShopsTabComplete;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.*;
-import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -35,7 +29,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -204,11 +197,9 @@ public class Main extends JavaPlugin implements Listener {
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
         Player player = (Player) e.getPlayer();
         if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)){
-            BackPacks.saveBackPack(e, backPackFile);
+            BackPacks.saveCustomInventory(e, backPackFile);
         }
-        if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP)){
-            BackPacks.saveBackPack(e, playerShopFile);
-        }
+        PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
     }
 
     @EventHandler
@@ -219,10 +210,10 @@ public class Main extends JavaPlugin implements Listener {
             PlayerShops.illegalPlayerShopItems(e, player);
         }
         if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
-            //PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
+            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
             PlayerShops.illegalPlayerShopItems(e, player);
         } else if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
-            PlayerShops.sd(e, econ, player);
+            PlayerShops.purchaseItemFromPlayer(e, econ, player);
         }
     }
 
