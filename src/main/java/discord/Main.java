@@ -206,12 +206,12 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerInventoryClick(InventoryClickEvent e) throws IOException {
         cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
         Player player = (Player) e.getWhoClicked();
-        if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK) && e.getCurrentItem() != null){
-            PlayerShops.illegalPlayerShopItems(e, player);
-        }
+//        if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK) && e.getCurrentItem() != null){
+//            PlayerShops.illegalPlayerShopItems(e, player);
+//        }
         if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
             PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
-            PlayerShops.illegalPlayerShopItems(e, player);
+            //PlayerShops.illegalPlayerShopItems(e, player);
         } else if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
             PlayerShops.purchaseItemFromPlayer(e, econ, player);
         }

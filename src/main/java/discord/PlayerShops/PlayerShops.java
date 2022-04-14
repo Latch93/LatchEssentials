@@ -34,8 +34,26 @@ public class PlayerShops {
         }
     }
     public static void itemWorthNotSet(InventoryClickEvent e, Player player, FileConfiguration playerShopCfg){
-        String itemWorthString = BackPacks.getItemWorthString(Objects.requireNonNull(e.getCurrentItem()));
-        if (!playerShopCfg.isSet(player.getName() + ".itemWorth." + itemWorthString)) {
+        ItemStack itemStack = e.getCurrentItem();
+        assert itemStack != null;
+        int totalItemAmount = itemStack.getAmount();
+        itemStack.setAmount(1);
+        boolean isValid = false;
+        ItemMeta im = itemStack.getItemMeta();
+        if ((itemStack.getType().toString().contains("SHULKER") || itemStack.getType().toString().contains("PLAYER_HEAD")) && itemStack.getItemMeta() != null && !itemStack.getItemMeta().getDisplayName().isEmpty()){
+            assert im != null;
+            im.setLore(null);
+            itemStack.setItemMeta(im);
+            isValid = playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack.getItemMeta().getDisplayName());
+        } else {
+            assert im != null;
+            im.setLore(null);
+            itemStack.setItemMeta(im);
+            isValid = playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack);
+        }
+        System.out.println("as: " + player.getName() + ".itemWorth." + itemStack);
+        if (Boolean.FALSE.equals(isValid)){
+            itemStack.setAmount(totalItemAmount);
             e.setCancelled(true);
             player.sendMessage(ChatColor.RED + "You need to set this item's worth with " + ChatColor.AQUA + "/ps setworth [amount]" + ChatColor.RED + " before you can add it to your shop.");
         }
@@ -84,9 +102,11 @@ public class PlayerShops {
             buyerBalance = econ.getBalance(offlineBuyer);
             int itemCost = 0;
             assert offlineSeller != null;
-            System.out.println("a: " + offlineSeller.getName() + ".itemWorth." + BackPacks.getItemWorthString(Objects.requireNonNull(e.getCurrentItem())));
-            if (playerShopCfg.isSet(offlineSeller.getName() + ".itemWorth." + BackPacks.getItemWorthString(Objects.requireNonNull(e.getCurrentItem())))){
-                itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + BackPacks.getItemWorthString(Objects.requireNonNull(e.getCurrentItem())));
+            System.out.println("a: " + offlineSeller.getName() + ".itemWorth." + e.getCurrentItem());
+            if (playerShopCfg.isSet(offlineSeller.getName() + ".itemWorth." + e.getCurrentItem())){
+                itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." +  e.getCurrentItem());
+            } else {
+
             }
             int totalAmount = e.getCurrentItem().getAmount();
             ItemMeta itemMeta = e.getCurrentItem().getItemMeta();

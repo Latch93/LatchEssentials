@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.IOException;
 import java.util.*;
@@ -35,16 +36,30 @@ public class PlayerShopsCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase(Constants.SET_WORTH_COMMAND)) {
                     try {
                         int itemWorth = Integer.parseInt(args[1]);
-                        if (player.getInventory().getItemInMainHand().getType().toString().contains("SHULKER_BOX") || player.getInventory().getItemInMainHand().getType().toString().contains("PLAYER_HEAD")) {
-                            player.sendMessage(ChatColor.RED + "Unable to sell " + ChatColor.GOLD + player.getInventory().getItemInMainHand().getType().toString() + "'s" + ChatColor.RED + " in player shops");
-                        } else {
+                        if (!player.getInventory().getItemInMainHand().getType().isAir()){
                             ItemStack itemStack = player.getInventory().getItemInMainHand();
-                            playerShopCfg.set(player.getName() + ".itemWorth." + BackPacks.getItemWorthString(itemStack), itemWorth);
-                            System.out.println("asd: " + BackPacks.getItemWorthString(itemStack));
-                            player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
+                            int totalItemCount = player.getInventory().getItemInMainHand().getAmount();
+                            ItemStack singleItemStack = player.getInventory().getItemInMainHand();
+                            singleItemStack.setAmount(1);
+                            ItemMeta im = singleItemStack.getItemMeta();
+                            if (singleItemStack.getType().toString().contains("SHULKER") || singleItemStack.getType().toString().contains("PLAYER_HEAD")){
+                                if (singleItemStack.getItemMeta() != null && Boolean.FALSE.equals(singleItemStack.getItemMeta().getDisplayName().isEmpty())){
+                                    assert im != null;
+                                    im.setLore(null);
+                                    singleItemStack.setItemMeta(im);
+                                    playerShopCfg.set(player.getName() + ".itemWorth." + Objects.requireNonNull(singleItemStack.getItemMeta()).getDisplayName(), itemWorth);
+                                    player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "You must name this Shulker Box before you can set its worth.");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
+                                playerShopCfg.set(player.getName() + ".itemWorth." + singleItemStack, itemWorth);
+                            }
+                            itemStack.setAmount(totalItemCount);
+                            playerShopCfg.save(Main.playerShopFile);
                         }
-                        playerShopCfg.save(Main.playerShopFile);
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                         player.sendMessage(ChatColor.RED + "Error: Set item worth like this -> /ps setworth 10");
                     } catch (IOException e) {
                         e.printStackTrace();
