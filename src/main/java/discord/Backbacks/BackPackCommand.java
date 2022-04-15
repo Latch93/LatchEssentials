@@ -5,6 +5,7 @@ import discord.Main;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -101,7 +102,11 @@ public class BackPackCommand implements CommandExecutor {
                     }
                 }
                 if (args[0].equalsIgnoreCase(Constants.OPEN_COMMAND)) {
-                    Objects.requireNonNull(player.getPlayer()).openInventory(BackPacks.setInventoryWhenOpened(player, Constants.YML_BACK_PACK_FILE_NAME, backPackCfg.getInt(player.getName() + ".size"), invTitle, player.getName()));
+                    try {
+                        Objects.requireNonNull(player.getPlayer()).openInventory(BackPacks.setInventoryWhenOpened(player, Constants.YML_BACK_PACK_FILE_NAME, backPackCfg.getInt(player.getName() + ".size"), invTitle, player.getName()));
+                    } catch (NullPointerException ignored){
+
+                    }
                 }
             }
             try {

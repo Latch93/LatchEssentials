@@ -42,6 +42,8 @@ public class PlayerShopsCommand implements CommandExecutor {
                             ItemStack singleItemStack = player.getInventory().getItemInMainHand();
                             singleItemStack.setAmount(1);
                             ItemMeta im = singleItemStack.getItemMeta();
+                            List<String> lore = im.getLore();
+                            im.setLore(null);
                             if (singleItemStack.getType().toString().contains("SHULKER") || singleItemStack.getType().toString().contains("PLAYER_HEAD")){
                                 if (singleItemStack.getItemMeta() != null && Boolean.FALSE.equals(singleItemStack.getItemMeta().getDisplayName().isEmpty())){
                                     assert im != null;

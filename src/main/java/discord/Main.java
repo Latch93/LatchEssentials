@@ -73,11 +73,6 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
-        try {
-            new LatchDiscord();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        }
         getServer().getPluginManager().registerEvents(this, this);
         setupEconomy();
         loadBackpackManager();
@@ -99,14 +94,19 @@ public class Main extends JavaPlugin implements Listener {
         discordTextCfg = getFileConfiguration(discordTextFile);
         advancementFile = getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME);
         advancementCfg = getFileConfiguration(advancementFile);
+        try {
+            new LatchDiscord();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        }
         Advancements.setAdvancements();
         // Backpack Command
         Objects.requireNonNull(this.getCommand("bp")).setExecutor(new BackPackCommand());
         Objects.requireNonNull(this.getCommand("bp")).setTabCompleter(new BackpackTabComplete());
 
         // Player Shop Command
-        Objects.requireNonNull(this.getCommand("ps")).setExecutor(new PlayerShopsCommand());
-        Objects.requireNonNull(this.getCommand("ps")).setTabCompleter(new PlayerShopsTabComplete());
+//        Objects.requireNonNull(this.getCommand("ps")).setExecutor(new PlayerShopsCommand());
+//        Objects.requireNonNull(this.getCommand("ps")).setTabCompleter(new PlayerShopsTabComplete());
 
         // Discord Text Command
         Objects.requireNonNull(this.getCommand("dt")).setExecutor(new DiscordTextCommand());
@@ -199,22 +199,19 @@ public class Main extends JavaPlugin implements Listener {
         if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)){
             BackPacks.saveCustomInventory(e, backPackFile);
         }
-        PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
+        //PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
     }
 
     @EventHandler
     public void onPlayerInventoryClick(InventoryClickEvent e) throws IOException {
         cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
         Player player = (Player) e.getWhoClicked();
-//        if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK) && e.getCurrentItem() != null){
-//            PlayerShops.illegalPlayerShopItems(e, player);
+        String invTitle = e.getView().getTitle();
+//        if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
+//            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
+//        } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null ) {
+//            PlayerShops.purchaseItemFromPlayer(e, econ, player);
 //        }
-        if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
-            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
-            //PlayerShops.illegalPlayerShopItems(e, player);
-        } else if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
-            PlayerShops.purchaseItemFromPlayer(e, econ, player);
-        }
     }
 
     public static int getWhitelistedPlayerCount(){
