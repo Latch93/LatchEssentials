@@ -1,30 +1,22 @@
 package discord.PlayerShops;
 
-import discord.Backbacks.BackPacks;
+import discord.Backbacks.Inventories;
 import discord.Constants;
 import discord.Main;
-
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 public class PlayerShops {
     public static void itemWorthNotSet(InventoryClickEvent e, Player player, FileConfiguration playerShopCfg){
@@ -32,44 +24,32 @@ public class PlayerShops {
         assert itemStack != null;
         int totalItemAmount = itemStack.getAmount();
         itemStack.setAmount(1);
-        boolean isValid = false;
-        ItemMeta im = itemStack.getItemMeta();
-        if ((itemStack.getType().toString().contains("SHULKER") || itemStack.getType().toString().contains("PLAYER_HEAD")) && itemStack.getItemMeta() != null && !itemStack.getItemMeta().getDisplayName().isEmpty()){
-            assert im != null;
-            im.setLore(null);
-            itemStack.setItemMeta(im);
-            isValid = playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack.getItemMeta().getDisplayName());
-        } else {
-            assert im != null;
-            im.setLore(null);
-            itemStack.setItemMeta(im);
-            isValid = playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack);
-        }
-        itemStack.setAmount(totalItemAmount);
-        if (Boolean.FALSE.equals(isValid)){
+        if (!playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack)){
             e.setCancelled(true);
             player.sendMessage(ChatColor.RED + "You need to set this item's worth with " + ChatColor.AQUA + "/ps setworth [amount]" + ChatColor.RED + " before you can add it to your shop.");
         }
+        itemStack.setAmount(totalItemAmount);
     }
 
     public static void removeLoreFromSellerInventory(InventoryCloseEvent e, File playerShopFile) throws IOException {
         Player player = (Player) e.getPlayer();
         if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP)){
-            BackPacks.saveCustomInventory(e, playerShopFile);
+            Inventories.saveCustomInventory(e, playerShopFile);
             if (e.getView().getTitle().contains(e.getPlayer().getName())){
-                Inventory inv = player.getInventory();
-                int slotCount = 0;
-                for (ItemStack itemStack : inv){
-                    if (itemStack != null && Boolean.TRUE.equals(itemStack.hasItemMeta())){
-                        ItemMeta itemMeta = itemStack.getItemMeta();
-                        assert itemMeta != null;
-                        if (itemMeta.getLore() != null && itemMeta.getLore().toString().contains("Cost per item")){
-                            itemMeta.setLore(null);
-                            itemStack.setItemMeta(itemMeta);
-                            inv.setItem(slotCount, itemStack);
+                for (int i = 0; i < 39; i++){
+                    ItemStack itemStack = player.getInventory().getItem(i);
+                    if (itemStack != null){
+                        System.out.println("before" + i + "-------" + itemStack);
+                        ItemMeta im = Inventories.setItemLore(e, i, true);
+                        if (im != null){
+                            itemStack.setItemMeta(im);
                         }
+                        System.out.println("after" + i + "-------" + itemStack);
+
+                        player.getInventory().setItem(i,itemStack);
                     }
-                    slotCount++;
+                    player.updateInventory();
+
                 }
             }
         }
@@ -78,7 +58,9 @@ public class PlayerShops {
     public static void purchaseItemFromPlayer(InventoryClickEvent e, Economy econ, Player player) {
         OfflinePlayer offlineBuyer = null;
         OfflinePlayer offlineSeller = null;
+
         double buyerBalance;
+        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
             String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
             String sellerShopPlayerName = arr[0];
@@ -93,21 +75,23 @@ public class PlayerShops {
             }
             buyerBalance = econ.getBalance(offlineBuyer);
             assert offlineSeller != null;
-            int itemCost = BackPacks.getItemWorth(Objects.requireNonNull(e.getCurrentItem()), offlineSeller.getName());
-            int totalAmount = e.getCurrentItem().getAmount();
-            ItemMeta itemMeta = e.getCurrentItem().getItemMeta();
-            assert itemMeta != null;
-            itemMeta.setLore(null);
+            ItemStack ims = e.getCurrentItem();
+            int itemAmount = ims.getAmount();
+            ims.setAmount(1);
+            ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
+            ims.setItemMeta(im);
+            int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
+            System.out.println("asd: " + offlineSeller.getName() + ".itemWorth." + ims);
+            ims.setAmount(itemAmount);
             if (e.getClick().toString().equalsIgnoreCase("LEFT")){
                 if (buyerBalance < itemCost){
                     player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
                 } else {
-                    ItemStack im = e.getCurrentItem();
+                    ItemStack itemStack = e.getCurrentItem();
                     ItemStack test = e.getCurrentItem();
-                    im.setAmount(im.getAmount() - 1);
-                    e.getClickedInventory().setItem(e.getSlot(), im);
+                    itemStack.setAmount(itemStack.getAmount() - 1);
+                    e.getClickedInventory().setItem(e.getSlot(), itemStack);
                     test.setAmount(1);
-                    test.setItemMeta(itemMeta);
                     player.getInventory().addItem(test);
                     econ.withdrawPlayer(offlineBuyer, itemCost);
                     econ.depositPlayer(offlineSeller, itemCost);
@@ -115,17 +99,17 @@ public class PlayerShops {
                 }
                 e.setCancelled(true);
             } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
+                e.setCancelled(true);
                 if (e.getCurrentItem().getAmount() >= 10) {
                     int itemTotalCost = itemCost * 10;
                     if (buyerBalance < itemTotalCost){
                         player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
                     } else {
-                        ItemStack im = e.getCurrentItem();
+                        ItemStack imq = e.getCurrentItem();
                         ItemStack test = e.getCurrentItem();
-                        im.setAmount(im.getAmount() - 10);
-                        e.getClickedInventory().setItem(e.getSlot(), im);
+                        imq.setAmount(imq.getAmount() - 10);
+                        e.getClickedInventory().setItem(e.getSlot(), imq);
                         test.setAmount(10);
-                        test.setItemMeta(itemMeta);
                         player.getInventory().addItem(test);
                         econ.withdrawPlayer(offlineBuyer, itemTotalCost);
                         econ.depositPlayer(offlineSeller, itemTotalCost);
@@ -133,24 +117,13 @@ public class PlayerShops {
                     }
                 }
                 e.setCancelled(true);
-            } else {
-                if (buyerBalance < (totalAmount * itemCost)){
-                    player.sendMessage(ChatColor.RED + "Not enough money to buy whole item stack.");
-                } else {
-                    int itemTotalCost = itemCost * totalAmount;
-                    ItemStack im = e.getCurrentItem();
-                    ItemStack test = e.getCurrentItem();
-                    im.setAmount(im.getAmount() - totalAmount);
-                    e.getClickedInventory().setItem(e.getSlot(), im);
-                    test.setAmount(totalAmount);
-                    test.setItemMeta(itemMeta);
-                    player.getInventory().addItem(test);
-                    econ.withdrawPlayer(offlineBuyer, itemTotalCost);
-                    econ.depositPlayer(offlineSeller, itemTotalCost);
-                    player.updateInventory();
-                }
-                e.setCancelled(true);
             }
+//            else {
+//                if (buyerBalance < (itemAmount * itemCost)){
+//                    player.sendMessage(ChatColor.RED + "Not enough money to buy whole item stack.");
+//                }
+//                e.setCancelled(true);
+//            }
         } else {
             e.setCancelled(true);
         }

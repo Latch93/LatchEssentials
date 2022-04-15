@@ -1,10 +1,8 @@
 package discord;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 public class Constants {
-    public static final FileConfiguration discordTextCfg = Main.loadConfig(Constants.YML_DISCORD_TEXT_FILE_NAME);
-    public static final String DISCORD_BOT_TOKEN = discordTextCfg.getString("botToken");
+
+    public static final String DISCORD_BOT_TOKEN = Main.loadConfig(Constants.YML_DISCORD_TEXT_FILE_NAME).getString("botToken");
     public static final String PLUGIN_NAME = "DiscordText";
     public static final String SERVER_OWNER_NAME = "latch93";
 

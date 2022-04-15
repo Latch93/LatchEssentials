@@ -3,8 +3,8 @@ package discord;
 import discord.AutoMiner.AutoMinerConfig;
 import discord.Backbacks.BackPackCommand;
 import discord.Backbacks.BackPackInventoryConfig;
-import discord.Backbacks.BackPacks;
 import discord.Backbacks.BackpackTabComplete;
+import discord.Backbacks.Inventories;
 import discord.Bank.Bank;
 import discord.Bank.BankConfig;
 import discord.DiscordText.DiscordTextCommand;
@@ -13,12 +13,11 @@ import discord.PlayerShops.PlayerShops;
 import discord.PlayerShops.PlayerShopsCommand;
 import discord.PlayerShops.PlayerShopsInventoryConfig;
 import discord.PlayerShops.PlayerShopsTabComplete;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -34,10 +33,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
-import java.awt.Color;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
     public static final boolean IS_TESTING = true;
@@ -73,6 +72,11 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
+        try {
+            new LatchDiscord();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        }
         getServer().getPluginManager().registerEvents(this, this);
         setupEconomy();
         loadBackpackManager();
@@ -94,19 +98,15 @@ public class Main extends JavaPlugin implements Listener {
         discordTextCfg = getFileConfiguration(discordTextFile);
         advancementFile = getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME);
         advancementCfg = getFileConfiguration(advancementFile);
-        try {
-            new LatchDiscord();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        }
+
         Advancements.setAdvancements();
         // Backpack Command
         Objects.requireNonNull(this.getCommand("bp")).setExecutor(new BackPackCommand());
         Objects.requireNonNull(this.getCommand("bp")).setTabCompleter(new BackpackTabComplete());
 
         // Player Shop Command
-//        Objects.requireNonNull(this.getCommand("ps")).setExecutor(new PlayerShopsCommand());
-//        Objects.requireNonNull(this.getCommand("ps")).setTabCompleter(new PlayerShopsTabComplete());
+        Objects.requireNonNull(this.getCommand("ps")).setExecutor(new PlayerShopsCommand());
+        Objects.requireNonNull(this.getCommand("ps")).setTabCompleter(new PlayerShopsTabComplete());
 
         // Discord Text Command
         Objects.requireNonNull(this.getCommand("dt")).setExecutor(new DiscordTextCommand());
@@ -197,9 +197,11 @@ public class Main extends JavaPlugin implements Listener {
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
         Player player = (Player) e.getPlayer();
         if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)){
-            BackPacks.saveCustomInventory(e, backPackFile);
+            Inventories.saveCustomInventory(e, backPackFile);
+        } else if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP)){
+            Inventories.saveCustomInventory(e, playerShopFile);
         }
-        //PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
+        PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
     }
 
     @EventHandler
@@ -207,11 +209,11 @@ public class Main extends JavaPlugin implements Listener {
         cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
         Player player = (Player) e.getWhoClicked();
         String invTitle = e.getView().getTitle();
-//        if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
-//            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
-//        } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null ) {
-//            PlayerShops.purchaseItemFromPlayer(e, econ, player);
-//        }
+        if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
+            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
+        } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null ) {
+            PlayerShops.purchaseItemFromPlayer(e, econ, player);
+        }
     }
 
     public static int getWhitelistedPlayerCount(){
