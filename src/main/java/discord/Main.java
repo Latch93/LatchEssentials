@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -39,7 +41,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
-    public static final boolean IS_TESTING = true;
+    public static final boolean IS_TESTING = false;
     public static Economy econ = null;
 
     public static AutoMinerConfig autoMinerCfgm;
@@ -116,7 +118,6 @@ public class Main extends JavaPlugin implements Listener {
 //        Objects.requireNonNull(this.getCommand("am")).setTabCompleter(new AutoMinerTabComplete());
 
     }
-
 
     @Override
     public void onDisable() {

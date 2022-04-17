@@ -23,6 +23,7 @@ discord\AutoMiner\AutoMinerConfig.class
 discord\Backbacks\BackPackInventoryConfig.class
 discord\AdvancementConfig.class
 discord\DiscordText\DiscordTextCommand.class
+discord\PlayerShops\PlayerShops.class
 discord\QuickSmelt.class
 discord\Bank\BankConfig.class
 discord\Backbacks\BackPackCommand.class

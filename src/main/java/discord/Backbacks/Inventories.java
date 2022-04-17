@@ -50,6 +50,7 @@ public class Inventories {
         inventoryCfg.save(configFile);
     }
 
+
     @Nullable
     public static ItemMeta setItemLore(InventoryCloseEvent e, int i, boolean isPlayerShop) {
         ItemMeta im = null;
@@ -66,7 +67,6 @@ public class Inventories {
             if (im != null){
                 if (im.getLore() != null){
                     if (im.getLore().get(0).contains("Cost")){
-                        System.out.println("asdas000" + player.getInventory().getItem(i));
                         im.setLore(null);
                     } else {
                         playerSetLore = im.getLore().get(0);

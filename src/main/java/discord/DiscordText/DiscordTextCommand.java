@@ -19,23 +19,24 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class DiscordTextCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args[0].equalsIgnoreCase("purgeWhitelist")){
+        if (args[0].equalsIgnoreCase("purgeWhitelist")) {
             LatchDiscord.purge();
-        } else if (args[0].equalsIgnoreCase("setdiscord")){
+        } else if (args[0].equalsIgnoreCase("setdiscord")) {
             try {
                 LatchDiscord.setDiscordUserNames();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (args[0].equalsIgnoreCase("stat")){
-            for(OfflinePlayer player : Bukkit.getWhitelistedPlayers()){
-                if (Objects.equals(player.getName(), sender.getName())){
-                    System.out.println("ads: "+ player.getStatistic(Statistic.DEATHS));
-                    System.out.println("ads2: "+ player.getStatistic(Statistic.RECORD_PLAYED));
-                    System.out.println("ads3: "+ player.getStatistic(Statistic.MOB_KILLS));
+        } else if (args[0].equalsIgnoreCase("stat")) {
+            for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()) {
+                if (Objects.equals(player.getName(), sender.getName())) {
+                    System.out.println("ads: " + player.getStatistic(Statistic.DEATHS));
+                    System.out.println("ads2: " + player.getStatistic(Statistic.RECORD_PLAYED));
+                    System.out.println("ads3: " + player.getStatistic(Statistic.MOB_KILLS));
                 }
             }
-        } else if (args[0].equalsIgnoreCase("rtp")){
+        }
+        else if (args[0].equalsIgnoreCase("rtp")){
             Player player = (Player) sender;
             World world = player.getWorld();
             OfflinePlayer olp = Bukkit.getOfflinePlayer(player.getUniqueId());
@@ -56,11 +57,12 @@ public class DiscordTextCommand implements CommandExecutor {
                     Location finalLocation = null;
                     if (blockToTeleporttTo.getType().isSolid()){
                         finalLocation = blockToTeleporttTo.getLocation();
-                        finalLocation.setY(finalLocation.getY()+1);
+                        finalLocation.setY(finalLocation.getY()+2.0);
                     }
                     if (finalLocation != null){
                         Main.getEconomy().withdrawPlayer(olp, 2500);
-                        player.sendMessage(ChatColor.GREEN + "Random Teleport successful!!! Your new balance is " + ChatColor.GOLD + "$" + Main.getEconomy().getBalance(olp));
+                        world.getChunkAt(finalLocation).load();
+                        player.sendMessage(ChatColor.GREEN + "Random Teleport successful!!! Your new balance is " + ChatColor.GOLD + "$" + df.format(Main.getEconomy().getBalance(olp)));
                         player.teleport(finalLocation);
                         TextChannel chatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
                         String biome = finalLocation.getBlock().getBiome().getKey().getKey();
@@ -70,12 +72,12 @@ public class DiscordTextCommand implements CommandExecutor {
                         }
                         assert chatChannel != null;
                         chatChannel.sendMessage(player.getName() + " was randomly teleported to a " + WordUtils.capitalizeFully(biome) + " biome.").queue();
-                        Bukkit.broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " was randomly teleported to a " + ChatColor.GOLD + WordUtils.capitalizeFully(biome) + ChatColor.GREEN + " biome.");
                     } else {
                         player.sendMessage(ChatColor.YELLOW + "Unable to send you to a safe random spot. Please try again");
                     }
                 }
-            } else {
+            }
+            else {
                 player.sendMessage(ChatColor.RED + "You need at least $2500 to teleport to a random location.");
             }
 

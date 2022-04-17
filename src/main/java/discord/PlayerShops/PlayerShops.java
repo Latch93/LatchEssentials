@@ -24,6 +24,9 @@ public class PlayerShops {
         assert itemStack != null;
         int totalItemAmount = itemStack.getAmount();
         itemStack.setAmount(1);
+        String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
+        String sellerShopPlayerName = arr[0];
+        itemStack.setItemMeta(Inventories.getItemWorthWithLore(player, itemStack, sellerShopPlayerName));
         if (!playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack)){
             e.setCancelled(true);
             player.sendMessage(ChatColor.RED + "You need to set this item's worth with " + ChatColor.AQUA + "/ps setworth [amount]" + ChatColor.RED + " before you can add it to your shop.");
@@ -39,13 +42,10 @@ public class PlayerShops {
                 for (int i = 0; i < 39; i++){
                     ItemStack itemStack = player.getInventory().getItem(i);
                     if (itemStack != null){
-                        System.out.println("before" + i + "-------" + itemStack);
                         ItemMeta im = Inventories.setItemLore(e, i, true);
                         if (im != null){
                             itemStack.setItemMeta(im);
                         }
-                        System.out.println("after" + i + "-------" + itemStack);
-
                         player.getInventory().setItem(i,itemStack);
                     }
                     player.updateInventory();
@@ -81,7 +81,6 @@ public class PlayerShops {
             ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
             ims.setItemMeta(im);
             int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
-            System.out.println("asd: " + offlineSeller.getName() + ".itemWorth." + ims);
             ims.setAmount(itemAmount);
             if (e.getClick().toString().equalsIgnoreCase("LEFT")){
                 if (buyerBalance < itemCost){
@@ -118,12 +117,6 @@ public class PlayerShops {
                 }
                 e.setCancelled(true);
             }
-//            else {
-//                if (buyerBalance < (itemAmount * itemCost)){
-//                    player.sendMessage(ChatColor.RED + "Not enough money to buy whole item stack.");
-//                }
-//                e.setCancelled(true);
-//            }
         } else {
             e.setCancelled(true);
         }
