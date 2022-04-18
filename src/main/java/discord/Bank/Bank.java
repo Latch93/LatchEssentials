@@ -66,7 +66,9 @@ public class Bank {
     }
 
     public static void setPlayerBalanceWithInterest(Player player){
-        double moneyForTimePlayed = (double) getSecondsPlayedInSession(player.getName()) * (double) 5;
+        FileConfiguration mainCfg = Main.getFileConfiguration(Main.discordTextFile);
+        double moneyPlayedMultiplier = mainCfg.getDouble("bankMultiplier");
+        double moneyForTimePlayed = (double) getSecondsPlayedInSession(player.getName()) * moneyPlayedMultiplier;
         Main.getEconomy().depositPlayer(Main.getPlayerFromOfflinePlayer(player), moneyForTimePlayed);
     }
 }

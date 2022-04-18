@@ -17,6 +17,7 @@ discord\ExperienceManager.class
 discord\SlimeChunkFinder.class
 discord\FarmMoney.class
 discord\Backbacks\BackpackTabComplete.class
+discord\RandomTeleport.class
 discord\Advancements.class
 discord\RandomItem.class
 discord\AutoMiner\AutoMinerConfig.class

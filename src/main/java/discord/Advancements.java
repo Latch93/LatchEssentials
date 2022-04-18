@@ -115,6 +115,8 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:husbandry/axolotl_in_a_bucket", "The Cutest Predator","Catch an Axolotl in a Bucket."));
         advancements.add(new Advancement("minecraft:husbandry/kill_axolotl_target", "The Healing Power of Friendship!","Have the Regeneration effect applied from assisting an axolotl or it killing a mob."));
         advancements.add(new Advancement("minecraft:husbandry/silk_touch_nest", "Total Beelocation","Move a Bee Nest, with 3 bees inside, using Silk Touch."));
+        advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
+
     }
 
     public static List<Advancement> getAdvancements(){
