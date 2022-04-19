@@ -23,11 +23,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -144,12 +146,6 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public static void advancement(PlayerAdvancementDoneEvent e) throws IOException {
-        Advancements.setPlayerAdvancementOnCompletion(e);
-        Advancements.showAdvancementInDiscord(e);
-    }
-
-    @EventHandler
     public void onLogout(PlayerQuitEvent event) throws IOException {
         LatchDiscord.sendPlayerLogoutMessage(event);
         LatchDiscord.setChannelDescription(true);
@@ -157,7 +153,12 @@ public class Main extends JavaPlugin implements Listener {
         Bank.setPlayerSessionSecondsPlayed(event);
         Bank.getPlayerBalance(event.getPlayer());
         Bank.setPlayerBalanceWithInterest(event.getPlayer());
+    }
 
+    @EventHandler
+    public static void advancement(PlayerAdvancementDoneEvent e) throws IOException {
+        Advancements.setPlayerAdvancementOnCompletion(e);
+        Advancements.showAdvancementInDiscord(e);
     }
 
     @EventHandler
@@ -172,60 +173,62 @@ public class Main extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onPlayerChatEvent(AsyncPlayerChatEvent e){
-        TextChannel textChannel = LatchDiscord.jda.getTextChannelById(Constants.TEST_CHANNEL_ID);
+        TextChannel textChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
         String playerName = e.getPlayer().getDisplayName();
         String message = e.getMessage();
-        ArrayList<String> colorCodes = new ArrayList<>();
-        colorCodes.add("&a");
-        colorCodes.add("&b");
-        colorCodes.add("&c");
-        colorCodes.add("&d");
-        colorCodes.add("&e");
-        colorCodes.add("&f");
-        colorCodes.add("&0");
-        colorCodes.add("&1");
-        colorCodes.add("&2");
-        colorCodes.add("&3");
-        colorCodes.add("&4");
-        colorCodes.add("&5");
-        colorCodes.add("&6");
-        colorCodes.add("&7");
-        colorCodes.add("&8");
-        colorCodes.add("&9");
-        colorCodes.add("&k");
-        colorCodes.add("&l");
-        colorCodes.add("&m");
-        colorCodes.add("&n");
-        colorCodes.add("&o");
-        colorCodes.add("&r");
-        colorCodes.add("&a");
-        colorCodes.add("&b");
-        colorCodes.add("&c");
-        colorCodes.add("&d");
-        colorCodes.add("&e");
-        colorCodes.add("&f");
-        colorCodes.add("§0");
-        colorCodes.add("§1");
-        colorCodes.add("§2");
-        colorCodes.add("§3");
-        colorCodes.add("§4");
-        colorCodes.add("§5");
-        colorCodes.add("§6");
-        colorCodes.add("§7");
-        colorCodes.add("§8");
-        colorCodes.add("§9");
-        colorCodes.add("§k");
-        colorCodes.add("§l");
-        colorCodes.add("§m");
-        colorCodes.add("§n");
-        colorCodes.add("§o");
-        colorCodes.add("§r");
-        for (String colorCode : colorCodes){
-            playerName = playerName.replace(colorCode, "");
-            message = message.replace(colorCode, "");
-        }
+        if (!message.toLowerCase().contains("@everyone") && !message.toLowerCase().contains("@here")){
+            ArrayList<String> colorCodes = new ArrayList<>();
+            colorCodes.add("&a");
+            colorCodes.add("&b");
+            colorCodes.add("&c");
+            colorCodes.add("&d");
+            colorCodes.add("&e");
+            colorCodes.add("&f");
+            colorCodes.add("&0");
+            colorCodes.add("&1");
+            colorCodes.add("&2");
+            colorCodes.add("&3");
+            colorCodes.add("&4");
+            colorCodes.add("&5");
+            colorCodes.add("&6");
+            colorCodes.add("&7");
+            colorCodes.add("&8");
+            colorCodes.add("&9");
+            colorCodes.add("&k");
+            colorCodes.add("&l");
+            colorCodes.add("&m");
+            colorCodes.add("&n");
+            colorCodes.add("&o");
+            colorCodes.add("&r");
+            colorCodes.add("§a");
+            colorCodes.add("§b");
+            colorCodes.add("§c");
+            colorCodes.add("§d");
+            colorCodes.add("§e");
+            colorCodes.add("§f");
+            colorCodes.add("§0");
+            colorCodes.add("§1");
+            colorCodes.add("§2");
+            colorCodes.add("§3");
+            colorCodes.add("§4");
+            colorCodes.add("§5");
+            colorCodes.add("§6");
+            colorCodes.add("§7");
+            colorCodes.add("§8");
+            colorCodes.add("§9");
+            colorCodes.add("§k");
+            colorCodes.add("§l");
+            colorCodes.add("§m");
+            colorCodes.add("§n");
+            colorCodes.add("§o");
+            colorCodes.add("§r");
+            for (String colorCode : colorCodes){
+                playerName = playerName.replace(colorCode, "");
+                message = message.replace(colorCode, "");
+            }
 
-        textChannel.sendMessage(playerName + " » " + message).queue();
+            textChannel.sendMessage(playerName + " » " + message).queue();
+        }
     }
     @EventHandler
     public void onCommandEvent(PlayerCommandPreprocessEvent event) {
@@ -270,8 +273,6 @@ public class Main extends JavaPlugin implements Listener {
         return Bukkit.getWhitelistedPlayers().size();
     }
 
-
-
     public static OfflinePlayer getPlayerFromOfflinePlayer(Player player){
         OfflinePlayer offlinePlayer = null;
         for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()) {
@@ -302,7 +303,14 @@ public class Main extends JavaPlugin implements Listener {
 //        ItemStack im = new ItemStack(event.getBlock().getType(), 1);
 //        Inventory inv = chest.getInventory();
 //        inv.addItem(im);
+    }
 
+    @EventHandler
+    public void onAnimalBreed(EntityBreedEvent e){
+        Player player = (Player) e.getBreeder();
+        String child = e.getEntity().getName();
+        System.out.println("player: " + player.getName());
+        System.out.println("child: " + child);
     }
 
     @EventHandler

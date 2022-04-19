@@ -145,18 +145,26 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                             } else {
                                 colorCode = ChatColor.GREEN;
                             }
-                            p.sendMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
+                            Bukkit.broadcastMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
                         }
                     }
                 }
                 // Sends staff application to member
                 if (channel.getId().equals(setTestingChannel(Constants.STAFF_APPLICATION_CHANNEL_ID)) && message.equalsIgnoreCase(Constants.STAFF_APPLY_COMMAND)) {
                     channel.deleteMessageById(messageId).queue();
-                    String finalStaffAppSubmittedChannelId = Constants.STAFF_APP_SUBMITTED_CHANNEL_ID;
                     event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
-                        TextChannel applicationSubmittedChannel = jda.getTextChannelById(finalStaffAppSubmittedChannelId);
-                        event.getJDA().addEventListener(new Feedback(privateChannel, event.getAuthor(), applicationSubmittedChannel));
+                        TextChannel applicationSubmittedChannel = jda.getTextChannelById(Constants.STAFF_APP_SUBMITTED_CHANNEL_ID);
+                        event.getJDA().addEventListener(new StaffApplication(privateChannel, event.getAuthor(), applicationSubmittedChannel));
                         return privateChannel.sendMessage("Please enter your application information line by line. \n Press enter after each question response. \n 1.) How old are you?");
+                    }).queue();
+                }
+                // Sends unban request to member
+                if (channel.getId().equals(Constants.UNBAN_REQUEST_CHANNEL_ID) && message.equalsIgnoreCase(Constants.UNBAN_REQUEST)) {
+                    channel.deleteMessageById(messageId).queue();
+                    event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
+                        TextChannel unbanRequestSubmittedChannel = jda.getTextChannelById(Constants.UNBAN_REQUEST_COMPLETE_CHANNEL_ID);
+                        event.getJDA().addEventListener(new UnbanRequest(privateChannel, event.getAuthor(), unbanRequestSubmittedChannel));
+                        return privateChannel.sendMessage("Please enter your unban form line by line. \n Press enter after each question response. \n 1.) What is your Minecraft username?");
                     }).queue();
                 }
                 // Check if username typed in whitelist channel is valid and whitelist if they are or send failed message

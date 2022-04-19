@@ -23,6 +23,7 @@ public class Constants {
     public static final String SEARCH_PLAYER_SHOP_COMMAND = "!searchps";
     public static final String SET_WHITELIST_COMMAND = "!setwhitelist";
     public static final String SEARCH_USER_COMMAND = "!searchplayer";
+    public static final String UNBAN_REQUEST = "!unbanRequest";
 
     // Channel and User IDs
     public static final String SERVER_OWNER_ID = "460463941542215691";
@@ -43,6 +44,8 @@ public class Constants {
     public static final String DISCORD_CONSOLE_CHANNEL_ID = "627210135877713970";
     public static final String RANDOM_ITEM_LOG_CHANNEL_ID = "955870340670689340";
     public static final String GUILD_ID = "625983914049142786";
+    public static final String UNBAN_REQUEST_CHANNEL_ID = "963008161055391814";
+    public static final String UNBAN_REQUEST_COMPLETE_CHANNEL_ID = "966062192157917284";
 
     // Backpack commands
     public static final String BACKPACK_BUY_COMMAND = "buy";

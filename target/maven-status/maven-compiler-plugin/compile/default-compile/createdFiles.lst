@@ -11,7 +11,6 @@ discord\PlayerShops\PlayerShopsInventoryConfig.class
 discord\AutoMiner\AutoMinerCommand.class
 discord\LatchDiscord.class
 discord\PlayerShops\PlayerShopsTabComplete.class
-discord\Feedback.class
 discord\Backbacks\Inventories.class
 discord\QuickBrew.class
 discord\ExperienceManager.class
@@ -21,6 +20,7 @@ discord\Configurations\LotteryConfig.class
 discord\Configurations\AdvancementConfig.class
 discord\Backbacks\BackpackTabComplete.class
 discord\RandomTeleport.class
+discord\StaffApplication.class
 discord\Advancements.class
 discord\RandomItem.class
 discord\AutoMiner\AutoMinerConfig.class
@@ -29,6 +29,7 @@ discord\DiscordText\DiscordTextCommand.class
 discord\PlayerShops\PlayerShops.class
 discord\Lottery.class
 discord\QuickSmelt.class
+discord\UnbanRequest.class
 discord\Bank\BankConfig.class
 discord\Backbacks\BackPackCommand.class
 discord\Advancement.class
