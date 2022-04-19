@@ -39,10 +39,11 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
-    public static final boolean IS_TESTING = true;
+    public static final boolean IS_TESTING = false;
     public static Economy econ = null;
 
     public static AutoMinerConfig autoMinerCfgm;
@@ -159,17 +160,73 @@ public class Main extends JavaPlugin implements Listener {
 
     }
 
-        @EventHandler
-        public static void onPlayerDeath(PlayerDeathEvent e){
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle(e.getDeathMessage());
-            eb.setColor(new Color(0xE1922E00, true));
-            eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
-            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-            assert minecraftChatChannel != null;
-            minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
+    @EventHandler
+    public static void onPlayerDeath(PlayerDeathEvent e){
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle(e.getDeathMessage());
+        eb.setColor(new Color(0xE1922E00, true));
+        eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
+        TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+        assert minecraftChatChannel != null;
+        minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
+    }
+    @EventHandler
+    public void onPlayerChatEvent(AsyncPlayerChatEvent e){
+        TextChannel textChannel = LatchDiscord.jda.getTextChannelById(Constants.TEST_CHANNEL_ID);
+        String playerName = e.getPlayer().getDisplayName();
+        String message = e.getMessage();
+        ArrayList<String> colorCodes = new ArrayList<>();
+        colorCodes.add("&a");
+        colorCodes.add("&b");
+        colorCodes.add("&c");
+        colorCodes.add("&d");
+        colorCodes.add("&e");
+        colorCodes.add("&f");
+        colorCodes.add("&0");
+        colorCodes.add("&1");
+        colorCodes.add("&2");
+        colorCodes.add("&3");
+        colorCodes.add("&4");
+        colorCodes.add("&5");
+        colorCodes.add("&6");
+        colorCodes.add("&7");
+        colorCodes.add("&8");
+        colorCodes.add("&9");
+        colorCodes.add("&k");
+        colorCodes.add("&l");
+        colorCodes.add("&m");
+        colorCodes.add("&n");
+        colorCodes.add("&o");
+        colorCodes.add("&r");
+        colorCodes.add("&a");
+        colorCodes.add("&b");
+        colorCodes.add("&c");
+        colorCodes.add("&d");
+        colorCodes.add("&e");
+        colorCodes.add("&f");
+        colorCodes.add("§0");
+        colorCodes.add("§1");
+        colorCodes.add("§2");
+        colorCodes.add("§3");
+        colorCodes.add("§4");
+        colorCodes.add("§5");
+        colorCodes.add("§6");
+        colorCodes.add("§7");
+        colorCodes.add("§8");
+        colorCodes.add("§9");
+        colorCodes.add("§k");
+        colorCodes.add("§l");
+        colorCodes.add("§m");
+        colorCodes.add("§n");
+        colorCodes.add("§o");
+        colorCodes.add("§r");
+        for (String colorCode : colorCodes){
+            playerName = playerName.replace(colorCode, "");
+            message = message.replace(colorCode, "");
         }
 
+        textChannel.sendMessage(playerName + " » " + message).queue();
+    }
     @EventHandler
     public void onCommandEvent(PlayerCommandPreprocessEvent event) {
         LatchDiscord.logPlayerBan(event, null);

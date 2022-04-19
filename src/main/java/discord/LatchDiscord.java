@@ -10,15 +10,16 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -26,8 +27,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
-
-import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
@@ -37,8 +36,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LatchDiscord extends ListenerAdapter implements Listener {
 
@@ -95,6 +95,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
                 String messageId = event.getMessageId();
                 String message = event.getMessage().getContentRaw();
+                String senderName = event.getAuthor().getName();
                 // If a user says the n word, then ban them
                 if (message.toLowerCase().replace(" ", "").contains("nigger") || message.toLowerCase().replace(" ", "").contains("nigga")){
                     event.getMember().ban(0, "Used the n-word in discord").queue();
@@ -116,6 +117,37 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     String[] arr = event.getMessage().getContentRaw().split(Constants.CLEAR_ALL_USER_MESSAGES_COMMAND);
                     String userId = arr[1].replace(" ", "");
                     clearAllUserMessages(channel, messageId, userId);
+                }
+                if (channel.getId().equalsIgnoreCase(Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(Constants.LATCH93BOT_USER_ID)){
+                    if (message.toLowerCase().contains("!searchuser")){
+                        String[] messageArr = message.split(" ");
+                        String discordUserName = getDiscordUserName(messageArr[1]);
+                        channel.sendMessage(messageArr[1] + "'s Discord username is: " + discordUserName).queue();
+                    } else {
+                        int count = 0;
+                        String highestRole = "Member";
+                        ChatColor colorCode;
+                        for (Player p : Bukkit.getOnlinePlayers()){
+                            for (Role role : event.getMember().getRoles()){
+                                if (role.getPosition() >= count){
+                                    count = role.getPosition();
+                                    highestRole = role.getName();
+                                }
+                            }
+                            if (highestRole.equalsIgnoreCase("Owner")){
+                                colorCode = ChatColor.GOLD;
+                            } else if (highestRole.toLowerCase().contains("admin")){
+                                colorCode = ChatColor.RED;
+                            } else if (highestRole.toLowerCase().contains("mod")){
+                                colorCode = ChatColor.LIGHT_PURPLE;
+                            } else if (highestRole.toLowerCase().contains("builder")){
+                                colorCode = ChatColor.BLUE;
+                            } else {
+                                colorCode = ChatColor.GREEN;
+                            }
+                            p.sendMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
+                        }
+                    }
                 }
                 // Sends staff application to member
                 if (channel.getId().equals(setTestingChannel(Constants.STAFF_APPLICATION_CHANNEL_ID)) && message.equalsIgnoreCase(Constants.STAFF_APPLY_COMMAND)) {
