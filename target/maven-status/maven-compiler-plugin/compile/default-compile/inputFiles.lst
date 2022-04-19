@@ -3,9 +3,9 @@ C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\PlayerSho
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Backbacks\Inventories.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Advancement.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\PortalBlocker.java
+C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Configurations\LotteryConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Advancements.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Bank\BankConfig.java
-C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\AdvancementConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\FarmMoney.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\LatchDiscord.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\DiscordText\DiscordTextCommand.java
@@ -13,6 +13,7 @@ C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\PlayerSho
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Backbacks\BackpackTabComplete.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Feedback.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Backbacks\BackPackCommand.java
+C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Configurations\AdvancementConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Main.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\QuickBrew.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\PlayerShops\PlayerShops.java
@@ -20,13 +21,15 @@ C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Bank\Bank
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\ExperienceManager.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\AutoMiner\AutoMinerConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\AutoMiner\AutoMinerTabComplete.java
+C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\RandomTeleport.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\AutoMiner\AutoMiner.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\SlimeChunkFinder.java
+C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Configurations\WhitelistConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Backbacks\BackPackInventoryConfig.java
+C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\Lottery.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\RandomItem.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\AutoMiner\AutoMinerCommand.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\QuickSmelt.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\MobileSpawner.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\DiscordText\DiscordTextConfig.java
 C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\PlayerShops\PlayerShopsCommand.java
-C:\Users\codyl\Documents\DiscordText\DiscordText\src\main\java\discord\WhitelistConfig.java

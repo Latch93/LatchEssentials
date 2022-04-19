@@ -88,6 +88,9 @@ public class Constants {
     public static final String YML_BACK_PACK_FILE_NAME = "playerBackpack";
     public static final String YML_DISCORD_TEXT_FILE_NAME = "config";
     public static final String YML_ADVANCEMENT_FILE_NAME = "advancement";
+    public static final String YML_LOTTERY_FILE_NAME = "lottery";
 
     public static final String INVALID_PARAMETERS = "Incorrect parameters. Please try again";
+
+    public static final double LOTTERY_MAX_AMOUNT = 25000.00;
 }

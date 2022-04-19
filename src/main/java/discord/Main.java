@@ -7,6 +7,9 @@ import discord.Backbacks.BackpackTabComplete;
 import discord.Backbacks.Inventories;
 import discord.Bank.Bank;
 import discord.Bank.BankConfig;
+import discord.Configurations.AdvancementConfig;
+import discord.Configurations.LotteryConfig;
+import discord.Configurations.WhitelistConfig;
 import discord.DiscordText.DiscordTextCommand;
 import discord.DiscordText.DiscordTextConfig;
 import discord.PlayerShops.PlayerShops;
@@ -17,7 +20,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,7 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -41,7 +42,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
-    public static final boolean IS_TESTING = false;
+    public static final boolean IS_TESTING = true;
     public static Economy econ = null;
 
     public static AutoMinerConfig autoMinerCfgm;
@@ -70,6 +71,10 @@ public class Main extends JavaPlugin implements Listener {
     public static AdvancementConfig advancementConfigCfgm;
     public static File advancementFile;
     public static FileConfiguration advancementCfg;
+    // Lottery Config
+    public static LotteryConfig lotteryConfigCfgm;
+    public static File lotteryFile;
+    public static FileConfiguration lotteryCfg;
 
     @Override
     public void onEnable() {
@@ -100,6 +105,8 @@ public class Main extends JavaPlugin implements Listener {
         discordTextCfg = getFileConfiguration(discordTextFile);
         advancementFile = getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME);
         advancementCfg = getFileConfiguration(advancementFile);
+        lotteryFile = getConfigFile(Constants.YML_LOTTERY_FILE_NAME);
+        lotteryCfg = getFileConfiguration(lotteryFile);
 
         Advancements.setAdvancements();
         // Backpack Command
@@ -133,14 +140,6 @@ public class Main extends JavaPlugin implements Listener {
         Bank.getPlayerBalance(e.getPlayer());
         Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
         Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
-//        for (Player onlinePlayer : Bukkit.getOnlinePlayers()){
-//            if (onlinePlayer.hasPermission("group.mod") && event.getPlayer().hasPermission("group.mod") && event.getPlayer().getName().equals(onlinePlayer.getName()) ){
-//               onlinePlayer.sendMessage(ChatColor.GREEN + "[" + ChatColor.WHITE + "+" + ChatColor.GREEN + "]" + ChatColor.GOLD + event.getPlayer().getName() + ChatColor.GREEN + " joined the server");
-//            }
-//            if (!event.getPlayer().hasPermission("group.mod") && event.getPlayer().getName().equals(onlinePlayer.getName())){
-//                onlinePlayer.sendMessage(ChatColor.GREEN + "[" + ChatColor.WHITE + "+" + ChatColor.GREEN + "] " + ChatColor.GOLD + event.getPlayer().getName() + ChatColor.GREEN + " joined the server");
-//            }
-//        }
     }
 
     @EventHandler
@@ -157,14 +156,7 @@ public class Main extends JavaPlugin implements Listener {
         Bank.setPlayerSessionSecondsPlayed(event);
         Bank.getPlayerBalance(event.getPlayer());
         Bank.setPlayerBalanceWithInterest(event.getPlayer());
-//        for (Player onlinePlayer : Bukkit.getOnlinePlayers()){
-//            if (onlinePlayer.hasPermission("group.mod") && event.getPlayer().hasPermission("group.mod")){
-//                onlinePlayer.sendMessage(ChatColor.GREEN + "[" + ChatColor.RED + "-" + ChatColor.GREEN + "] " + ChatColor.GOLD + event.getPlayer().getName() + ChatColor.GREEN + " left the server");
-//            }
-//            if (!event.getPlayer().hasPermission("group.mod")){
-//                onlinePlayer.sendMessage(ChatColor.GREEN + "[" + ChatColor.RED + "-" + ChatColor.GREEN + "] " + ChatColor.GOLD + event.getPlayer().getName() + ChatColor.GREEN + " left the server");
-//            }
-//        }
+
     }
 
         @EventHandler
@@ -330,6 +322,11 @@ public class Main extends JavaPlugin implements Listener {
     public static void loadAdvancementConfigManager(){
         advancementConfigCfgm = new AdvancementConfig();
         advancementConfigCfgm.setup();
+    }
+
+    public static void loadLotteryConfigManager(){
+        lotteryConfigCfgm =  new LotteryConfig();
+        lotteryConfigCfgm.setup();
     }
 
     public static FileConfiguration loadConfig(String fileName) {

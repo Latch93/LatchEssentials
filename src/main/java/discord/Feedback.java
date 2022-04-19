@@ -14,7 +14,7 @@ public class Feedback extends ListenerAdapter {
     public final long authorId;
     public final MessageChannel applicationSubmittedChannel;
     int counter = 1;
-    private static List<String> applicationAnswers = new ArrayList<>();
+    private static final List<String> applicationAnswers = new ArrayList<>();
 
     public Feedback(MessageChannel channel, User author, MessageChannel applicationSubmittedChannel) {
        this.channelId = channel.getIdLong();
