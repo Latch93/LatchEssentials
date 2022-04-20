@@ -127,26 +127,24 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         int count = 0;
                         String highestRole = "Member";
                         ChatColor colorCode;
-                        for (Player p : Bukkit.getOnlinePlayers()){
-                            for (Role role : event.getMember().getRoles()){
-                                if (role.getPosition() >= count){
-                                    count = role.getPosition();
-                                    highestRole = role.getName();
-                                }
+                        for (Role role : event.getMember().getRoles()){
+                            if (role.getPosition() >= count){
+                                count = role.getPosition();
+                                highestRole = role.getName();
                             }
-                            if (highestRole.equalsIgnoreCase("Owner")){
-                                colorCode = ChatColor.GOLD;
-                            } else if (highestRole.toLowerCase().contains("admin")){
-                                colorCode = ChatColor.RED;
-                            } else if (highestRole.toLowerCase().contains("mod")){
-                                colorCode = ChatColor.LIGHT_PURPLE;
-                            } else if (highestRole.toLowerCase().contains("builder")){
-                                colorCode = ChatColor.BLUE;
-                            } else {
-                                colorCode = ChatColor.GREEN;
-                            }
-                            Bukkit.broadcastMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
                         }
+                        if (highestRole.equalsIgnoreCase("Owner")){
+                            colorCode = ChatColor.GOLD;
+                        } else if (highestRole.toLowerCase().contains("admin")){
+                            colorCode = ChatColor.RED;
+                        } else if (highestRole.toLowerCase().contains("mod")){
+                            colorCode = ChatColor.LIGHT_PURPLE;
+                        } else if (highestRole.toLowerCase().contains("builder")){
+                            colorCode = ChatColor.BLUE;
+                        } else {
+                            colorCode = ChatColor.GREEN;
+                        }
+                        Bukkit.broadcastMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
                     }
                 }
                 // Sends staff application to member

@@ -226,7 +226,6 @@ public class Main extends JavaPlugin implements Listener {
                 playerName = playerName.replace(colorCode, "");
                 message = message.replace(colorCode, "");
             }
-
             textChannel.sendMessage(playerName + " » " + message).queue();
         }
     }

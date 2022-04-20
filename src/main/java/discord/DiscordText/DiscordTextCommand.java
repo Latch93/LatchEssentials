@@ -3,9 +3,11 @@ package discord.DiscordText;
 import discord.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -37,6 +39,23 @@ public class DiscordTextCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "Invalid command. Please use this command as follows -> " + ChatColor.AQUA + "[/dt lotto check] [/dt lotto buyin] [/dt lotto total]");
             }
         }
+//        else if (args[0].equalsIgnoreCase("test")){
+//            Horse horse = (Horse) player.getVehicle();
+//            assert horse != null;
+//            player.sendMessage("Horse Speed1: " + horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue());
+//            player.sendMessage("Horse Speed2: " + horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue());
+//            player.sendMessage("Horse Speed3: " + horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getDefaultValue());
+//            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.9);
+//            player.sendMessage("Horse health1: " + horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+//            player.sendMessage("Horse health2: " + horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+//            player.sendMessage("Horse health3: " + horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+//            horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
+//            player.sendMessage("Horse player1: " + player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+//            player.sendMessage("Horse player2: " + player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+//            player.sendMessage("Horse player3: " + player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+//            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(50);
+//        }
+//        player.getAttribute(Attribute.)
         return false;
     }
 }

@@ -17,7 +17,5 @@ T
 $src/main/java/discord/Bank/Bank.java,6\2\625437cbd76b2421cce186cecc7d7ce48d30a928
 d
 4src/main/java/discord/Backbacks/BackPackCommand.java,d\c\dc164965c8c202c119598ec33bf906083691609d
-i
-9src/main/java/discord/DiscordText/DiscordTextCommand.java,9\2\926a0b4b4f223c57d0b50fa18e87ad7866e95318
 W
 'src/main/java/discord/Advancements.java,3\6\3605ac8a4b40ff439a3b380907036373bbe8bb36
