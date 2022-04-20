@@ -23,7 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Main extends JavaPlugin implements Listener {
-    public static final boolean IS_TESTING = false;
+    public static final boolean IS_TESTING = true;
     public static Economy econ = null;
 
     public static AutoMinerConfig autoMinerCfgm;
@@ -123,6 +122,10 @@ public class Main extends JavaPlugin implements Listener {
         // Discord Text Command
         Objects.requireNonNull(this.getCommand("dt")).setExecutor(new DiscordTextCommand());
 
+        // Discord Staff Chat Command
+        Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordTextCommand());
+
+
         // Auto Miner Commands
 //        Objects.requireNonNull(this.getCommand("am")).setExecutor(new AutoMinerCommand());
 //        Objects.requireNonNull(this.getCommand("am")).setTabCompleter(new AutoMinerTabComplete());
@@ -171,12 +174,15 @@ public class Main extends JavaPlugin implements Listener {
         assert minecraftChatChannel != null;
         minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
     }
+
     @EventHandler
     public void onPlayerChatEvent(AsyncPlayerChatEvent e){
-        TextChannel textChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-        String playerName = e.getPlayer().getDisplayName();
-        String message = e.getMessage();
-        if (!message.toLowerCase().contains("@everyone") && !message.toLowerCase().contains("@here")){
+        TextChannel minecraftChatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+        minecraftChatChannel.sendMessage(convertMinecraftMessageToDiscord(e.getPlayer().getName(), e.getMessage())).queue();
+    }
+
+    public static String convertMinecraftMessageToDiscord(String senderName, String senderMessage) {
+        if (!senderMessage.toLowerCase().contains("@everyone") && !senderMessage.toLowerCase().contains("@here")){
             ArrayList<String> colorCodes = new ArrayList<>();
             colorCodes.add("&a");
             colorCodes.add("&b");
@@ -223,12 +229,13 @@ public class Main extends JavaPlugin implements Listener {
             colorCodes.add("§o");
             colorCodes.add("§r");
             for (String colorCode : colorCodes){
-                playerName = playerName.replace(colorCode, "");
-                message = message.replace(colorCode, "");
+                senderName = senderName.replace(colorCode, "");
+                senderMessage = senderMessage.replace(colorCode, "");
             }
-            textChannel.sendMessage(playerName + " » " + message).queue();
         }
+        return senderName + " » " + senderMessage;
     }
+
     @EventHandler
     public void onCommandEvent(PlayerCommandPreprocessEvent event) {
         LatchDiscord.logPlayerBan(event, null);

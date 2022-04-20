@@ -37,23 +37,8 @@ public class PlayerShopsCommand implements CommandExecutor {
                             int totalItemCount = player.getInventory().getItemInMainHand().getAmount();
                             ItemStack singleItemStack = player.getInventory().getItemInMainHand();
                             singleItemStack.setAmount(1);
-//                            ItemMeta im = singleItemStack.getItemMeta();
-//                            List<String> lore = im.getLore();
-//                            im.setLore(null);
-//                            if (singleItemStack.getType().toString().contains("SHULKER") || singleItemStack.getType().toString().contains("PLAYER_HEAD")){
-//                                if (singleItemStack.getItemMeta() != null && Boolean.FALSE.equals(singleItemStack.getItemMeta().getDisplayName().isEmpty())){
-////                                    assert im != null;
-////                                    im.setLore(null);
-////                                    singleItemStack.setItemMeta(im);
-//                                    playerShopCfg.set(player.getName() + ".itemWorth." + Objects.requireNonNull(singleItemStack.getItemMeta()).getDisplayName(), itemWorth);
-//                                    player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
-//                                } else {
-//                                    player.sendMessage(ChatColor.RED + "You must name this Shulker Box before you can set its worth.");
-//                                }
-//                            } else {
-                                player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
-                                playerShopCfg.set(player.getName() + ".itemWorth." + singleItemStack, itemWorth);
-//                            }
+                            player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
+                            playerShopCfg.set(player.getName() + ".itemWorth." + singleItemStack, itemWorth);
                             itemStack.setAmount(totalItemCount);
                             playerShopCfg.save(Main.playerShopFile);
                         }

@@ -1,13 +1,13 @@
 package discord.DiscordText;
 
-import discord.*;
+import discord.LatchDiscord;
+import discord.Lottery;
+import discord.RandomTeleport;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
@@ -28,11 +28,9 @@ public class DiscordTextCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.GREEN + "Total deaths: " + ChatColor.GOLD + player.getStatistic(Statistic.DEATHS));
             sender.sendMessage(ChatColor.GREEN + "Total mobs killed: " + ChatColor.GOLD + player.getStatistic(Statistic.MOB_KILLS));
             sender.sendMessage(ChatColor.GREEN + "Number of times jumped: " + ChatColor.GOLD + player.getStatistic(Statistic.JUMP));
-        }
-        else if (args[0].equalsIgnoreCase("rtp")){
+        } else if (args[0].equalsIgnoreCase("rtp")){
             RandomTeleport.randomTp(player);
-        }
-        else if (args[0].equalsIgnoreCase("lotto")){
+        } else if (args[0].equalsIgnoreCase("lotto")) {
             try {
                 Lottery.lottoCommands(player, args[1]);
             } catch (ArrayIndexOutOfBoundsException e) {

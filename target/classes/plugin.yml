@@ -12,3 +12,5 @@ commands:
     description: "Auto Miner"
   dt:
     description: "Discord Text"
+  dtsc:
+    description: "Discord Staff Chat"

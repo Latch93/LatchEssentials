@@ -34,3 +34,4 @@ discord\Bank\BankConfig.class
 discord\Backbacks\BackPackCommand.class
 discord\Advancement.class
 discord\AutoMiner\AutoMinerTabComplete.class
+discord\DiscordStaffChatCommand.class

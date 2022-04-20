@@ -46,6 +46,7 @@ public class Constants {
     public static final String GUILD_ID = "625983914049142786";
     public static final String UNBAN_REQUEST_CHANNEL_ID = "963008161055391814";
     public static final String UNBAN_REQUEST_COMPLETE_CHANNEL_ID = "966062192157917284";
+    public static final String DISCORD_STAFF_CHAT_CHANNEL_ID = "636400726070919180";
 
     // Backpack commands
     public static final String BACKPACK_BUY_COMMAND = "buy";
@@ -57,6 +58,9 @@ public class Constants {
     // Player Shop commands
     public static final String SET_WORTH_COMMAND = "setworth";
     public static final String MY_SHOP_COMMAND = "myshop";
+
+    // DiscordStaffChat commands
+    public static final String DISCORD_STAFF_CHAT_COMMAND = "dtsc";
 
 
     // Backpack message strings

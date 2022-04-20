@@ -86,16 +86,16 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        MessageChannel channel = event.getChannel();
+        if (event.getMember() != null) {
+            username = Objects.requireNonNull(event.getMember().getUser().getName());
+            userId = Objects.requireNonNull(event.getMember().getId());
+        }
+        String messageId = event.getMessageId();
+        String message = event.getMessage().getContentRaw();
+        String senderName = event.getAuthor().getName();
         if (Boolean.FALSE.equals(Main.IS_TESTING)){
             try {
-                MessageChannel channel = event.getChannel();
-                if (event.getMember() != null) {
-                    username = Objects.requireNonNull(event.getMember().getUser().getName());
-                    userId = Objects.requireNonNull(event.getMember().getId());
-                }
-                String messageId = event.getMessageId();
-                String message = event.getMessage().getContentRaw();
-                String senderName = event.getAuthor().getName();
                 // If a user says the n word, then ban them
                 if (message.toLowerCase().replace(" ", "").contains("nigger") || message.toLowerCase().replace(" ", "").contains("nigga")){
                     event.getMember().ban(0, "Used the n-word in discord").queue();
@@ -124,27 +124,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         String discordUserName = getDiscordUserName(messageArr[1]);
                         channel.sendMessage(messageArr[1] + "'s Discord username is: " + discordUserName).queue();
                     } else {
-                        int count = 0;
-                        String highestRole = "Member";
-                        ChatColor colorCode;
-                        for (Role role : event.getMember().getRoles()){
-                            if (role.getPosition() >= count){
-                                count = role.getPosition();
-                                highestRole = role.getName();
-                            }
-                        }
-                        if (highestRole.equalsIgnoreCase("Owner")){
-                            colorCode = ChatColor.GOLD;
-                        } else if (highestRole.toLowerCase().contains("admin")){
-                            colorCode = ChatColor.RED;
-                        } else if (highestRole.toLowerCase().contains("mod")){
-                            colorCode = ChatColor.LIGHT_PURPLE;
-                        } else if (highestRole.toLowerCase().contains("builder")){
-                            colorCode = ChatColor.BLUE;
-                        } else {
-                            colorCode = ChatColor.GREEN;
-                        }
-                        Bukkit.broadcastMessage(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message);
+                        Bukkit.broadcastMessage(convertDiscordMessageToServer(event, message, senderName));
                     }
                 }
                 // Sends staff application to member
@@ -172,11 +152,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 // Updates the whitelist.yml with new members and connects discord and minecraft usernames. Command used in Text channel
                 if (Constants.TEST_CHANNEL_ID.equalsIgnoreCase(channel.getId()) && message.equalsIgnoreCase(Constants.SET_WHITELIST_COMMAND)){
                     setWhitelistUsernames();
-                }
-                if (Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId()) && message.equalsIgnoreCase(Constants.SEARCH_USER_COMMAND)){
-                    String[] arr = message.split(Constants.SEARCH_USER_COMMAND);
-                    String mcName = arr[1].replace(" ", "");
-                    channel.sendMessage(mcName + "'s discord username is " + getDiscordUserName(mcName)).queue();
                 }
                 // Searches the player shops and returns if items are in a player's shop
                 if (Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())){
@@ -223,8 +198,39 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 e.printStackTrace();
             }
         }
+        if (channel.getId().equalsIgnoreCase(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)){
+            for (Player player : Bukkit.getOnlinePlayers()){
+                if (player.hasPermission("group.mod")){
+                    player.sendMessage(convertDiscordMessageToServer(event, message, senderName));
+                }
+            }
+        }
 
 
+    }
+
+    public static String convertDiscordMessageToServer(MessageReceivedEvent event, String message, String senderName) {
+        int count = 0;
+        String highestRole = "Member";
+        ChatColor colorCode;
+        for (Role role : event.getMember().getRoles()){
+            if (role.getPosition() >= count){
+                count = role.getPosition();
+                highestRole = role.getName();
+            }
+        }
+        if (highestRole.equalsIgnoreCase("Owner")){
+            colorCode = ChatColor.GOLD;
+        } else if (highestRole.toLowerCase().contains("admin")){
+            colorCode = ChatColor.RED;
+        } else if (highestRole.toLowerCase().contains("mod")){
+            colorCode = ChatColor.LIGHT_PURPLE;
+        } else if (highestRole.toLowerCase().contains("builder")){
+            colorCode = ChatColor.BLUE;
+        } else {
+            colorCode = ChatColor.GREEN;
+        }
+        return ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message;
     }
 
 
