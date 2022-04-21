@@ -13,7 +13,7 @@ public class RandomTeleport {
     public static void randomTp(Player player){ ;
         World world = player.getWorld();
         OfflinePlayer olp = Bukkit.getOfflinePlayer(player.getUniqueId());
-        double playerBalance = Main.getEconomy().getBalance(olp);
+        double playerBalance = Api.getEconomy().getBalance(olp);
         DecimalFormat df = new DecimalFormat("0.00");
         if (playerBalance >= 2500){
             if (player.getWorld().getName().equalsIgnoreCase("world")){
@@ -33,9 +33,9 @@ public class RandomTeleport {
                     finalLocation.setY(finalLocation.getY()+2.0);
                 }
                 if (finalLocation != null){
-                    Main.getEconomy().withdrawPlayer(olp, 2500);
+                    Api.getEconomy().withdrawPlayer(olp, 2500);
                     world.getChunkAt(finalLocation).load();
-                    player.sendMessage(ChatColor.GREEN + "Random Teleport successful!!! Your new balance is " + ChatColor.GOLD + "$" + df.format(Main.getEconomy().getBalance(olp)));
+                    player.sendMessage(ChatColor.GREEN + "Random Teleport successful!!! Your new balance is " + ChatColor.GOLD + "$" + df.format(Api.getEconomy().getBalance(olp)));
                     player.teleport(finalLocation);
                     TextChannel chatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
                     String biome = finalLocation.getBlock().getBiome().getKey().getKey();

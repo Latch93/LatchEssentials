@@ -2,6 +2,7 @@ C:\Users\Latch\Documents\DiscordText\src\main\java\discord\LatchDiscord.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\PlayerShops\PlayerShops.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\QuickBrew.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\QuickSmelt.java
+C:\Users\Latch\Documents\DiscordText\src\main\java\discord\UnbanRequest.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Advancement.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\AutoMiner\AutoMiner.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Configurations\LotteryConfig.java
@@ -10,8 +11,11 @@ C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Lottery.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Backbacks\BackPackInventoryConfig.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\PlayerShops\PlayerShopsCommand.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Bank\Bank.java
+C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Api.java
+C:\Users\Latch\Documents\DiscordText\src\main\java\discord\LatchTwitchBot.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\AutoMiner\AutoMinerTabComplete.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Constants.java
+C:\Users\Latch\Documents\DiscordText\src\main\java\discord\DiscordStaffChatCommand.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\RandomItem.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\MobileSpawner.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Advancements.java
@@ -25,11 +29,11 @@ C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Backbacks\BackPackCom
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\FarmMoney.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\ExperienceManager.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\RandomTeleport.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Feedback.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\PortalBlocker.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Configurations\AdvancementConfig.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Configurations\WhitelistConfig.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\AutoMiner\AutoMinerConfig.java
+C:\Users\Latch\Documents\DiscordText\src\main\java\discord\StaffApplication.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Backbacks\BackpackTabComplete.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\AutoMiner\AutoMinerCommand.java
 C:\Users\Latch\Documents\DiscordText\src\main\java\discord\Backbacks\Inventories.java

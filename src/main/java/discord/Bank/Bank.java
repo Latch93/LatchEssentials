@@ -1,5 +1,6 @@
 package discord.Bank;
 
+import discord.Api;
 import discord.Constants;
 import discord.Main;
 
@@ -11,12 +12,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class Bank {
-    private static FileConfiguration bankCfg = Main.getFileConfiguration(Main.bankFile);
+    private static File bankFile = Api.getConfigFile(Constants.YML_BANK_FILE_NAME);
+    private static FileConfiguration bankCfg = Api.getFileConfiguration(bankFile);
     public static void setLoginTime(PlayerJoinEvent e) throws IOException {
         String playerName = e.getPlayer().getName();
         Date date = new Date();
@@ -26,7 +29,7 @@ public class Bank {
             bankCfg.set(Constants.YML_PLAYERS + playerName, playerName);
         }
         bankCfg.set(Constants.YML_PLAYERS + playerName + ".loginTime", timeMilli);
-        bankCfg.save(Main.bankFile);
+        bankCfg.save(bankFile);
     }
     public static void setLogoutTime(PlayerQuitEvent e) throws IOException {
         String playerName = e.getPlayer().getName();
@@ -37,13 +40,13 @@ public class Bank {
             bankCfg.set(Constants.YML_PLAYERS + playerName, playerName);
         }
         bankCfg.set(Constants.YML_PLAYERS + playerName + ".logoutTime", timeMilli);
-        bankCfg.save(Main.bankFile);
+        bankCfg.save(bankFile);
     }
 
     public static void setPlayerSessionSecondsPlayed(PlayerQuitEvent e) throws IOException {
         String playerName = e.getPlayer().getName();
         bankCfg.set(Constants.YML_PLAYERS + playerName + ".lastSessionSeconds", TimeUnit.MILLISECONDS.toSeconds(getSecondsPlayedInSession(playerName)));
-        bankCfg.save(Main.bankFile);
+        bankCfg.save(bankFile);
     }
 
     public static Long getSecondsPlayedInSession(String playerName){
@@ -55,20 +58,20 @@ public class Bank {
     }
 
     public static double getPlayerBalance(Player player){
-        OfflinePlayer offlinePlayer = Main.getPlayerFromOfflinePlayer(player);
-        Economy econ = Main.getEconomy();
+        OfflinePlayer offlinePlayer = Api.getPlayerFromOfflinePlayer(player);
+        Economy econ = Api.getEconomy();
         return econ.getBalance(offlinePlayer);
     }
 
     public static void setPlayerBalanceInConfigOnLogin(Player player) throws IOException {
         bankCfg.set(Constants.YML_PLAYERS + player.getName() + ".loginBalance", getPlayerBalance(player));
-        bankCfg.save(Main.bankFile);
+        bankCfg.save(bankFile);
     }
 
     public static void setPlayerBalanceWithInterest(Player player){
-        FileConfiguration mainCfg = Main.getFileConfiguration(Main.discordTextFile);
+        FileConfiguration mainCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
         double moneyPlayedMultiplier = mainCfg.getDouble("bankMultiplier");
         double moneyForTimePlayed = (double) getSecondsPlayedInSession(player.getName()) * moneyPlayedMultiplier;
-        Main.getEconomy().depositPlayer(Main.getPlayerFromOfflinePlayer(player), moneyForTimePlayed);
+        Api.getEconomy().depositPlayer(Api.getPlayerFromOfflinePlayer(player), moneyForTimePlayed);
     }
 }

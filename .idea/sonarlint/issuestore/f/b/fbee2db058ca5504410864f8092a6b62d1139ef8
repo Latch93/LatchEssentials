@@ -1,0 +1,10 @@
+
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(¸ë×šüÿÿÿÿ
+[
+java:S1128">Remove this unused import 'org.bukkit.plugin.java.JavaPlugin'.(ÙÎ†È8ý¦Ê¼„0
+K
+java:S1128")Remove this unused import 'discord.Main'.(‚ôË©úÿÿÿÿ8þ¦Ê¼„0
+N
+java:S1854"8Remove this useless assignment to local variable "econ".(ï¼Ê§
+?
+java:S1481")Remove this unused "econ" local variable.(ï¼Ê§

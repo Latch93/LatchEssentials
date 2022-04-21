@@ -2,7 +2,7 @@ package discord;
 
 public class Constants {
 
-    public static final String DISCORD_BOT_TOKEN = Main.loadConfig(Constants.YML_DISCORD_TEXT_FILE_NAME).getString("botToken");
+    public static final String DISCORD_BOT_TOKEN = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME).getString("botToken");
     public static final String PLUGIN_NAME = "DiscordText";
     public static final String SERVER_OWNER_NAME = "latch93";
 
@@ -24,6 +24,7 @@ public class Constants {
     public static final String SET_WHITELIST_COMMAND = "!setwhitelist";
     public static final String SEARCH_USER_COMMAND = "!searchplayer";
     public static final String UNBAN_REQUEST = "!unbanRequest";
+    public static final String TOGGLE_WHITELIST_COMMAND = "!whitelist";
 
     // Channel and User IDs
     public static final String SERVER_OWNER_ID = "460463941542215691";
@@ -93,7 +94,7 @@ public class Constants {
     public static final String YML_WHITELIST_FILE_NAME = "whitelist";
     public static final String YML_PLAYER_SHOP_FILE_NAME = "playerShops";
     public static final String YML_BACK_PACK_FILE_NAME = "playerBackpack";
-    public static final String YML_DISCORD_TEXT_FILE_NAME = "config";
+    public static final String YML_CONFIG_FILE_NAME = "config";
     public static final String YML_ADVANCEMENT_FILE_NAME = "advancement";
     public static final String YML_LOTTERY_FILE_NAME = "lottery";
 

@@ -5,6 +5,7 @@ import discord.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class DiscordTextConfig {
         if(!plugin.getDataFolder().exists()){
             plugin.getDataFolder().mkdir();
         }
-        discordTextFile = new File(plugin.getDataFolder(), Constants.YML_DISCORD_TEXT_FILE_NAME + ".yml");
+        discordTextFile = new File(plugin.getDataFolder(), Constants.YML_CONFIG_FILE_NAME + ".yml");
         discordTextCfg = YamlConfiguration.loadConfiguration(discordTextFile);
         //if the discordTextConfig.yml does not exist, create it
         if(!discordTextFile.exists()){

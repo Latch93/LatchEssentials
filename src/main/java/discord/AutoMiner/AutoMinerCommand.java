@@ -1,5 +1,6 @@
 package discord.AutoMiner;
 
+import discord.Api;
 import discord.Constants;
 import discord.Main;
 
@@ -11,16 +12,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 
 public class AutoMinerCommand implements CommandExecutor {
-    private static final File autoMinerFile = Main.getConfigFile(Constants.YML_AUTO_MINER_FILE_NAME);
-    private static final FileConfiguration autoMinerCfg = Main.getFileConfiguration(autoMinerFile);
+    private static final File autoMinerFile = Api.getConfigFile(Constants.YML_AUTO_MINER_FILE_NAME);
+    private static final FileConfiguration autoMinerCfg = Api.getFileConfiguration(autoMinerFile);
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Economy econ = Main.getEconomy();
+        Economy econ = Api.getEconomy();
         Player player = null;
         if (sender instanceof Player) {
             player = (Player) sender;

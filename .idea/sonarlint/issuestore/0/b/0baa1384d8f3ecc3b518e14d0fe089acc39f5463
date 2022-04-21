@@ -1,0 +1,11 @@
+
+P
+java:S1141""5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+P
+java:S11416"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(œ–„˜
+K
+java:S1128")Remove this unused import 'discord.Main'.(‚ôË©úÿÿÿÿ8ÑªÍ½„0
+m
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(¼ß…ýüÿÿÿÿ
+<	java:S108?")Either remove or fill this block of code.(ßâ

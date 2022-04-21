@@ -1,6 +1,6 @@
 package discord;
 
-import discord.AutoMiner.AutoMinerConfig;
+import com.cavariux.twitchirc.Chat.Channel;
 import discord.Backbacks.BackPackCommand;
 import discord.Backbacks.BackPackInventoryConfig;
 import discord.Backbacks.BackpackTabComplete;
@@ -18,11 +18,13 @@ import discord.PlayerShops.PlayerShopsInventoryConfig;
 import discord.PlayerShops.PlayerShopsTabComplete;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,82 +35,61 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jibble.pircbot.IrcException;
 
 import javax.security.auth.login.LoginException;
+
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main extends JavaPlugin implements Listener {
-    public static final boolean IS_TESTING = true;
-    public static Economy econ = null;
-
-    public static AutoMinerConfig autoMinerCfgm;
-
+    public static final boolean GLOBAL_TESTING = false;
+    //public static final AutoMinerConfig autoMinerCfgm = new AutoMinerConfig();
     // Whitelist Config
-    public static WhitelistConfig whitelistCfgm;
-    public static File whitelistFile;
-    public static FileConfiguration whitelistCfg;
+    private static WhitelistConfig whitelistCfgm;
     // Player Shop Config
-    public static PlayerShopsInventoryConfig playerShopsInventoryCfgm;
-    public static File playerShopFile;
-    public static FileConfiguration playerShopCfg;
+    private static PlayerShopsInventoryConfig playerShopsInventoryCfgm;
     // Bank Config
-    public static BankConfig bankCfgm;
-    public static File bankFile;
-    public static FileConfiguration bankCfg;
+    private static BankConfig bankCfgm;
     // Back Pack Config
-    public static BackPackInventoryConfig backPackInventoryCfgm;
-    public static File backPackFile;
-    public static FileConfiguration backPackCfg;
+    private static BackPackInventoryConfig backPackInventoryCfgm;
     // Discord Text Config
-    public static DiscordTextConfig discordTextConfigCfgm;
-    public static File discordTextFile;
-    public static FileConfiguration discordTextCfg;
+    private static DiscordTextConfig discordTextConfigCfgm;
     // Advancement Config
-    public static AdvancementConfig advancementConfigCfgm;
-    public static File advancementFile;
-    public static FileConfiguration advancementCfg;
+    private static AdvancementConfig advancementConfigCfgm;
     // Lottery Config
-    public static LotteryConfig lotteryConfigCfgm;
-    public static File lotteryFile;
-    public static FileConfiguration lotteryCfg;
+    private static LotteryConfig lotteryConfigCfgm;
 
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
+        getServer().getPluginManager().registerEvents(this, this);
         try {
             new LatchDiscord();
         } catch (LoginException e) {
             e.printStackTrace();
         }
-        getServer().getPluginManager().registerEvents(this, this);
-        setupEconomy();
-        loadBackpackManager();
-        loadPlayerShopsManager();
-        loadBankManager();
-        loadAutoMinerManager();
-        loadWhitelistManager();
-        loadDiscordTextConfigManager();
-        loadAdvancementConfigManager();
-        whitelistFile = getConfigFile(Constants.YML_WHITELIST_FILE_NAME);
-        whitelistCfg = getFileConfiguration(whitelistFile);
-        playerShopFile = getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME);
-        playerShopCfg = getFileConfiguration(playerShopFile);
-        bankFile = getConfigFile(Constants.YML_BANK_FILE_NAME);
-        bankCfg = getFileConfiguration(bankFile);
-        backPackFile = getConfigFile(Constants.YML_BACK_PACK_FILE_NAME);
-        backPackCfg = getFileConfiguration(backPackFile);
-        discordTextFile = getConfigFile(Constants.YML_DISCORD_TEXT_FILE_NAME);
-        discordTextCfg = getFileConfiguration(discordTextFile);
-        advancementFile = getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME);
-        advancementCfg = getFileConfiguration(advancementFile);
-        lotteryFile = getConfigFile(Constants.YML_LOTTERY_FILE_NAME);
-        lotteryCfg = getFileConfiguration(lotteryFile);
+        whitelistCfgm = new WhitelistConfig();
+        playerShopsInventoryCfgm = new PlayerShopsInventoryConfig();
+        bankCfgm = new BankConfig();
+        backPackInventoryCfgm = new BackPackInventoryConfig();
+        discordTextConfigCfgm = new DiscordTextConfig();
+        advancementConfigCfgm = new AdvancementConfig();
+        lotteryConfigCfgm = new LotteryConfig();
+        Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
+        loadAllConfigManagers();
 
         Advancements.setAdvancements();
         // Backpack Command
@@ -123,186 +104,138 @@ public class Main extends JavaPlugin implements Listener {
         Objects.requireNonNull(this.getCommand("dt")).setExecutor(new DiscordTextCommand());
 
         // Discord Staff Chat Command
-        Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordTextCommand());
-
+        Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
 
         // Auto Miner Commands
 //        Objects.requireNonNull(this.getCommand("am")).setExecutor(new AutoMinerCommand());
 //        Objects.requireNonNull(this.getCommand("am")).setTabCompleter(new AutoMinerTabComplete());
-
+        LatchTwitchBot twitchBot = new LatchTwitchBot();
+        twitchBot.connect();
+        Channel channel = twitchBot.joinChannel("#latch93");
+        twitchBot.sendMessage("Hi, I'm connected, ", channel);
+        twitchBot.start();
     }
 
     @Override
     public void onDisable() {
         getLogger().info("discord_text is disabled");
-        LatchDiscord.sendServerStoppedMessage();
+        LatchDiscord.stopBot();
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
+            LatchDiscord.sendServerStoppedMessage();
+
+        }
     }
 
     @EventHandler
     public void onLogin(PlayerJoinEvent e) throws IOException {
-        LatchDiscord.sendPlayerOnJoinMessage(e);
-        LatchDiscord.setChannelDescription(false);
-        Bank.setLoginTime(e);
-        Bank.getPlayerBalance(e.getPlayer());
-        Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
-        Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onLogin"))) {
+            LatchDiscord.sendPlayerOnJoinMessage(e);
+            LatchDiscord.setChannelDescription(false);
+            Bank.setLoginTime(e);
+            Bank.getPlayerBalance(e.getPlayer());
+            Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
+            Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
+        }
     }
 
     @EventHandler
     public void onLogout(PlayerQuitEvent event) throws IOException {
-        LatchDiscord.sendPlayerLogoutMessage(event);
-        LatchDiscord.setChannelDescription(true);
-        Bank.setLogoutTime(event);
-        Bank.setPlayerSessionSecondsPlayed(event);
-        Bank.getPlayerBalance(event.getPlayer());
-        Bank.setPlayerBalanceWithInterest(event.getPlayer());
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onLogout"))) {
+            LatchDiscord.sendPlayerLogoutMessage(event);
+            LatchDiscord.setChannelDescription(true);
+            Bank.setLogoutTime(event);
+            Bank.setPlayerSessionSecondsPlayed(event);
+            Bank.getPlayerBalance(event.getPlayer());
+            Bank.setPlayerBalanceWithInterest(event.getPlayer());
+        }
     }
 
     @EventHandler
-    public static void advancement(PlayerAdvancementDoneEvent e) throws IOException {
-        Advancements.setPlayerAdvancementOnCompletion(e);
-        Advancements.showAdvancementInDiscord(e);
+    public static void advancementDoneEvent(PlayerAdvancementDoneEvent e) throws IOException {
+        if (Boolean.FALSE.equals(getIsParameterInTesting("advancementDoneEvent"))) {
+            Advancements.setPlayerAdvancementOnCompletion(e);
+            Advancements.showAdvancementInDiscord(e);
+        }
     }
 
     @EventHandler
     public static void onPlayerDeath(PlayerDeathEvent e){
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setTitle(e.getDeathMessage());
-        eb.setColor(new Color(0xE1922E00, true));
-        eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
-        TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-        assert minecraftChatChannel != null;
-        minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerDeath"))) {
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle(e.getDeathMessage());
+            eb.setColor(new Color(0xE1922E00, true));
+            eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
+            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+            assert minecraftChatChannel != null;
+            minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
+        }
     }
 
     @EventHandler
     public void onPlayerChatEvent(AsyncPlayerChatEvent e){
-        TextChannel minecraftChatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-        minecraftChatChannel.sendMessage(convertMinecraftMessageToDiscord(e.getPlayer().getName(), e.getMessage())).queue();
-    }
-
-    public static String convertMinecraftMessageToDiscord(String senderName, String senderMessage) {
-        if (!senderMessage.toLowerCase().contains("@everyone") && !senderMessage.toLowerCase().contains("@here")){
-            ArrayList<String> colorCodes = new ArrayList<>();
-            colorCodes.add("&a");
-            colorCodes.add("&b");
-            colorCodes.add("&c");
-            colorCodes.add("&d");
-            colorCodes.add("&e");
-            colorCodes.add("&f");
-            colorCodes.add("&0");
-            colorCodes.add("&1");
-            colorCodes.add("&2");
-            colorCodes.add("&3");
-            colorCodes.add("&4");
-            colorCodes.add("&5");
-            colorCodes.add("&6");
-            colorCodes.add("&7");
-            colorCodes.add("&8");
-            colorCodes.add("&9");
-            colorCodes.add("&k");
-            colorCodes.add("&l");
-            colorCodes.add("&m");
-            colorCodes.add("&n");
-            colorCodes.add("&o");
-            colorCodes.add("&r");
-            colorCodes.add("§a");
-            colorCodes.add("§b");
-            colorCodes.add("§c");
-            colorCodes.add("§d");
-            colorCodes.add("§e");
-            colorCodes.add("§f");
-            colorCodes.add("§0");
-            colorCodes.add("§1");
-            colorCodes.add("§2");
-            colorCodes.add("§3");
-            colorCodes.add("§4");
-            colorCodes.add("§5");
-            colorCodes.add("§6");
-            colorCodes.add("§7");
-            colorCodes.add("§8");
-            colorCodes.add("§9");
-            colorCodes.add("§k");
-            colorCodes.add("§l");
-            colorCodes.add("§m");
-            colorCodes.add("§n");
-            colorCodes.add("§o");
-            colorCodes.add("§r");
-            for (String colorCode : colorCodes){
-                senderName = senderName.replace(colorCode, "");
-                senderMessage = senderMessage.replace(colorCode, "");
-            }
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChatEvent")) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString())) ){
+            TextChannel minecraftChatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+            assert minecraftChatChannel != null;
+            minecraftChatChannel.sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getName(), e.getMessage())).queue();
         }
-        return senderName + " » " + senderMessage;
+        if(Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))){
+            e.getPlayer().sendMessage(ChatColor.YELLOW + "You are invisible right now.");
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
     public void onCommandEvent(PlayerCommandPreprocessEvent event) {
-        LatchDiscord.logPlayerBan(event, null);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onCommandEvent"))) {
+            LatchDiscord.logPlayerBan(event, null);
+        }
     }
 
     @EventHandler
-    public void onInteract(PlayerInteractEvent event) {
-        try {
+    public void onInteract(PlayerInteractEvent event) throws IOException {
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onInteract"))) {
             RandomItem.getRandomItem(event);
-            QuickSmelt.quickSmelt(event.getPlayer(), econ, event);
-            QuickBrew.quickBrew(event.getPlayer(), econ, event);
+            QuickSmelt.quickSmelt(event.getPlayer(), Api.getEconomy(), event);
+            QuickBrew.quickBrew(event.getPlayer(), Api.getEconomy(), event);
             MobileSpawner.disableSpawnerMobChange(event);
             SlimeChunkFinder.isSlimeChunk(event);
-        } catch (NullPointerException | IOException ignored){}
+        }
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
-        Player player = (Player) e.getPlayer();
-        if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)){
-            Inventories.saveCustomInventory(e, backPackFile);
-        } else if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP)){
-            Inventories.saveCustomInventory(e, playerShopFile);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onInventoryClose"))) {
+            Player player = (Player) e.getPlayer();
+            if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)) {
+                Inventories.saveCustomInventory(e, Api.getConfigFile(Constants.YML_BACK_PACK_FILE_NAME));
+            } else if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP)) {
+                Inventories.saveCustomInventory(e, Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
+            }
+            PlayerShops.removeLoreFromSellerInventory(e, Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
         }
-        PlayerShops.removeLoreFromSellerInventory(e, playerShopFile);
     }
 
     @EventHandler
-    public void onPlayerInventoryClick(InventoryClickEvent e) throws IOException {
-        cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
-        Player player = (Player) e.getWhoClicked();
-        String invTitle = e.getView().getTitle();
-        if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null){
-            PlayerShops.itemWorthNotSet(e, player, getFileConfiguration(playerShopFile));
-        } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null ) {
-            PlayerShops.purchaseItemFromPlayer(e, econ, player);
-        }
-    }
-
-    public static int getWhitelistedPlayerCount(){
-        return Bukkit.getWhitelistedPlayers().size();
-    }
-
-    public static OfflinePlayer getPlayerFromOfflinePlayer(Player player){
-        OfflinePlayer offlinePlayer = null;
-        for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()) {
-            if (olp.getName().equalsIgnoreCase(player.getName())) {
-                offlinePlayer = olp;
+    public void onPlayerInventoryClick(InventoryClickEvent e){
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerInventoryClick"))) {
+            Api.cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
+            Player player = (Player) e.getWhoClicked();
+            String invTitle = e.getView().getTitle();
+            if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
+                PlayerShops.itemWorthNotSet(e, player, Api.getFileConfiguration(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME)));
+            } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
+                PlayerShops.purchaseItemFromPlayer(e, Api.getEconomy(), player);
             }
         }
-        return offlinePlayer;
-    }
-
-    public static File getConfigFile(String fileName){
-        Main plugin = getPlugin(Main.class);
-        return new File(plugin.getDataFolder(), fileName + ".yml");
-    }
-
-    public static FileConfiguration getFileConfiguration(File file){
-        return YamlConfiguration.loadConfiguration(file);
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), event, null, null, null);
-        FarmMoney.rewardMoneyFromCrops(event, econ);
-        MobileSpawner.setSpawnerOnBreak(event);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockBreak"))){
+            Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), event, null, null, null);
+            FarmMoney.rewardMoneyFromCrops(event, Api.getEconomy());
+            MobileSpawner.setSpawnerOnBreak(event);
+        }
 //        Location chestLocation = new Location(Bukkit.getWorld("world"), 10000, 68, 10004);
 //        Chest chest = (Chest) chestLocation.getBlock().getState();
 //        chest.setCustomName("AutoMiner Chest");
@@ -313,114 +246,51 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onAnimalBreed(EntityBreedEvent e){
-        Player player = (Player) e.getBreeder();
-        String child = e.getEntity().getName();
-        System.out.println("player: " + player.getName());
-        System.out.println("child: " + child);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onAnimalBreed"))) {
+            Player player = (Player) e.getBreeder();
+            String child = e.getEntity().getName();
+        }
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event){
-        cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, event, null, null);
-        MobileSpawner.setSpawnerOnPlace(event, econ);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockPlace"))) {
+            Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, event, null, null);
+            MobileSpawner.setSpawnerOnPlace(event, Api.getEconomy());
+        }
         //AutoMiner.mineBlocks(event);
     }
 
     @EventHandler
     public void onPlayerPortalUse(PlayerPortalEvent event) {
-        cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, null, null, event);
-        PortalBlocker.portalBlocker(event);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerPortalUse"))){
+            Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, null, null, event);
+            PortalBlocker.portalBlocker(event);
+        }
     }
 
     @EventHandler
     public void onPlayerChestItemRemove(InventoryClickEvent event) {
-       LatchDiscord.banPlayerStealing(event);
-    }
-
-    // Economy Setup
-    public void setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return;
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChestItemRemove"))) {
+            LatchDiscord.banPlayerStealing(event);
         }
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return;
-        }
-        econ = rsp.getProvider();
-        setEconomy(econ);
-
     }
 
-    public static Economy getEconomy(){
-        return econ;
+    public static boolean getIsParameterInTesting(String parameter){
+        return Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("testingParameters." + parameter);
     }
 
-    public static void setEconomy(Economy value) {
-        econ = value;
-    }
-
-    // Configuration File Managers
-    public static void loadBackpackManager() {
-        backPackInventoryCfgm = new BackPackInventoryConfig();
+    public static void loadAllConfigManagers(){
         backPackInventoryCfgm.setup();
-    }
-
-    public static void loadPlayerShopsManager() {
-        playerShopsInventoryCfgm = new PlayerShopsInventoryConfig();
         playerShopsInventoryCfgm.setup();
-    }
-
-    public static void loadBankManager() {
-        bankCfgm = new BankConfig();
         bankCfgm.setup();
-    }
-
-    public static void loadAutoMinerManager(){
-        autoMinerCfgm = new AutoMinerConfig();
-        autoMinerCfgm.setup();
-    }
-
-    public static void loadWhitelistManager(){
-        whitelistCfgm = new WhitelistConfig();
+        //autoMinerCfgm.setup();
         whitelistCfgm.setup();
-    }
-
-    public static void loadDiscordTextConfigManager(){
-        discordTextConfigCfgm = new DiscordTextConfig();
         discordTextConfigCfgm.setup();
-    }
-
-    public static void loadAdvancementConfigManager(){
-        advancementConfigCfgm = new AdvancementConfig();
         advancementConfigCfgm.setup();
-    }
-
-    public static void loadLotteryConfigManager(){
-        lotteryConfigCfgm =  new LotteryConfig();
         lotteryConfigCfgm.setup();
     }
 
-    public static FileConfiguration loadConfig(String fileName) {
-        File discordTextFile = getConfigFile(fileName);
-        return YamlConfiguration.loadConfiguration(discordTextFile);
-    }
-
-    public static void cancelEventsInPreviousSeason(String worldName, String player, BlockBreakEvent blockBreakEvent, BlockPlaceEvent blockPlaceEvent, InventoryClickEvent inventoryClickEvent, PlayerPortalEvent playerPortalEvent){
-        if (worldName.equalsIgnoreCase("season1")) {
-            if (player == null || !player.equalsIgnoreCase("Latch93")){
-                if (blockBreakEvent != null) {
-                    blockBreakEvent.setCancelled(true);
-                } else if (blockPlaceEvent != null) {
-                    blockPlaceEvent.setCancelled(true);
-                } else if (inventoryClickEvent != null) {
-                    inventoryClickEvent.setCancelled(true);
-                } else if (playerPortalEvent != null) {
-                    playerPortalEvent.setCancelled(true);
-                }
-            }
-
-        }
-}
 
 }
 

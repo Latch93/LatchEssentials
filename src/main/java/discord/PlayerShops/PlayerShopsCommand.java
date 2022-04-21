@@ -1,5 +1,6 @@
 package discord.PlayerShops;
 
+import discord.Api;
 import discord.Backbacks.Inventories;
 import discord.Constants;
 import discord.Main;
@@ -20,7 +21,7 @@ public class PlayerShopsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             try {
-                FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+                FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
                 Player player = (Player) sender;
                 int invSize = 27;
                 String playerName = player.getName();
@@ -40,7 +41,7 @@ public class PlayerShopsCommand implements CommandExecutor {
                             player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
                             playerShopCfg.set(player.getName() + ".itemWorth." + singleItemStack, itemWorth);
                             itemStack.setAmount(totalItemCount);
-                            playerShopCfg.save(Main.playerShopFile);
+                            playerShopCfg.save(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
                         }
                     } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                         player.sendMessage(ChatColor.RED + "Error: Set item worth like this -> /ps setworth 10");

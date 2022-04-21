@@ -124,7 +124,7 @@ public class Advancements {
     }
 
     public static void setPlayerCompletedAdvancementsOnLogin(Player player) throws IOException {
-        FileConfiguration advancementCfg = Main.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
+        FileConfiguration advancementCfg = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
         Iterator<org.bukkit.advancement.Advancement> advancements = Bukkit.getServer().advancementIterator();
         String playerName = player.getName();
         int totalCompletedAdvancementCount = 0;
@@ -142,7 +142,7 @@ public class Advancements {
         advancementCfg.set(Constants.YML_PLAYERS + playerName + ".name", playerName);
         advancementCfg.set(Constants.YML_PLAYERS + playerName + ".advancementCount", totalCompletedAdvancementCount);
         advancementCfg.set("totalAdvancements", Advancements.getAdvancements().size());
-        advancementCfg.save(Main.advancementFile);
+        advancementCfg.save(Api.getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME));
     }
 
     public static void setPlayerAdvancementOnCompletion(PlayerAdvancementDoneEvent e) throws IOException {
@@ -150,9 +150,9 @@ public class Advancements {
             for (Advancement advancement : getAdvancements()){
                 if (e.getAdvancement().getKey().toString().equalsIgnoreCase(advancement.getID())){
                     String playerName = e.getPlayer().getName();
-                    FileConfiguration advancementCfg = Main.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
+                    FileConfiguration advancementCfg = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
                     advancementCfg.set(Constants.YML_PLAYERS + playerName + ".advancementCount", advancementCfg.getInt(Constants.YML_PLAYERS + playerName + ".advancementCount") + 1);
-                    advancementCfg.save(Main.advancementFile);
+                    advancementCfg.save(Api.getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME));
                 }
             }
         }
@@ -171,7 +171,7 @@ public class Advancements {
     public static void showAdvancementInDiscord(PlayerAdvancementDoneEvent e){
         String advancement = e.getAdvancement().getKey().toString();
         String advancementMessage = "";
-        int playerAchievementCount = Main.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
+        int playerAchievementCount = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
         for (Advancement advance : getAdvancements()){
             if (advancement.equalsIgnoreCase(advance.getID())){
                 advancementMessage = e.getPlayer().getName() + " has made the advancement " + advance.getName() + "!" + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + getAdvancements().size();

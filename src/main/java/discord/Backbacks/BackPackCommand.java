@@ -1,5 +1,6 @@
 package discord.Backbacks;
 
+import discord.Api;
 import discord.Constants;
 import discord.Main;
 
@@ -19,11 +20,11 @@ public class BackPackCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = null;
-        Economy econ = Main.getEconomy();
+        Economy econ = Api.getEconomy();
         if (sender instanceof Player){
             player = (Player) sender;
             String invTitle = player.getName() + "'s Backpack";
-            FileConfiguration backPackCfg = Main.loadConfig(Constants.YML_BACK_PACK_FILE_NAME);
+            FileConfiguration backPackCfg = Api.loadConfig(Constants.YML_BACK_PACK_FILE_NAME);
             OfflinePlayer offlinePlayer = null;
             for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()){
                 if (player.getName().equalsIgnoreCase(olp.getName())){
@@ -104,7 +105,7 @@ public class BackPackCommand implements CommandExecutor {
                 }
             }
             try {
-                backPackCfg.save(Main.backPackFile);
+                backPackCfg.save(Api.getConfigFile(Constants.YML_BACK_PACK_FILE_NAME));
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,8 +1,9 @@
 package discord.PlayerShops;
 
+import discord.Api;
 import discord.Backbacks.Inventories;
 import discord.Constants;
-import discord.Main;
+
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +20,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class PlayerShops {
+    private PlayerShops(){
+    }
+
     public static void itemWorthNotSet(InventoryClickEvent e, Player player, FileConfiguration playerShopCfg){
         ItemStack itemStack = e.getCurrentItem();
         assert itemStack != null;
@@ -60,7 +64,7 @@ public class PlayerShops {
         OfflinePlayer offlineSeller = null;
 
         double buyerBalance;
-        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
             String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
             String sellerShopPlayerName = arr[0];
@@ -76,6 +80,7 @@ public class PlayerShops {
             buyerBalance = econ.getBalance(offlineBuyer);
             assert offlineSeller != null;
             ItemStack ims = e.getCurrentItem();
+            assert ims != null;
             int itemAmount = ims.getAmount();
             ims.setAmount(1);
             ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
@@ -83,42 +88,48 @@ public class PlayerShops {
             int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
             ims.setAmount(itemAmount);
             if (e.getClick().toString().equalsIgnoreCase("LEFT")){
-                if (buyerBalance < itemCost){
-                    player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
-                } else {
-                    ItemStack itemStack = e.getCurrentItem();
-                    ItemStack test = e.getCurrentItem();
-                    itemStack.setAmount(itemStack.getAmount() - 1);
-                    e.getClickedInventory().setItem(e.getSlot(), itemStack);
-                    test.setAmount(1);
-                    player.getInventory().addItem(test);
-                    econ.withdrawPlayer(offlineBuyer, itemCost);
-                    econ.depositPlayer(offlineSeller, itemCost);
-                    player.updateInventory();
-                }
-                e.setCancelled(true);
+                leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
             } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
-                e.setCancelled(true);
-                if (e.getCurrentItem().getAmount() >= 10) {
-                    int itemTotalCost = itemCost * 10;
-                    if (buyerBalance < itemTotalCost){
-                        player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
-                    } else {
-                        ItemStack imq = e.getCurrentItem();
-                        ItemStack test = e.getCurrentItem();
-                        imq.setAmount(imq.getAmount() - 10);
-                        e.getClickedInventory().setItem(e.getSlot(), imq);
-                        test.setAmount(10);
-                        player.getInventory().addItem(test);
-                        econ.withdrawPlayer(offlineBuyer, itemTotalCost);
-                        econ.depositPlayer(offlineSeller, itemTotalCost);
-                        player.updateInventory();
-                    }
-                }
-                e.setCancelled(true);
+                rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
             }
         } else {
             e.setCancelled(true);
         }
+    }
+
+    private static void leftClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) {
+        if (buyerBalance < itemCost){
+            player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
+        } else {
+            setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, 1);
+        }
+        e.setCancelled(true);
+    }
+
+    private static void rightClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) {
+        e.setCancelled(true);
+        if (Objects.requireNonNull(e.getCurrentItem()).getAmount() >= 10) {
+            int itemTotalCost = itemCost * 10;
+            if (buyerBalance < itemTotalCost){
+                player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
+            } else {
+                setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, 10);
+            }
+        }
+        e.setCancelled(true);
+    }
+
+    private static void setBuyerAndSellerInventories(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, int itemCost, int amountSold) {
+        ItemStack itemStack = e.getCurrentItem();
+        ItemStack test = e.getCurrentItem();
+        assert itemStack != null;
+        itemStack.setAmount(itemStack.getAmount() - amountSold);
+        Objects.requireNonNull(e.getClickedInventory()).setItem(e.getSlot(), itemStack);
+        assert test != null;
+        test.setAmount(amountSold);
+        player.getInventory().addItem(test);
+        econ.withdrawPlayer(offlineBuyer, itemCost);
+        econ.depositPlayer(offlineSeller, itemCost);
+        player.updateInventory();
     }
 }

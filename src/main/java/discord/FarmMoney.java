@@ -15,9 +15,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.text.DecimalFormat;
 
 public class FarmMoney {
+    private FarmMoney(){}
+
     public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ){
         if (!event.getPlayer().getWorld().getName().equalsIgnoreCase("season1")){
-            FileConfiguration mainConfig = Main.loadConfig(Constants.YML_DISCORD_TEXT_FILE_NAME);
+            FileConfiguration mainConfig = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME);
             OfflinePlayer player = null;
             for (OfflinePlayer offlinePlayer : Bukkit.getWhitelistedPlayers()){
                 if (event.getPlayer().getName().equalsIgnoreCase(offlinePlayer.getName())){

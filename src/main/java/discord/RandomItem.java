@@ -7,7 +7,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +23,7 @@ public class RandomItem{
     public static final Material[] m = Material.values();
 
     public static void getRandomItem(PlayerInteractEvent event) throws IOException {
-        FileConfiguration discordTextCfg = Main.loadConfig(Constants.YML_DISCORD_TEXT_FILE_NAME);
+        FileConfiguration discordTextCfg = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME);
         int randomItemCost = discordTextCfg.getInt("randomItemGen.cost");
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         Economy econ;
@@ -33,7 +32,7 @@ public class RandomItem{
         Player player = event.getPlayer();
         OfflinePlayer op = Bukkit.getOfflinePlayer(player.getUniqueId());
         Location leverLocation = new Location(event.getPlayer().getWorld(), discordTextCfg.getInt("randomItemGen.buttonLocation.x"), discordTextCfg.getInt("randomItemGen.buttonLocation.y"), discordTextCfg.getInt("randomItemGen.buttonLocation.z") );
-        if(Objects.requireNonNull(event.getClickedBlock()).getLocation().equals(leverLocation)){
+        if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(leverLocation)){
             Block block = event.getClickedBlock();
             assert block != null;
             if (block.getLocation().equals(leverLocation)){

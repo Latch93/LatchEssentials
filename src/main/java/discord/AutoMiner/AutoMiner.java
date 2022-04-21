@@ -1,5 +1,6 @@
 package discord.AutoMiner;
 
+import discord.Api;
 import discord.Constants;
 import discord.Main;
 
@@ -18,8 +19,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class AutoMiner {
-    private static final File autoMinerFile = Main.getConfigFile(Constants.YML_AUTO_MINER_FILE_NAME);
-    private static final FileConfiguration autoMinerCfg = Main.getFileConfiguration(autoMinerFile);
+    private static final File autoMinerFile = Api.getConfigFile(Constants.YML_AUTO_MINER_FILE_NAME);
+    private static final FileConfiguration autoMinerCfg = Api.getFileConfiguration(autoMinerFile);
     public static void setChestLocation(PlayerInteractEvent e) throws IOException {
         ItemStack itemInPlayersHand = e.getPlayer().getInventory().getItemInMainHand();
         if (itemInPlayersHand.getType().toString().equalsIgnoreCase("STICK") && itemInPlayersHand.getEnchantments().toString().contains("fire") && Objects.requireNonNull(e.getClickedBlock()).getType().toString().equalsIgnoreCase("CHEST")){

@@ -1,7 +1,7 @@
 package discord.PlayerShops;
 
+import discord.Api;
 import discord.Constants;
-import discord.Main;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -13,12 +13,11 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class PlayerShopsTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> playerShopCommandList = new ArrayList<>();
-        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         playerShopCommandList.add(Constants.MY_SHOP_COMMAND);
         playerShopCommandList.add(Constants.SET_WORTH_COMMAND);
         playerShopCommandList.add(Constants.OPEN_COMMAND);
@@ -35,8 +34,8 @@ public class PlayerShopsTabComplete implements TabCompleter {
             }
             try {
                 return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
-            } catch (IndexOutOfBoundsException ignored){
-
+            } catch (IndexOutOfBoundsException e){
+                System.out.println("Incorrect player shop command.");
             }
         }
         return StringUtil.copyPartialMatches(commandText, tabList, new ArrayList<>());

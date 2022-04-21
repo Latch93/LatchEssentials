@@ -1,5 +1,6 @@
 package discord.Backbacks;
 
+import discord.Api;
 import discord.Constants;
 import discord.Main;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 public class Inventories {
     public static void saveCustomInventory(InventoryCloseEvent e, File configFile) throws IOException {
-        FileConfiguration inventoryCfg = Main.getFileConfiguration(configFile);
+        FileConfiguration inventoryCfg = Api.getFileConfiguration(configFile);
         UUID playerUUID = e.getPlayer().getUniqueId();
         String playerName = e.getPlayer().getName();
         for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()){
@@ -109,7 +110,7 @@ public class Inventories {
     }
 
     public static Inventory setInventoryWhenOpened(Player player, String fileName, int slots, String invTitle, String playerShopToOpen){
-        FileConfiguration inventoryConfig = Main.loadConfig(fileName);
+        FileConfiguration inventoryConfig = Api.loadConfig(fileName);
         Inventory inv = null;
         String playerName = "";
         if (playerShopToOpen == null || playerShopToOpen.equalsIgnoreCase(player.getName())){
@@ -134,7 +135,7 @@ public class Inventories {
     }
 
     public static Inventory setLoreInPlayerShop(String playerShopToOpen, Inventory inv, String playerName){
-        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         for (int i = 0; i < inv.getSize(); i++){
             if (inv.getItem(i) != null){
                 ItemStack itemStack = inv.getItem(i);
@@ -171,7 +172,7 @@ public class Inventories {
     }
 
     public static int getItemWorth(ItemStack itemStack, String playerShopToOpen){
-        FileConfiguration playerShopCfg = Main.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         int itemWorth;
         ItemMeta im = Objects.requireNonNull(itemStack.getItemMeta());
         im.setLore(null);
