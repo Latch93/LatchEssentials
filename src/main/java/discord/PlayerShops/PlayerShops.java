@@ -65,35 +65,39 @@ public class PlayerShops {
 
         double buyerBalance;
         FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
-        if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
-            String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
-            String sellerShopPlayerName = arr[0];
-            for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()) {
-                Player temp = (Player) e.getWhoClicked();
-                if (temp.getName().equalsIgnoreCase(olp.getName())) {
-                    offlineBuyer = olp;
-                }
-                if (sellerShopPlayerName.equalsIgnoreCase(olp.getName())) {
-                    offlineSeller = olp;
-                }
-            }
-            buyerBalance = econ.getBalance(offlineBuyer);
-            assert offlineSeller != null;
-            ItemStack ims = e.getCurrentItem();
-            assert ims != null;
-            int itemAmount = ims.getAmount();
-            ims.setAmount(1);
-            ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
-            ims.setItemMeta(im);
-            int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
-            ims.setAmount(itemAmount);
-            if (e.getClick().toString().equalsIgnoreCase("LEFT")){
-                leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
-            } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
-                rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
-            }
-        } else {
+        if (Boolean.TRUE.equals(e.isShiftClick())){
             e.setCancelled(true);
+        } else {
+            if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
+                String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
+                String sellerShopPlayerName = arr[0];
+                for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()) {
+                    Player temp = (Player) e.getWhoClicked();
+                    if (temp.getName().equalsIgnoreCase(olp.getName())) {
+                        offlineBuyer = olp;
+                    }
+                    if (sellerShopPlayerName.equalsIgnoreCase(olp.getName())) {
+                        offlineSeller = olp;
+                    }
+                }
+                buyerBalance = econ.getBalance(offlineBuyer);
+                assert offlineSeller != null;
+                ItemStack ims = e.getCurrentItem();
+                assert ims != null;
+                int itemAmount = ims.getAmount();
+                ims.setAmount(1);
+                ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
+                ims.setItemMeta(im);
+                int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
+                ims.setAmount(itemAmount);
+                if (e.getClick().toString().equalsIgnoreCase("LEFT")){
+                    leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
+                } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
+                    rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
+                }
+            } else {
+                e.setCancelled(true);
+            }
         }
     }
 

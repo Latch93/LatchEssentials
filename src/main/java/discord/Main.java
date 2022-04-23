@@ -1,6 +1,5 @@
 package discord;
 
-import com.cavariux.twitchirc.Chat.Channel;
 import discord.Backbacks.BackPackCommand;
 import discord.Backbacks.BackPackInventoryConfig;
 import discord.Backbacks.BackpackTabComplete;
@@ -9,9 +8,12 @@ import discord.Bank.Bank;
 import discord.Bank.BankConfig;
 import discord.Configurations.AdvancementConfig;
 import discord.Configurations.LotteryConfig;
+import discord.LatchTwitchBot.LatchTwitchBotCommand;
+import discord.LatchTwitchBot.LatchTwitchBotConfig;
 import discord.Configurations.WhitelistConfig;
 import discord.DiscordText.DiscordTextCommand;
 import discord.DiscordText.DiscordTextConfig;
+import discord.LatchTwitchBot.LatchTwitchBotTabComplete;
 import discord.PlayerShops.PlayerShops;
 import discord.PlayerShops.PlayerShopsCommand;
 import discord.PlayerShops.PlayerShopsInventoryConfig;
@@ -19,12 +21,7 @@ import discord.PlayerShops.PlayerShopsTabComplete;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,24 +32,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jibble.pircbot.IrcException;
 
 import javax.security.auth.login.LoginException;
 
 import java.awt.*;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.util.ArrayList;
+
 import java.util.Objects;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 public class Main extends JavaPlugin implements Listener {
     public static final boolean GLOBAL_TESTING = false;
@@ -71,6 +59,8 @@ public class Main extends JavaPlugin implements Listener {
     private static AdvancementConfig advancementConfigCfgm;
     // Lottery Config
     private static LotteryConfig lotteryConfigCfgm;
+    // Twitch Config
+    private static LatchTwitchBotConfig twitchBotCfgm;
 
     @Override
     public void onEnable() {
@@ -88,6 +78,7 @@ public class Main extends JavaPlugin implements Listener {
         discordTextConfigCfgm = new DiscordTextConfig();
         advancementConfigCfgm = new AdvancementConfig();
         lotteryConfigCfgm = new LotteryConfig();
+        twitchBotCfgm = new LatchTwitchBotConfig();
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
 
@@ -106,23 +97,23 @@ public class Main extends JavaPlugin implements Listener {
         // Discord Staff Chat Command
         Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
 
+        // Twitch Bot Command
+        Objects.requireNonNull(this.getCommand("twitch")).setExecutor(new LatchTwitchBotCommand());
+        Objects.requireNonNull(this.getCommand("twitch")).setTabCompleter(new LatchTwitchBotTabComplete());
+
         // Auto Miner Commands
 //        Objects.requireNonNull(this.getCommand("am")).setExecutor(new AutoMinerCommand());
 //        Objects.requireNonNull(this.getCommand("am")).setTabCompleter(new AutoMinerTabComplete());
-        LatchTwitchBot twitchBot = new LatchTwitchBot();
-        twitchBot.connect();
-        Channel channel = twitchBot.joinChannel("#latch93");
-        twitchBot.sendMessage("Hi, I'm connected, ", channel);
-        twitchBot.start();
+
     }
 
     @Override
     public void onDisable() {
+        Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
         getLogger().info("discord_text is disabled");
         LatchDiscord.stopBot();
         if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
             LatchDiscord.sendServerStoppedMessage();
-
         }
     }
 
@@ -289,6 +280,7 @@ public class Main extends JavaPlugin implements Listener {
         discordTextConfigCfgm.setup();
         advancementConfigCfgm.setup();
         lotteryConfigCfgm.setup();
+        twitchBotCfgm.setup();
     }
 
 

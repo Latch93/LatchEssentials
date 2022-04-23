@@ -60,6 +60,13 @@ public class Constants {
     public static final String SET_WORTH_COMMAND = "setworth";
     public static final String MY_SHOP_COMMAND = "myshop";
 
+    // Twitch Bot commands
+    public static final String START_BOT_COMMAND = "start";
+    public static final String STOP_BOT_COMMAND = "stop";
+    public static final String ADD_BOT_COMMAND = "addBot";
+    public static final String HELP_COMMAND = "help";
+    public static final String SEND_TWITCH_MESSAGE_COMMAND = "sendMessage";
+
     // DiscordStaffChat commands
     public static final String DISCORD_STAFF_CHAT_COMMAND = "dtsc";
 
@@ -97,6 +104,7 @@ public class Constants {
     public static final String YML_CONFIG_FILE_NAME = "config";
     public static final String YML_ADVANCEMENT_FILE_NAME = "advancement";
     public static final String YML_LOTTERY_FILE_NAME = "lottery";
+    public static final String YML_TWITCH_FILE_NAME = "twitch";
 
     public static final String INVALID_PARAMETERS = "Incorrect parameters. Please try again";
 

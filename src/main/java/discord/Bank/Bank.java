@@ -2,7 +2,6 @@ package discord.Bank;
 
 import discord.Api;
 import discord.Constants;
-import discord.Main;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -58,7 +57,7 @@ public class Bank {
     }
 
     public static double getPlayerBalance(Player player){
-        OfflinePlayer offlinePlayer = Api.getPlayerFromOfflinePlayer(player);
+        OfflinePlayer offlinePlayer = Api.getOfflinePlayerFromPlayer(player);
         Economy econ = Api.getEconomy();
         return econ.getBalance(offlinePlayer);
     }
@@ -72,6 +71,6 @@ public class Bank {
         FileConfiguration mainCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
         double moneyPlayedMultiplier = mainCfg.getDouble("bankMultiplier");
         double moneyForTimePlayed = (double) getSecondsPlayedInSession(player.getName()) * moneyPlayedMultiplier;
-        Api.getEconomy().depositPlayer(Api.getPlayerFromOfflinePlayer(player), moneyForTimePlayed);
+        Api.getEconomy().depositPlayer(Api.getOfflinePlayerFromPlayer(player), moneyForTimePlayed);
     }
 }

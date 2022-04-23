@@ -80,6 +80,16 @@
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
         </dependency>
+        <dependency>
+            <groupId>com.cavariux</groupId>
+            <artifactId>latchtwitch</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.twitch4j</groupId>
+            <artifactId>twitch4j</artifactId>
+            <version>1.9.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
