@@ -31,7 +31,6 @@ public class Api {
     public static LatchTwitchBot twitchBot;
     // Formats chat message in Minecraft to send to Discord channel
     public static String convertMinecraftMessageToDiscord(String senderName, String senderMessage) {
-        if (!senderMessage.toLowerCase().contains("@everyone") && !senderMessage.toLowerCase().contains("@here")){
             ArrayList<String> colorCodes = new ArrayList<>();
             colorCodes.add("&a");
             colorCodes.add("&b");
@@ -81,6 +80,8 @@ public class Api {
                 senderName = senderName.replace(colorCode, "");
                 senderMessage = senderMessage.replace(colorCode, "");
             }
+        if (senderMessage.toLowerCase().contains("@everyone") || senderMessage.toLowerCase().contains("@here")){
+            senderMessage = "I tried to @ everyone or @ here. I shouldn't do that, but I did";
         }
         return senderName + " » " + senderMessage;
     }
@@ -170,12 +171,27 @@ public class Api {
         return twitchUsername;
     }
 
+    public static void stopTwitchBot(List<LatchTwitchBotRunnable> twitchBotList, Player player){
+        Iterator<LatchTwitchBotRunnable> iter = twitchBotList.iterator();
+        while(iter.hasNext()){
+            LatchTwitchBotRunnable runBot = iter.next();
+            if (runBot.getMinecraftName().equalsIgnoreCase(player.getName())){
+                runBot.getTwitchClient().close();
+                player.sendMessage(ChatColor.GREEN + "Your TwitchBot has been " + ChatColor.RED + "terminated.");
+                Api.messageInConsole(ChatColor.RED + "Terminated " + ChatColor.GOLD + player.getName() + "'s " + ChatColor.RED + "TwitchBot.");
+                iter.remove();
+            }
+        }
+    }
+
     public static void stopAllTwitchBots(List<LatchTwitchBotRunnable> twitchBotList){
         Iterator<LatchTwitchBotRunnable> iter = twitchBotList.iterator();
         while(iter.hasNext()){
-            iter.next().getBot().stop();
+            LatchTwitchBotRunnable runBot = iter.next();
+            runBot.getTwitchClient().close();
+            Api.messageInConsole(ChatColor.RED + "Terminated " + ChatColor.GOLD + "ALL " + ChatColor.RED + "TwitchBots.");
             iter.remove();
-        }
+    }
         Api.messageInConsole(ChatColor.RED + "Terminated " + ChatColor.GOLD + "all " + ChatColor.RED + "TwitchBots.");
     }
 

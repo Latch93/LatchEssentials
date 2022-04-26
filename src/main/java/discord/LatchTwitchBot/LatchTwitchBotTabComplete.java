@@ -18,6 +18,7 @@ public class LatchTwitchBotTabComplete implements TabCompleter {
         twitchBotCommandList.add(Constants.START_BOT_COMMAND);
         twitchBotCommandList.add(Constants.HELP_COMMAND);
         twitchBotCommandList.add(Constants.SEND_TWITCH_MESSAGE_COMMAND);
+        twitchBotCommandList.add(Constants.ADD_CHANNEL_ID);
         return StringUtil.copyPartialMatches(args[0], twitchBotCommandList, new ArrayList<>());
 
     }

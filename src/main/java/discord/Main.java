@@ -138,6 +138,7 @@ public class Main extends JavaPlugin implements Listener {
             Bank.setPlayerSessionSecondsPlayed(event);
             Bank.getPlayerBalance(event.getPlayer());
             Bank.setPlayerBalanceWithInterest(event.getPlayer());
+            Api.stopTwitchBot(LatchTwitchBotCommand.twitchBotList, event.getPlayer());
         }
     }
 
@@ -167,7 +168,7 @@ public class Main extends JavaPlugin implements Listener {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChatEvent")) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString())) ){
             TextChannel minecraftChatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
             assert minecraftChatChannel != null;
-            minecraftChatChannel.sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getName(), e.getMessage())).queue();
+            minecraftChatChannel.sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
         }
         if(Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))){
             e.getPlayer().sendMessage(ChatColor.YELLOW + "You are invisible right now.");

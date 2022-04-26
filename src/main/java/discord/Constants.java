@@ -66,6 +66,7 @@ public class Constants {
     public static final String ADD_BOT_COMMAND = "addBot";
     public static final String HELP_COMMAND = "help";
     public static final String SEND_TWITCH_MESSAGE_COMMAND = "sendMessage";
+    public static final String ADD_CHANNEL_ID = "addChannelId";
 
     // DiscordStaffChat commands
     public static final String DISCORD_STAFF_CHAT_COMMAND = "dtsc";

@@ -24,21 +24,6 @@ public class LatchTwitchBot extends TwitchBot {
         this.setOauth_Key(oauthToken);
         this.setClientID(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("clientId"));
     }
-
-    @Override
-    public void onMessage(User user, Channel channel, String message) {
-        FileConfiguration twitchCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_TWITCH_FILE_NAME));
-        String channelName = String.valueOf(channel);
-        channelName = channelName.replace("#", "");
-        String minecraftName = twitchCfg.getString(Constants.YML_PLAYERS + channelName + ".minecraftUsername");
-        assert minecraftName != null;
-        if (Bukkit.getPlayer(minecraftName) != null){
-            Player player = Bukkit.getPlayer(minecraftName);
-            assert player != null;
-            player.sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + user + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + message);
-        }
-    }
-
     public void setBot(LatchTwitchBot bot){
         this.bot = bot;
     }
