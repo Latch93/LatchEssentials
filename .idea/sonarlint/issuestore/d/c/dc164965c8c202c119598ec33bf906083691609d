@@ -1,7 +1,0 @@
-
-o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(çÏÂé
-K
-java:S1128")Remove this unused import 'discord.Main'.(‚ôË©úÿÿÿÿ8¿£¥¾„0
-m
-java:S3776"RRefactor this method to reduce its Cognitive Complexity from 84 to the 15 allowed.(¼ß…ýüÿÿÿÿ
-C	java:S108f")Either remove or fill this block of code.(–ŠúÃþÿÿÿÿ

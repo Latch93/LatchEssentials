@@ -7,14 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="DiscordText" />
+        <module name="LatchLMP" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-XDignore.symbol.file" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="DiscordText" options="" />
+      <module name="LatchLMP" options="" />
     </option>
   </component>
 </project>
