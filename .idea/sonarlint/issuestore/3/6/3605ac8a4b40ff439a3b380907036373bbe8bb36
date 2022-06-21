@@ -1,19 +1,0 @@
-
-H
-java:S1444"2Make this "public static advancements" field final(§ŞÜ®
-i
-java:S1192"RDefine a constant instead of duplicating this literal ".advancementCount" 4 times.(ÌÓ÷è
-1
-java:S1700"Rename field "advancements"(§ŞÜ®
-n
-java:S1104"XMake advancements a static final constant or non-public and provide accessors if needed.(§ŞÜ®
-M
-java:S1128"7Remove this unused import 'java.text.SimpleDateFormat'.(ú¡ÙÛ
-Z
-java:S1128"DRemove this unused import 'org.bukkit.event.player.PlayerJoinEvent'.(Ï ¦
-P
-java:S1128"5Remove this unused import 'org.bukkit.OfflinePlayer'.(ƒØ¤¥şÿÿÿÿ
-3
-java:S2386"Make this member "protected".(§ŞÜ®
-P
-java:S1118":Add a private constructor to hide the implicit public one.(É³Ş·

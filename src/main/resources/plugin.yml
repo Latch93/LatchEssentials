@@ -1,6 +1,6 @@
 name: DiscordText
 version: 1.0
-main: discord.Main
+main: lmp.Main
 api-version: 1.18
 depend: [ProtocolLib, Vault]
 commands:
@@ -10,7 +10,9 @@ commands:
     description: "Player Shop"
   am:
     description: "Auto Miner"
-  dt:
-    description: "Discord Text"
+  lmp:
+    description: "LMP Server Command"
   dtsc:
     description: "Discord Staff Chat"
+  twitch:
+    description: "Twitch Bot"

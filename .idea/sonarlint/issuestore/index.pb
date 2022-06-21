@@ -1,21 +1,3 @@
 
 J
 dependency-reduced-pom.xml,8\a\8a88dfd5af6f2db5a5431581b56e901f5f143d92
-\
-,src/main/java/discord/ExperienceManager.java,4\a\4a2ac78d9eaa308421d5719d59b959860c94ea64
-X
-(src/main/java/discord/MobileSpawner.java,3\1\311286a46d8af7e68ca70910aecdb1b763aa41b4
-T
-$src/main/java/discord/QuickBrew.java,8\7\87364c436add1676cfd583cb50c98ca359c302ff
-X
-(src/main/java/discord/PortalBlocker.java,d\f\dfde27a4ac74c05fbdcca31a76238c547104488d
-U
-%src/main/java/discord/QuickSmelt.java,4\e\4e268f5c6ab6366954b491637db7d8c670d6b522
-Y
-)src/main/java/discord/RandomTeleport.java,d\6\d6d8e0a5271ee5d80f47fd0a93fc7023245ea5fa
-T
-$src/main/java/discord/Bank/Bank.java,6\2\625437cbd76b2421cce186cecc7d7ce48d30a928
-d
-4src/main/java/discord/Backbacks/BackPackCommand.java,d\c\dc164965c8c202c119598ec33bf906083691609d
-W
-'src/main/java/discord/Advancements.java,3\6\3605ac8a4b40ff439a3b380907036373bbe8bb36
