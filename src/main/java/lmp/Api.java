@@ -1,12 +1,16 @@
 package lmp;
 
+import io.netty.util.Constant;
 import lmp.LatchTwitchBot.LatchTwitchBot;
 import lmp.LatchTwitchBot.LatchTwitchBotRunnable;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.node.types.InheritanceNode;
+import net.luckperms.api.util.Tristate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,6 +29,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -184,13 +189,44 @@ public class Api {
         calendar.setTime(new Date());
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String time = "";
         FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
         try {
-
-        } catch (NullPointerException ignore){
             sdf.setTimeZone(TimeZone.getTimeZone(whitelistCfg.getString("players." + minecraftId + ".ip-info.timezoneName")));
+            time = sdf.format(calendar.getTime());
+        } catch (NullPointerException ignore){
         }
-        return sdf.format(calendar.getTime());
+        return time;
+    }
+
+    public static void checkPlayerMemberStatus(Player player){
+        net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
+        assert user != null;
+        if (!"default".equalsIgnoreCase(user.getPrimaryGroup()) && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("showJoinMessage"))){
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Objects.requireNonNull(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("joinMessage")))));
+        }
+        if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT ).equals(Tristate.TRUE)){
+            player.sendMessage(ChatColor.RED + "You need to link your Discord and Minecraft accounts.\n" +
+                    "Go to Discord and type the following into the General Channel -> " + ChatColor.AQUA + "!link\n" +
+                    ChatColor.RED + "Then copy and paste the command into Minecraft chat and click enter.");
+        }
+    }
+
+    public static void updateUserInfo(Player player) throws IOException {
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        if (whitelistCfg.isSet(String.valueOf(player.getUniqueId()))){
+            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
+            String discordId = whitelistCfg.getString(Constants.YML_PLAYERS + player.getUniqueId() + ".discordId");
+            assert discordId != null;
+            if (LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(discordId) != null){
+                whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(discordId)).getUser().getName());
+                whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
+            } else {
+                whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", false);
+                player.kickPlayer("You not in Latch's Discord.");
+            }
+        }
+        whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
     }
 
     public static void stopTwitchBot(List<LatchTwitchBotRunnable> twitchBotList, Player player){
@@ -372,5 +408,18 @@ public class Api {
 
     public static String getDiscordNameFromMCid(String minecraftID){
         return Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(minecraftID))).getUser().getName();
+    }
+
+    public static void setIsPlayerInDiscord() throws IOException {
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        for (String minecraftId : whitelistCfg.getConfigurationSection(Constants.YML_PLAYERS).getKeys(false)) {
+            String discordId = whitelistCfg.getString(Constants.YML_PLAYERS + minecraftId + ".discordId");
+            if (LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(discordId) != null){
+                whitelistCfg.set(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", true);
+            } else {
+                whitelistCfg.set(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", false);
+            }
+        }
+        whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
     }
 }

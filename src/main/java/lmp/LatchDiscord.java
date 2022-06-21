@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.units.qual.min;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.*;
 
@@ -136,6 +137,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         String messageId = event.getMessageId();
         String message = event.getMessage().getContentRaw();
         String senderName = event.getAuthor().getName();
+        Member messageSender = event.getMember();
         for (TextChannel textChannel : mentionedChannelsList){
             message = message.replace(textChannel.getId(), textChannel.getName());
         }
@@ -294,7 +296,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }).queue();
                 }
                 if (message.equalsIgnoreCase("!link")){
-                    channel.sendMessage(username + " --- Copy and paste the following command into Minecraft Chat to get perms.").queue();
+                    channel.sendMessage(username + " --- Join the server and paste the following command into you chat to get perms.").queue();
                     channel.sendMessage("/lmp link " + userId).queue();
                 }
                 // Searches the player shops and returns if items are in a player's shop
@@ -324,12 +326,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                                         if (!itemToSearch.equalsIgnoreCase("spawn_egg")){
                                             ItemStack is = new ItemStack(Material.valueOf(itemToSearch.toUpperCase()), 1);
                                             if (configCfg.getInt(player + ".itemWorth." + is) != 0) {
-                                                channel.sendMessage(player + " has " + totalAmount + " " + itemToSearch + "(s) in their shop for $" + configCfg.getDouble(player + ".itemWorth." + is) + " per item.").queue();
+                                                channel.sendMessage(Objects.requireNonNull(Bukkit.getPlayer(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop for $" + configCfg.getDouble(player + ".itemWorth." + is) + " per item.").queue();
                                             } else {
-                                                channel.sendMessage(player + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
+                                                channel.sendMessage(Objects.requireNonNull(Bukkit.getPlayer(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
                                             }
                                         } else {
-                                            channel.sendMessage(player + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
+                                            channel.sendMessage(Objects.requireNonNull(Bukkit.getPlayer(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
                                         }
                                     }
 
@@ -361,6 +363,16 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             String[] messageArr = message.split(" ");
             if (messageArr[0].equalsIgnoreCase(Constants.TOGGLE_WHITELIST_COMMAND)){
                 whitelistToggle(messageArr[1], channel);
+            }
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase("!joinTime")){
+            channel.sendMessage(senderName + " joined on " + messageSender.getTimeJoined().toString().split("T")[0]).queue();
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("plop")){
+            try {
+                Api.setIsPlayerInDiscord();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         if (message.toLowerCase().contains("<@latch93>")){
@@ -404,34 +416,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         return ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message;
     }
 
-
-    private void runWhitelistTest(MessageChannel channel, String username, String messageId, String message, String whitelistChannelId) {
-        try {
-            addPlayerToWhitelist(channel, username, message, messageId, whitelistChannelId);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        try {
-            String minecraftUserName = getMinecraftUserName(Objects.requireNonNull(event.getMember()).getUser().getName());
-            if (minecraftUserName == null || minecraftUserName.isEmpty()){
-                Api.messageInConsole(ChatColor.GOLD + event.getMember().getUser().getName() + ChatColor.RED + "left the discord.");
-            } else {
-                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist remove " + minecraftUserName));
-            }
-            FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-            for (String minecraftId : whitelistCfg.getConfigurationSection("players").getKeys(false)) {
-                if (event.getMember().getUser().getId().equals(whitelistCfg.getString(Constants.YML_PLAYERS + minecraftId + ".discordId"))){
-                    whitelistCfg.set(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", false);
-                }
-            }
-            whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
-        }
+        Api.messageInConsole(ChatColor.GOLD + event.getMember().getUser().getName() + ChatColor.RED + "left the discord.");
+        TextChannel modChat = jda.getTextChannelById(setTestingChannel(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID));
+        assert modChat != null;
+        modChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").queue();
     }
 
     @Override
@@ -512,66 +502,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         for(Message message : messageHistory) {
             if (message.getAuthor().getId().equalsIgnoreCase(userID)){
                 channel.deleteMessageById(message.getId()).queue();
-            }
-        }
-    }
-
-    public static void addPlayerToWhitelist(MessageChannel channel, String username, String message, String messageId, String currentChannelId ) throws IOException {
-        URL url = null;
-        int whitelistTest = 0;
-        boolean isPlayerWhitelisted = false;
-        if (currentChannelId.equalsIgnoreCase(channel.getId()) && !username.equalsIgnoreCase("LatchDCBot")){
-            BufferedReader br = null;
-            try {
-                url = new URL("https://api.mojang.com/users/profiles/minecraft/" + message);
-                br = new BufferedReader(new InputStreamReader(url.openStream()));
-                String str = br.readLine();
-                if (str != null){
-                    whitelistTest = 1;
-                    isPlayerWhitelisted = getWhitelistedPlayers(message, false);
-                }
-            } catch (IOException | NullPointerException e) {
-                e.printStackTrace();
-            } finally {
-                if (br != null){
-                    br.close();
-                }
-            }
-
-            if (whitelistTest == 0){
-                channel.sendMessage(Constants.USERNAME_DOES_NOT_EXIST_MESSAGE).queue();
-            } else {
-                isPlayerWhitelisted(channel, messageId, isPlayerWhitelisted, message);
-            }
-        }
-    }
-
-
-    private static boolean getWhitelistedPlayers(String message, boolean isPlayerWhitelisted) {
-        for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()){
-            if (message.equalsIgnoreCase(player.getName())){
-                isPlayerWhitelisted = true;
-            }
-        }
-        return isPlayerWhitelisted;
-    }
-
-    private static void isPlayerWhitelisted(MessageChannel channel, String messageId, boolean isPlayerWhitelisted, String message) {
-        if (Boolean.TRUE.equals(isPlayerWhitelisted)){
-            channel.deleteMessageById(messageId).queue();
-            channel.sendMessage(Constants.USER_EXISTS_ON_WHITELIST_MESSAGE).queue();
-        }
-        if (Boolean.FALSE.equals(isPlayerWhitelisted)){
-            if (Boolean.FALSE.equals(Main.getIsParameterInTesting("global"))) {
-                channel.sendMessage(Constants.ADDED_TO_WHITELIST_MESSAGE).queue();
-            }
-            try {
-                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist add " + message));
-                //setWhitelistUsernames();
-                TextChannel modChatChannel = jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
-                modChatChannel.sendMessage("New player has been added to the whitelist from Discord").queue();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -680,19 +610,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
     }
 
-    public static void setMinecraftId() throws IOException {
-        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-        Set<OfflinePlayer> players = Bukkit.getWhitelistedPlayers();
-        for (String playerFromWhitelist : whitelistCfg.getConfigurationSection("players").getKeys(false)) {
-            for (OfflinePlayer player : players){
-                if (whitelistCfg.getString("players." + playerFromWhitelist + ".minecraftName").toLowerCase().contains(player.getName().toLowerCase())){
-                    whitelistCfg.set("players." + playerFromWhitelist + ".minecraftId", player.getUniqueId().toString());
-                }
-            }
-        }
-        whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-    }
-
     public static void logPlayerBan(PlayerCommandPreprocessEvent event, Message messageFromDiscordConsole) {
         TextChannel banLogChannel = jda.getTextChannelById(Constants.BAN_LOG_CHANNEL_ID);
         assert banLogChannel != null;
@@ -749,31 +666,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             }
         }
         whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-    }
-
-
-
-    public static void purge(){
-        ArrayList<String> discordMembers = new ArrayList<>();
-        ArrayList<String> whitelistedPlayers = new ArrayList<>();
-        for (OfflinePlayer player : Bukkit.getWhitelistedPlayers()){
-            whitelistedPlayers.add(player.getName().toLowerCase());
-            for (String minecraftUsername : Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME)).getConfigurationSection("players").getKeys(false)) {
-                if (player.getName().equals(minecraftUsername)) {
-                    discordMembers.add(minecraftUsername.toLowerCase());
-                }
-            }
-        }
-        ArrayList<String> test = new ArrayList<>();
-        for (String d : whitelistedPlayers){
-            if (!discordMembers.contains(d)){
-                test.add(d);
-            }
-        }
-        for (String d : test){
-            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "whitelist remove " + d));
-        }
-
     }
 
     public static String getDiscordUserName(String UUID){

@@ -3,6 +3,7 @@ package lmp.PlayerShops;
 import lmp.Api;
 import lmp.Backbacks.Inventories;
 import lmp.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerShopsCommand implements CommandExecutor {
     Inventory inv;
@@ -27,10 +29,10 @@ public class PlayerShopsCommand implements CommandExecutor {
                 if (args[0] != null){
                     if (args[0].equalsIgnoreCase(Constants.MY_SHOP_COMMAND)) {
                         String invTitle = playerName + "'s Shop";
-                        if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(invTitle + ".isOpen"))){
+                        if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(player.getUniqueId() + ".isOpen"))){
                             inv = Inventories.setInventoryWhenOpened(player, Constants.YML_PLAYER_SHOP_FILE_NAME, invSize, invTitle, playerName);
                             Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setLoreInPlayerShop(playerName, inv, player.getName()));
-                            playerShopCfg.set(playerName + ".isOpen", true);
+                            playerShopCfg.set(player.getUniqueId() + ".isOpen", true);
                             playerShopCfg.save(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
                         } else {
                             player.sendMessage(ChatColor.YELLOW + "That player's shop is currently open. Player's shop can only be opened by one player at a time. Try again later.");
@@ -45,7 +47,7 @@ public class PlayerShopsCommand implements CommandExecutor {
                                 ItemStack singleItemStack = player.getInventory().getItemInMainHand();
                                 singleItemStack.setAmount(1);
                                 player.sendMessage(ChatColor.GREEN + "Set value of item to " + ChatColor.GOLD + "$" + itemWorth);
-                                playerShopCfg.set(player.getName() + ".itemWorth." + singleItemStack, itemWorth);
+                                playerShopCfg.set(player.getUniqueId() + ".itemWorth." + singleItemStack, itemWorth);
                                 itemStack.setAmount(totalItemCount);
                                 playerShopCfg.save(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
                             }
@@ -60,10 +62,10 @@ public class PlayerShopsCommand implements CommandExecutor {
                         try {
                             String playerShopToOpen = args[1];
                             String invTitle = args[1] + "'s Shop";
-                            if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(invTitle + ".isOpen"))){
+                            if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(Objects.requireNonNull(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(playerShopToOpen)))).getUniqueId() + ".isOpen"))){
                                 inv = Inventories.setInventoryWhenOpened(player, Constants.YML_PLAYER_SHOP_FILE_NAME, invSize, invTitle, playerShopToOpen);
-                                Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setLoreInPlayerShop(playerShopToOpen, inv, player.getName()));
-                                playerShopCfg.set(playerName + ".isOpen", true);
+                                player.openInventory(Inventories.setLoreInPlayerShop(playerShopToOpen, inv, player.getName()));
+                                playerShopCfg.set(Api.getMinecraftIdFromMinecraftName(playerShopToOpen) + ".isOpen", true);
                                 playerShopCfg.save(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
                             } else {
                                 player.sendMessage(ChatColor.YELLOW + "That player's shop is currently open. Player's shop can only be opened by one player at a time. Try again later.");

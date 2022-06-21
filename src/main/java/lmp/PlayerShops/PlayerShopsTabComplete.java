@@ -14,6 +14,8 @@ import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerShopsTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -28,9 +30,10 @@ public class PlayerShopsTabComplete implements TabCompleter {
             tabList = playerShopCommandList;
             commandText = args[0];
         } else {
-            for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()){
-                if (playerShopCfg.isSet(olp.getName() + Constants.YML_SIZE)){
-                    tabList.add(olp.getName());
+            for (String minecraftId : playerShopCfg.getKeys(false)){
+                if (playerShopCfg.isSet(minecraftId + ".slots") && playerShopCfg.getString(minecraftId + ".slots") != null){
+
+                    tabList.add(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)).getName());
                 }
             }
             try {

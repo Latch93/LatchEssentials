@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerShops {
     private PlayerShops(){
@@ -31,7 +32,7 @@ public class PlayerShops {
         String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
         String sellerShopPlayerName = arr[0];
         itemStack.setItemMeta(Inventories.getItemWorthWithLore(player, itemStack, sellerShopPlayerName));
-        if (!playerShopCfg.isSet(player.getName() + ".itemWorth." + itemStack)){
+        if (!playerShopCfg.isSet(player.getUniqueId() + ".itemWorth." + itemStack)){
             e.setCancelled(true);
             player.sendMessage(ChatColor.RED + "You need to set this item's worth with " + ChatColor.AQUA + "/ps setworth [amount]" + ChatColor.RED + " before you can add it to your shop.");
         }
@@ -53,7 +54,6 @@ public class PlayerShops {
                         player.getInventory().setItem(i,itemStack);
                     }
                     player.updateInventory();
-
                 }
             }
         }
@@ -63,7 +63,6 @@ public class PlayerShops {
         OfflinePlayer offlineBuyer = null;
         OfflinePlayer offlineSeller = null;
 
-        double buyerBalance;
         FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
         if (Boolean.TRUE.equals(e.isShiftClick())){
             e.setCancelled(true);
@@ -71,29 +70,20 @@ public class PlayerShops {
             if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
                 String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
                 String sellerShopPlayerName = arr[0];
-                for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()) {
-                    Player temp = (Player) e.getWhoClicked();
-                    if (temp.getName().equalsIgnoreCase(olp.getName())) {
-                        offlineBuyer = olp;
-                    }
-                    if (sellerShopPlayerName.equalsIgnoreCase(olp.getName())) {
-                        offlineSeller = olp;
-                    }
-                }
-                buyerBalance = econ.getBalance(offlineBuyer);
-                assert offlineSeller != null;
+                offlineBuyer = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(e.getWhoClicked().getName())));
+                offlineSeller = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(sellerShopPlayerName)));
                 ItemStack ims = e.getCurrentItem();
                 assert ims != null;
                 int itemAmount = ims.getAmount();
                 ims.setAmount(1);
                 ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
                 ims.setItemMeta(im);
-                int itemCost = playerShopCfg.getInt(offlineSeller.getName() + ".itemWorth." + ims);
+                int itemCost = playerShopCfg.getInt(offlineSeller.getUniqueId() + ".itemWorth." + ims);
                 ims.setAmount(itemAmount);
                 if (e.getClick().toString().equalsIgnoreCase("LEFT")){
-                    leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
+                    leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
                 } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
-                    rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, buyerBalance, itemCost);
+                    rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
                 }
             } else {
                 e.setCancelled(true);

@@ -25,9 +25,11 @@ public class Inventories {
         FileConfiguration inventoryCfg = Api.getFileConfiguration(configFile);
         UUID playerUUID = e.getPlayer().getUniqueId();
         String playerName = e.getPlayer().getName();
-        for (OfflinePlayer olp : Bukkit.getWhitelistedPlayers()){
-            if (inventoryCfg.isSet(olp.getName() + Constants.YML_SIZE) && e.getView().getTitle().contains(olp.getName())){
-                playerName = olp.getName();
+        String[] arr = e.getView().getTitle().split("'");
+        UUID titleUUID = UUID.fromString(Api.getMinecraftIdFromMinecraftName(arr[0]));
+        for (String minecraftId : inventoryCfg.getKeys(false)){
+            if (inventoryCfg.isSet(minecraftId + Constants.YML_SIZE) && e.getView().getTitle().toLowerCase().contains(Objects.requireNonNull(Objects.requireNonNull(Bukkit.getOfflinePlayer(titleUUID).getName()).toLowerCase()))){
+                playerName = Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)).getName();
             }
         }
         for (int i = 0; i < e.getInventory().getSize(); i++){
@@ -36,18 +38,18 @@ public class Inventories {
                 ItemMeta im = setItemLore(e, i, false);
                 assert itemStack != null;
                 itemStack.setItemMeta(im);
-                inventoryCfg.set(playerName + Constants.YML_SLOTS + i, itemStack);
+                inventoryCfg.set(titleUUID + Constants.YML_SLOTS + i, itemStack);
             } else {
-                inventoryCfg.set(playerName + Constants.YML_SLOTS + i, null);
+                inventoryCfg.set(titleUUID + Constants.YML_SLOTS + i, null);
             }
         }
-        if (inventoryCfg.get(playerName + Constants.YML_SIZE) == null){
-            inventoryCfg.set(playerName + Constants.YML_SIZE, e.getInventory().getSize());
+        if (inventoryCfg.get(titleUUID + Constants.YML_SIZE) == null){
+            inventoryCfg.set(titleUUID + Constants.YML_SIZE, e.getInventory().getSize());
         } else {
-            inventoryCfg.set(playerName + Constants.YML_SIZE, inventoryCfg.getInt(playerName + Constants.YML_SIZE));
+            inventoryCfg.set(titleUUID + Constants.YML_SIZE, inventoryCfg.getInt(titleUUID + Constants.YML_SIZE));
         }
-        inventoryCfg.set(playerName + ".name", playerName);
-        inventoryCfg.set(playerName + ".isOpen", false);
+        inventoryCfg.set(titleUUID + ".name", playerName);
+        inventoryCfg.set(titleUUID + ".isOpen", false);
         inventoryCfg.save(configFile);
     }
 
@@ -113,18 +115,19 @@ public class Inventories {
         FileConfiguration inventoryConfig = Api.loadConfig(fileName);
         Inventory inv = null;
         String playerName = "";
-        if (playerShopToOpen == null || playerShopToOpen.equalsIgnoreCase(player.getName())){
-            playerName = player.getName();
+        String playerId = "";
+        if (playerShopToOpen == null){
+            playerId = player.getUniqueId().toString();
         } else {
-            playerName = playerShopToOpen;
+            playerId = Api.getMinecraftIdFromMinecraftName(playerShopToOpen);
         }
-        if (inventoryConfig.get(playerName + Constants.YML_SIZE) != null) {
+        if (inventoryConfig.get(playerId + Constants.YML_SIZE) != null) {
             inv = Bukkit.createInventory(null, slots, invTitle);
-            if ((inventoryConfig.get(playerName + ".slots") != null)){
-                for(String users : inventoryConfig.getConfigurationSection(playerName + ".slots").getKeys(false)) {
-                    inventoryConfig.set(playerName + ".isOpen", true);
+            if ((inventoryConfig.get(playerId + ".slots") != null)){
+                for(String users : inventoryConfig.getConfigurationSection(playerId + ".slots").getKeys(false)) {
+                    inventoryConfig.set(playerId + ".isOpen", true);
                     inventoryConfig.save(fileName);
-                    ItemStack is = inventoryConfig.getItemStack(playerName + Constants.YML_SLOTS + users);
+                    ItemStack is = inventoryConfig.getItemStack(playerId + Constants.YML_SLOTS + users);
                     inv.setItem(Integer.parseInt(users), is);
                 }
             }
@@ -138,6 +141,8 @@ public class Inventories {
 
     public static Inventory setLoreInPlayerShop(String playerShopToOpen, Inventory inv, String playerName){
         FileConfiguration playerShopCfg = Api.loadConfig(Constants.YML_PLAYER_SHOP_FILE_NAME);
+        OfflinePlayer playerShopToOpenPlayer = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(playerShopToOpen)));
+        OfflinePlayer secondPlayerNameToCheckAgainst = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(playerName)));
         for (int i = 0; i < inv.getSize(); i++){
             if (inv.getItem(i) != null){
                 ItemStack itemStack = inv.getItem(i);
@@ -147,15 +152,16 @@ public class Inventories {
                 int totalAmount = itemStack.getAmount();
                 int itemWorth;
                 ItemMeta im = Objects.requireNonNull(inv.getItem(i)).getItemMeta();
-                itemWorth = playerShopCfg.getInt(playerShopToOpen + ".itemWorth." + itemStack);
+                itemWorth = playerShopCfg.getInt(playerShopToOpenPlayer.getUniqueId() + ".itemWorth." + itemStack);
                 List<String> loreList = new ArrayList<>();
+                assert im != null;
                 if (im.getLore()!= null){
                     loreList.add(im.getLore().get(0));
                 }
                 itemStack.setAmount(1);
                 itemStack.setAmount(itemStackAmount);
                 int totalWorth = totalAmount * itemWorth;
-                if (!playerShopToOpen.equalsIgnoreCase(playerName)){
+                if (!playerShopToOpenPlayer.getUniqueId().equals(secondPlayerNameToCheckAgainst.getUniqueId())){
                     loreList.add(ChatColor.GREEN + "Cost per item " + ChatColor.GOLD + "$" + itemWorth);
                     loreList.add(ChatColor.GREEN + "Left click to purchase " + ChatColor.GOLD + "1" + ChatColor.GREEN + " item.");
                     if (totalAmount > 9) {
@@ -179,7 +185,7 @@ public class Inventories {
         ItemMeta im = Objects.requireNonNull(itemStack.getItemMeta());
         im.setLore(null);
         itemStack.setItemMeta(im);
-        itemWorth = playerShopCfg.getInt(playerShopToOpen + ".itemWorth." + itemStack);
+        itemWorth = playerShopCfg.getInt(Bukkit.getPlayer(playerShopToOpen).getUniqueId() + ".itemWorth." + itemStack);
         return itemWorth;
     }
 

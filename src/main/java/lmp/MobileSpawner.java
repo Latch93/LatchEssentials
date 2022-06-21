@@ -58,12 +58,7 @@ public class MobileSpawner {
 
     public static void setSpawnerOnPlace(BlockPlaceEvent event, Economy econ){
         if(event.getItemInHand().getItemMeta().getLore() != null && event.getItemInHand().getType() == Material.SPAWNER) {
-            OfflinePlayer player = null;
-            for (OfflinePlayer offlinePlayer : Bukkit.getWhitelistedPlayers()){
-                if (event.getPlayer().getName().equalsIgnoreCase(offlinePlayer.getName())){
-                    player = offlinePlayer;
-                }
-            }
+            OfflinePlayer player = Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId());
             if (econ.getBalance(player) >= 5000) {
                 EntityType e = EntityType.valueOf(event.getItemInHand().getItemMeta().getLore().get(0));
                 CreatureSpawner cs = (CreatureSpawner) event.getBlock().getState();

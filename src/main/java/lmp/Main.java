@@ -176,17 +176,10 @@ public class Main extends JavaPlugin implements Listener {
             Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
             Bank.showLastSessionReward(e.getPlayer());
             Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
+            Api.checkPlayerMemberStatus(e.getPlayer());
         }
-        User user = luckPerms.getUserManager().getUser(e.getPlayer().getUniqueId());
-        assert user != null;
-        if (!"default".equalsIgnoreCase(user.getPrimaryGroup()) && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("showJoinMessage"))){
-            e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Objects.requireNonNull(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("joinMessage")))));
-        }
-        if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT ).equals(Tristate.TRUE)){
-            e.getPlayer().sendMessage(ChatColor.RED + "You need to link your Discord and Minecraft accounts.\n" +
-                    "Go to Discord and type the following into the General Channel -> " + ChatColor.AQUA + "!link\n" +
-                    ChatColor.RED + "Then copy and paste the command into Minecraft chat and click enter.");
-        }
+        Api.updateUserInfo(e.getPlayer());
+        Api.checkPlayerMemberStatus(e.getPlayer());
     }
 
 
