@@ -3,8 +3,10 @@ package lmp;
 import io.netty.util.Constant;
 import lmp.LatchTwitchBot.LatchTwitchBot;
 import lmp.LatchTwitchBot.LatchTwitchBotRunnable;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.util.Tristate;
@@ -212,6 +214,19 @@ public class Api {
         }
     }
 
+    public static boolean cancelJrModEvent(UUID uniqueId){
+        boolean isInvisibleJrMod = false;
+        if (Api.isPlayerInvisible(uniqueId.toString())){
+            net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(uniqueId);
+            assert user != null;
+            if (user.data().contains(InheritanceNode.builder("jr-mod").value(true).build(), NodeEqualityPredicate.EXACT ).equals(Tristate.TRUE)){
+                isInvisibleJrMod = true;
+                Objects.requireNonNull(Bukkit.getPlayer(uniqueId)).sendMessage(ChatColor.RED + "Jr Mods are not allowed to Break or Place blocks while invisible.");
+            }
+        }
+        return isInvisibleJrMod;
+    }
+
     public static void updateUserInfo(Player player) throws IOException {
         FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
         if (whitelistCfg.isSet(String.valueOf(player.getUniqueId()))){
@@ -221,6 +236,9 @@ public class Api {
             if (LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(discordId) != null){
                 whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(discordId)).getUser().getName());
                 whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
+                if (!player.getName().equalsIgnoreCase(whitelistCfg.getString(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName"))){
+                    whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
+                }
             } else {
                 whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", false);
                 player.kickPlayer("You not in Latch's Discord.");
@@ -421,5 +439,21 @@ public class Api {
             }
         }
         whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+    }
+
+    public static void updateDiscordRolesFile(){
+        FileConfiguration discordRoleCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DISCORD_ROLES_FILE_NAME));
+        for (Role role : LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getRoles()) {
+            discordRoleCfg.set(Constants.YML_ROLES + "name", role.getName());
+            discordRoleCfg.set(Constants.YML_ROLES + "id", role.getId());
+        }
+    }
+
+    public static void addRoleFromDiscord(String roleName){
+        Main.luckPerms.getGroupManager().loadAllGroups();
+        CompletableFuture<Group> futureGroup = Main.luckPerms.getGroupManager().createAndLoadGroup(roleName);
+        futureGroup.thenAcceptAsync(group -> {
+            Main.luckPerms.getGroupManager().saveGroup(group);
+        });
     }
 }

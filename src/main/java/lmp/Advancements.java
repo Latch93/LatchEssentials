@@ -116,6 +116,7 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:husbandry/allay_deliver_cake_to_note_block", "You've Got a Friend in Me","Have an Allay drop a Cake at a Note Block."));
         advancements.add(new Advancement("minecraft:adventure/avoid_vibration", "Sneak 100","Sneak near a Sculk Sensor or Warden to prevent it from detecting you."));
         advancements.add(new Advancement("minecraft:adventure/kill_mob_near_sculk_catalyst", "It Spreads","Kill a mob near a Sculk Catalyst."));
+        // Bukkit Bukkit
 
         advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
         advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));

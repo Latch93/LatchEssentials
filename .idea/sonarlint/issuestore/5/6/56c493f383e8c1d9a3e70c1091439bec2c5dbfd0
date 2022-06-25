@@ -1,0 +1,20 @@
+
+h
+java:S1192"FDefine a constant instead of duplicating this literal "lotto" 3 times.(Ì¦¸òüÿÿÿÿ8ŠäÍ™0
+f
+java:S1192"IDefine a constant instead of duplicating this literal "withdraw" 3 times.(ÔØ½¾8ŠäÍ™0
+¼
+java:S1598"¥This file "LMPCommandTabComplete.java" should be located in "lmp\PlayerShops" directory, not in "C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\DiscordText".(Éİì®
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Éİì®
+L
+java:S1128"*Remove this unused import 'lmp.Constants'.(æ½ß¼ûÿÿÿÿ8ı¸‘Í™0
+D
+java:S1128".Remove this unused import 'org.bukkit.Bukkit'.(Ø­æ
+P
+java:S1128"5Remove this unused import 'org.bukkit.OfflinePlayer'.(ƒØ¤¥şÿÿÿÿ
+n
+java:S1128"LRemove this unused import 'org.bukkit.configuration.file.FileConfiguration'.(¸ù—Óÿÿÿÿÿ8ƒ¹‘Í™0
+D
+java:S1128".Remove this unused import 'java.util.Objects'.(¼¸õ›
+F
+java:S1128"+Remove this unused import 'java.util.UUID'.(ÀãÄ£úÿÿÿÿ

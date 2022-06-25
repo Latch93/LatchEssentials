@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.InheritanceNode;
+import net.md_5.bungee.protocol.packet.Chat;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -23,6 +24,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class LMPCommand implements CommandExecutor {
@@ -55,6 +58,12 @@ public class LMPCommand implements CommandExecutor {
                         Location dropLocation = player.getLocation();
                         world.dropItem(dropLocation, paper);
                         player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
+                        FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
+                        Date date = new Date();
+                        moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
+                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
+                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
+                        moneyOrderLogCfg.save(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
                     } else {
                         player.sendMessage(ChatColor.RED + "Can't withdraw more than your current balance.");
                     }
@@ -77,6 +86,13 @@ public class LMPCommand implements CommandExecutor {
                                     player.sendMessage(ChatColor.GREEN + "Deposited " + ChatColor.GOLD + "$" + amount + ChatColor.GREEN + " from " + ChatColor.GOLD + playerName);
                                     is.setAmount(0);
                                     player.getInventory().setItem(count, is);
+                                    FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
+                                    Date date = new Date();
+                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
+                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".from", playerName);
+                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "deposit");
+                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
+                                    moneyOrderLogCfg.save(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
                                 } else {
                                     player.sendMessage(ChatColor.RED + "Can't deposit more MoneyOrders because it will exceed the server's maximum amount.");
                                 }
@@ -247,12 +263,16 @@ public class LMPCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.RED + "You need to react to the rules in the " + ChatColor.AQUA + "Discord Rules Channel " + ChatColor.RED + "before you can link your account.");
                     }
+                } else if (args[0].equalsIgnoreCase("help")){
+                    player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e){
             player.sendMessage(ChatColor.RED + "An error has occurred. Please review your command and try again.");
         } catch (NullPointerException e){
             player.sendMessage(ChatColor.RED + "An error has occurred. If you are linking your Discord and Minecraft accounts, you need to be a member in Discord.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return false;

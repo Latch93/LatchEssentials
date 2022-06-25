@@ -30,7 +30,7 @@ public class DiscordStaffChatCommand implements CommandExecutor {
                         String[] messageArr = convertedMessage.split(" » ");
                         for (Player p : Bukkit.getOnlinePlayers()){
                             if (p.hasPermission("group.jr-mod")){
-                                p.sendMessage(ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + " - " + ChatColor.GOLD + playerName + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
+                                p.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + playerName + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }
                         discordStaffChannel.sendMessage("[Mod-Chat] - " + convertedMessage).queue();

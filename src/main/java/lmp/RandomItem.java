@@ -54,14 +54,14 @@ public class RandomItem{
                         EmbedBuilder eb = new EmbedBuilder();
                         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
                         Date date = new Date(System.currentTimeMillis());
-                        eb.setTitle("Discord Username: " + LatchDiscord.getDiscordUserName(player.getName()) + "\nMC Username: " + player.getName() + "\nRandom Item: " + m[n].toString() + "\nLocal Time: " + formatter.format(date), null);
+                        eb.setTitle("Discord Username: " + LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(Api.getDiscordIdFromMCid(player.getUniqueId().toString())).getUser().getName() + "\nMC Username: " + player.getName() + "\nRandom Item: " + m[n].toString() + "\nLocal Time: " + formatter.format(date), null);
                         eb.setColor(new Color(0xE1E2BF0D, true));
                         TextChannel randomItemLogChannel = LatchDiscord.jda.getTextChannelById(Constants.RANDOM_ITEM_LOG_CHANNEL_ID);
                         assert randomItemLogChannel != null;
                         randomItemLogChannel.sendMessageEmbeds(eb.build()).queue();
                     } catch (IllegalArgumentException e){
                         Api.messageInConsole(ChatColor.RED + "Can't give air in Random Item " + e);
-                        player.sendMessage(ChatColor.RED + "An error occured. Please click for a random item again :)");
+                        player.sendMessage(ChatColor.RED + "An error occurred. Please click for a random item again :)");
                     }
 
                 } else {

@@ -1,0 +1,18 @@
+
+`	java:S112T"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+`	java:S112g"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+`
+java:S1192"JDefine a constant instead of duplicating this literal ".boughtIn" 6 times.(Ë¶•
+E
+java:S1066`"/Merge this if statement with the enclosing one.(³É‚û
+P
+java:S1141Q"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+U
+java:S1118":Add a private constructor to hide the implicit public one.(²êöÜüÿÿÿÿ
+9
+java:S2119"Save and re-use this "Random".(šŸ«íøÿÿÿÿ
+1
+java:S1116!"Remove this empty statement.(Ëü‚
+<	java:S108*")Either remove or fill this block of code.(ßâ
+m
+java:S37760"RRefactor this method to reduce its Cognitive Complexity from 30 to the 15 allowed.(È­˜‹ûÿÿÿÿ

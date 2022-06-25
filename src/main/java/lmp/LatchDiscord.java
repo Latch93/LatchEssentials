@@ -107,21 +107,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
 
     @Override
-    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent e) {
-        if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.ADMIN_ROLE_ID)){
-            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "admin");
-        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.MOD_ROLE_ID)){
-            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "mod");
-        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.JR_MOD_ROLE_ID)){
-            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "jr-mod");
-        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.HELPER_ROLE_ID)){
-            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "helper");
-        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.BUILDER_ROLE_ID)){
-            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "builder");
-        }
-    }
-
-    @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         MessageChannel channel = event.getChannel();
         if (event.getMember() != null) {
@@ -185,6 +170,31 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                     minecraftChannel.sendMessageEmbeds(eb.build()).queue();
                 }
+                if (channel.getId().equals(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && message.equalsIgnoreCase(Constants.ONLINE_COMMAND)){
+                    ArrayList<String> onlinePlayers = new ArrayList<>();
+                    EmbedBuilder eb = new EmbedBuilder();
+                    TextChannel minecraftChannel = jda.getTextChannelById(setTestingChannel(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID));
+                    assert minecraftChannel != null;
+                    StringBuilder onlinePlayerMessage = new StringBuilder();
+                    int count = 1;
+                    for (Player player : Bukkit.getOnlinePlayers()){
+                        if (Boolean.TRUE.equals(Api.isPlayerInvisible(player.getUniqueId().toString()))){
+                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + "\n");
+                            onlinePlayers.add(player.getDisplayName());
+                            count++;
+                        }
+                    }
+
+                    if (!onlinePlayers.isEmpty()){
+                        eb.setColor(new Color(0xC6D13EFF, true));
+                        eb.setTitle("Online Vanished Players: " + onlinePlayers.size());
+                        eb.setDescription(onlinePlayerMessage.toString());
+                    } else {
+                        eb.setColor(new Color(0xC6D5042E, true));
+                        eb.setTitle("No Vanished Players Online");
+                    }
+                    minecraftChannel.sendMessageEmbeds(eb.build()).queue();
+                }
                 // Deletes all messages from a specified user
                 if (userId.equals(Constants.SERVER_OWNER_ID) && message.contains(Constants.CLEAR_ALL_USER_MESSAGES_COMMAND)) {
                     String[] arr = event.getMessage().getContentRaw().split(Constants.CLEAR_ALL_USER_MESSAGES_COMMAND);
@@ -238,7 +248,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
                         TextChannel applicationSubmittedChannel = jda.getTextChannelById(Constants.STAFF_APP_SUBMITTED_CHANNEL_ID);
                         event.getJDA().addEventListener(new StaffApplication(privateChannel, event.getAuthor(), applicationSubmittedChannel));
-                        return privateChannel.sendMessage("Please enter your application information line by line. \n Press enter after each question response. \n 1.) How old are you?");
+                        return privateChannel.sendMessage("Please enter your application information line by line.\nPress enter after each question response.\n" +
+                                "\nResponsibilities as a Jr. Mod:\n1.)Watch new players on the server while in vanish.\n2.)Ensure new players are following the rules, i.e., not x-raying, griefing, stealing or being a jerk.\n" +
+                                "1.) How old are you?");
                     }).queue();
                 }
                 if (channel.getId().equals(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase(Constants.STAT_COMMAND)){
@@ -296,7 +308,10 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }).queue();
                 }
                 if (message.equalsIgnoreCase("!link")){
-                    channel.sendMessage(username + " --- Join the server and paste the following command into you chat to get perms.").queue();
+                    if (!messageSender.getRoles().toString().contains("Member")){
+                        channel.sendMessage(username + " --- React to the <#625996424554872842> channel to get the Member role and access to the server ip").queue();
+                    }
+                    channel.sendMessage(username + " --- Log onto the server and paste the following command into your chat to get perms.").queue();
                     channel.sendMessage("/lmp link " + userId).queue();
                 }
                 // Searches the player shops and returns if items are in a player's shop
@@ -365,12 +380,55 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 whitelistToggle(messageArr[1], channel);
             }
         }
+
         if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase("!joinTime")){
             channel.sendMessage(senderName + " joined on " + messageSender.getTimeJoined().toString().split("T")[0]).queue();
         }
         if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("plop")){
             try {
                 Api.setIsPlayerInDiscord();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!setafk")){
+            String[] messageArr = message.split(" ");
+            FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+            configCfg.set("isLatchAFK", Boolean.parseBoolean(messageArr[1]));
+            try {
+                configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+                channel.sendMessage("AFK status has been set to " + messageArr[1]).queue();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!afkmessage")){
+            FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+            configCfg.set("afkMessage", Arrays.toString(message.split(" ", 2)));
+            try {
+                configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+                channel.sendMessage("AFK message has been set.").queue();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!setreturntime")){
+            String[] messageArr = message.split(" ");
+            FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+            configCfg.set("returnTime", messageArr[1]);
+            try {
+                configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+                channel.sendMessage("Return time has been set.").queue();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!setjoinmessage")){
+            FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+            configCfg.set("joinMessage", Arrays.toString(message.split(" ", 2)));
+            try {
+                configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+                channel.sendMessage("Join message has been updated.").queue();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -386,7 +444,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 int minutes = p.getMinutes();
                 int hoursOfTheDay = hours % 24;
                 int minutesOfTheHour = minutes % 60;
-                channel.sendMessage(configCfg.getString("afkMessage") + days + " days | " + hoursOfTheDay + " hours | " + minutesOfTheHour + " minutes").queue();
+                channel.sendMessage(configCfg.getString("afkMessage") +" He will return in " + days + " days | " + hoursOfTheDay + " hours | " + minutesOfTheHour + " minutes").queue();
             }
         }
 

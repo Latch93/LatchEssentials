@@ -12,11 +12,9 @@ import lmp.LatchTwitchBot.LatchTwitchBotConfig;
 import lmp.DiscordText.LMPCommand;
 import lmp.DiscordText.LMPConfig;
 import lmp.LatchTwitchBot.LatchTwitchBotTabComplete;
-import lmp.PlayerShops.PlayerShops;
-import lmp.PlayerShops.PlayerShopsCommand;
-import lmp.PlayerShops.PlayerShopsInventoryConfig;
-import lmp.PlayerShops.PlayerShopsTabComplete;
+import lmp.PlayerShops.*;
 import io.ipgeolocation.api.IPGeolocationAPI;
+import lmp.PlayerShops.LMPCommandTabComplete;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -51,9 +49,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.security.auth.login.LoginException;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -117,7 +118,7 @@ public class Main extends JavaPlugin implements Listener {
 
         // Server Command
         Objects.requireNonNull(this.getCommand("lmp")).setExecutor(new LMPCommand());
-
+        Objects.requireNonNull(this.getCommand("lmp")).setTabCompleter(new LMPCommandTabComplete());
         // Discord Staff Chat Command
         Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
 
@@ -179,7 +180,6 @@ public class Main extends JavaPlugin implements Listener {
             Api.checkPlayerMemberStatus(e.getPlayer());
         }
         Api.updateUserInfo(e.getPlayer());
-        Api.checkPlayerMemberStatus(e.getPlayer());
     }
 
 
@@ -218,7 +218,7 @@ public class Main extends JavaPlugin implements Listener {
                 LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + LatchDiscord.getDiscordUserId(LatchDiscord.getDiscordUserName(e.getEntity().getName())) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
             }
         }
-        if (Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
+        if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
             DecimalFormat df = new DecimalFormat("0.00");
             double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(e.getEntity()));
             double percentToRemove = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("deathBalancePercentage");
@@ -249,7 +249,7 @@ public class Main extends JavaPlugin implements Listener {
                 Objects.requireNonNull(LatchDiscord.jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
                 for (Player player : Bukkit.getOnlinePlayers()){
                     if (player.hasPermission("group.jr-mod")){
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + e.getPlayer().getDisplayName() + " » " + e.getMessage());
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
                     }
                 }
                 e.setCancelled(true);
@@ -396,11 +396,36 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event){
+    public void onBlockBreak(BlockBreakEvent event) throws IOException {
+        event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockBreak"))){
             Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), event, null, null, null);
             FarmMoney.rewardMoneyFromCrops(event, Api.getEconomy());
             MobileSpawner.setSpawnerOnBreak(event);
+        }
+        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)){
+            if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)){
+                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                for (Player p : Bukkit.getOnlinePlayers()){
+                    if (p.hasPermission("group.jr-mod")){
+                        p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+                    }
+                }
+            }
+            if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
+                LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+            }
+            FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            Date date = new Date();
+            Player player = event.getPlayer();
+            blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
+            blockBreakLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
         }
 //        Location chestLocation = new Location(Bukkit.getWorld("world"), 10000, 68, 10004);
 //        Chest chest = (Chest) chestLocation.getBlock().getState();
@@ -420,6 +445,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event){
+        event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockPlace"))) {
             Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, event, null, null);
             MobileSpawner.setSpawnerOnPlace(event, Api.getEconomy());

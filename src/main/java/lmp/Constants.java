@@ -107,6 +107,7 @@ public class Constants {
     public static final String YML_SIZE = ".size";
     public static final String YML_ITEMS = "items.";
     public static final String YML_SLOTS = ".slots.";
+    public static final String YML_ROLES = "roles.";
     // Config File Names
     public static final String YML_BANK_FILE_NAME = "bank";
     public static final String YML_AUTO_MINER_FILE_NAME = "autoMiner";
@@ -119,6 +120,9 @@ public class Constants {
     public static final String YML_TWITCH_FILE_NAME = "twitch";
     public static final String YML_AUTO_SORTER_FILE_NAME = "autoSorter";
     public static final String YML_BOSS_FILE_NAME = "boss";
+    public static final String YML_DISCORD_ROLES_FILE_NAME = "discordRoles";
+    public static final String YML_BLOCK_BREAK_LOG_FILE_NAME = "blockBreakLog";
+    public static final String YML_MONEY_ORDER_LOG_FILE_NAME = "moneyOrderLog";
 
     public static final String INVALID_PARAMETERS = "Incorrect parameters. Please try again";
 

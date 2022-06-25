@@ -1,0 +1,27 @@
+
+\
+java:S1192j"FDefine a constant instead of duplicating this literal "world" 4 times.(§÷¡–
+^
+java:S1192g"HDefine a constant instead of duplicating this literal "latch93" 3 times.(”Ù
+P
+java:S1141+"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+Q
+java:S1141¨"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+Q
+java:S1141¯"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+Q
+java:S1141³"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+Q
+java:S1141Ó"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+Q
+java:S1141"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+t	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(¿»´ïıÿÿÿÿ
+n
+java:S3776 "SRefactor this method to reduce its Cognitive Complexity from 135 to the 15 allowed.(¼ß…ıüÿÿÿÿ
+D	java:S108¸")Either remove or fill this block of code.(–ŠúÃşÿÿÿÿ
+W
+java:S1128"ARemove this unused import 'net.md_5.bungee.protocol.packet.Chat'.(Ø­Ğ®
+V
+java:S1128"4Remove this unused import 'java.time.LocalDateTime'.(æÃ§ƒüÿÿÿÿ8ÂÄ¶Ì™0
+\
+java:S1128"?Remove this unused import 'java.time.format.DateTimeFormatter'.(‰÷÷ª8ÃÄ¶Ì™0

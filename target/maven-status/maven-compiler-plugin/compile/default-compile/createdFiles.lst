@@ -39,6 +39,7 @@ lmp\FarmMoney.class
 lmp\LatchTwitchBot\LatchTwitchBotRunnable.class
 lmp\Advancement.class
 lmp\PingUtil.class
+lmp\PlayerShops\LMPCommandTabComplete.class
 lmp\LatchTwitchBot\LatchTwitchBot.class
 lmp\PlayerShops\PlayerShopsCommand.class
 lmp\Backbacks\BackPackInventoryConfig.class
