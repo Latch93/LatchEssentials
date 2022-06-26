@@ -78,7 +78,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (hourOfDay == 7) {
                 if (minuteOfHour == 0) {
@@ -107,7 +111,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (hourOfDay == 10) {
                 if (minuteOfHour == 0) {
@@ -136,7 +144,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (hourOfDay == 13) {
                 if (minuteOfHour == 0) {
@@ -165,7 +177,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (hourOfDay == 16) {
                 if (minuteOfHour == 0) {
@@ -194,7 +210,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             } else if (hourOfDay == 19) {
                 if (minuteOfHour == 0) {
@@ -222,7 +242,11 @@ public class LMPTimer extends BukkitRunnable {
                     }
                 }
                 if (minuteOfHour == 20){
-                    stopBloodmoon();
+                    try {
+                        stopBloodmoon();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
                 }
             } else if (hourOfDay == 22) {
@@ -280,8 +304,8 @@ public class LMPTimer extends BukkitRunnable {
         hordeList.add("SKELETON");
         hordeList.add("WITCH");
         bloodmoonCfg.set("HordeMobWhitelist", hordeList);
-        bloodmoonCfg.set("HordeMinPopulation", 2);
-        bloodmoonCfg.set("HordeMaxPopulation", 5);
+        bloodmoonCfg.set("HordeMinPopulation", 1);
+        bloodmoonCfg.set("HordeMaxPopulation", 3);
         bloodmoonCfg.set("EnableZombieBoss", false);
         bloodmoonCfg.set("BloodMoonSpawnMobRate", 10);
         bloodmoonCfg.set("MobHealthMultiplicator", 2);
@@ -291,9 +315,9 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonCfg.set("ItemDropsMaximum", 3);
         bloodmoonCfg.set("BaselineHordeSpawnrate", 600);
         List<String> dropList = new ArrayList<>();
-        dropList.add("IRON_INGOT:5:10");
+        dropList.add("IRON_INGOT:5:5");
         dropList.add("DIAMOND:1:1");
-        dropList.add("GOLD_INGOT:6:10");
+        dropList.add("GOLD_INGOT:6:7");
         dropList.add("IRON_BLOCK:2:5");
         dropList.add("GOLD_BLOCK:3:5");
         dropList.add("APPLE:3:5");
@@ -316,8 +340,8 @@ public class LMPTimer extends BukkitRunnable {
         hordeList.add("PILLAGER");
         hordeList.add("PHANTOM");
         bloodmoonCfg.set("HordeMobWhitelist", hordeList);
-        bloodmoonCfg.set("HordeMinPopulation", 3);
-        bloodmoonCfg.set("HordeMaxPopulation", 7);
+        bloodmoonCfg.set("HordeMinPopulation", 2);
+        bloodmoonCfg.set("HordeMaxPopulation", 5);
         bloodmoonCfg.set("EnableZombieBoss", true);
         bloodmoonCfg.set("BloodMoonSpawnMobRate", 20);
         bloodmoonCfg.set("MobHealthMultiplicator", 3);
@@ -389,14 +413,16 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
     }
 
-    public static void startBloodmoon(){
+    public static void startBloodmoon() throws IOException {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule mobGriefing false"));
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bloodmoon start world"));
+        Api.setDoSpawnersSpawn(true);
     }
 
-    public static void stopBloodmoon(){
+    public static void stopBloodmoon() throws IOException {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule mobGriefing true"));
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bloodmoon stop world"));
+        Api.setDoSpawnersSpawn(false);
     }
 
     public static void broadcastEasyBloodmoon(){

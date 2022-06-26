@@ -456,4 +456,10 @@ public class Api {
             Main.luckPerms.getGroupManager().saveGroup(group);
         });
     }
+
+    public static void setDoSpawnersSpawn(Boolean doSpawnersSpawn) throws IOException {
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        configCfg.set("areSpawnersActive", doSpawnersSpawn);
+        configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+    }
 }

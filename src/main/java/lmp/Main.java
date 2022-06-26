@@ -305,10 +305,16 @@ public class Main extends JavaPlugin implements Listener {
             //Api.denyOpenChestDuringBossBattle(event);
             CustomPortals.setBlockToNetherPortal(event);
         }
-
-
     }
-
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent e){
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        if (Boolean.FALSE.equals(configCfg.getBoolean("areSpawnersActive"))) {
+            if (e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
+                e.setCancelled(true);
+            }
+        }
+    }
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onInventoryClose"))) {
