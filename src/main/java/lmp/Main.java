@@ -403,17 +403,21 @@ public class Main extends JavaPlugin implements Listener {
             FarmMoney.rewardMoneyFromCrops(event, Api.getEconomy());
             MobileSpawner.setSpawnerOnBreak(event);
         }
-        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)){
-            if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)){
-                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
-                for (Player p : Bukkit.getOnlinePlayers()){
-                    if (p.hasPermission("group.jr-mod")){
-                        p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
+            if (!event.getPlayer().hasPermission("group.mod")) {
+                if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
+                    LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (p.hasPermission("group.jr-mod")) {
+                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+                        }
                     }
                 }
             }
-            if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
-                LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+            if (!event.getPlayer().hasPermission("group.mod")){
+                if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
+                    LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                }
             }
             FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");

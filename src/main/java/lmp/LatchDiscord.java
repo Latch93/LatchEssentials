@@ -391,7 +391,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 e.printStackTrace();
             }
         }
-        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!setafk")){
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!status")){
             String[] messageArr = message.split(" ");
             FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
             configCfg.set("isLatchAFK", Boolean.parseBoolean(messageArr[1]));
@@ -402,7 +402,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 e.printStackTrace();
             }
         }
-        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!afkmessage")){
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!message")){
             FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
             configCfg.set("afkMessage", Arrays.toString(message.split(" ", 2)));
             try {
@@ -412,7 +412,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 e.printStackTrace();
             }
         }
-        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!setreturntime")){
+        if (channel.getId().equalsIgnoreCase(Constants.TEST_CHANNEL_ID) && message.toLowerCase().contains("!returntime")){
             String[] messageArr = message.split(" ");
             FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
             configCfg.set("returnTime", messageArr[1]);
