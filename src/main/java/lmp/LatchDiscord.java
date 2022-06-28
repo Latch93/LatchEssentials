@@ -692,6 +692,16 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         banLogChannel.sendMessage(Api.getDiscordNameFromMCid(minecraftId) + " banned " + playerBannedName + " | Discord Username: <@" +  Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
                     }
                 }
+                if (banMessage[0].equalsIgnoreCase("/tempban")){
+                    try {
+                        for (int i = 2; i <= banMessage.length - 1; i++) {
+                            banReason.append(banMessage[i]).append(" ");
+                        }
+                        banLogChannel.sendMessage(Api.getDiscordNameFromMCid(minecraftId) + " temp banned " + playerBannedName + " | Reason: " + banReason + " | Discord Username: <@" + Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
+                    } catch (NullPointerException | ArrayIndexOutOfBoundsException e){
+                        banLogChannel.sendMessage(Api.getDiscordNameFromMCid(minecraftId) + " temp banned " + playerBannedName + " | Discord Username: <@" +  Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
+                    }
+                }
             } else {
                 if (banMessage[0].equalsIgnoreCase("ban")){
                     try {
@@ -701,6 +711,17 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         banLogChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(minecraftId) + ">" + " banned " + banMessage[1] + " | Reason: " + banReason + " | Discord Username: <@" + Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
                     } catch (NullPointerException | ArrayIndexOutOfBoundsException e){
                         banLogChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(minecraftId) + ">" + " banned " + banMessage[1] + " | Discord Username: <@" + Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
+                    }
+                }
+                else if (banMessage[0].equalsIgnoreCase("tempban")){
+                    event.
+                    try {
+                        for (int i = 2; i <= banMessage.length - 2; i++) {
+                            banReason.append(banMessage[i]).append(" ");
+                        }
+                        banLogChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(minecraftId) + ">" + " temp banned " + banMessage[1] + " | Reason: " + banReason + " | Discord Username: <@" + Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
+                    } catch (NullPointerException | ArrayIndexOutOfBoundsException e){
+                        banLogChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(minecraftId) + ">" + " temp banned " + banMessage[1] + " | Discord Username: <@" + Api.getDiscordIdFromMCid(Api.getMinecraftIdFromMinecraftName(playerBannedName)) + ">").queue();
                     }
                 }
             }

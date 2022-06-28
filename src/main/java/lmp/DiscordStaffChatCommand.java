@@ -33,7 +33,7 @@ public class DiscordStaffChatCommand implements CommandExecutor {
                                 p.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + playerName + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }
-                        discordStaffChannel.sendMessage("[Mod-Chat] - " + convertedMessage).queue();
+                        discordStaffChannel.sendMessage("[DTSC] - " + convertedMessage).queue();
                     }
                 }
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {

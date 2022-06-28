@@ -116,12 +116,10 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:husbandry/allay_deliver_cake_to_note_block", "You've Got a Friend in Me","Have an Allay drop a Cake at a Note Block."));
         advancements.add(new Advancement("minecraft:adventure/avoid_vibration", "Sneak 100","Sneak near a Sculk Sensor or Warden to prevent it from detecting you."));
         advancements.add(new Advancement("minecraft:adventure/kill_mob_near_sculk_catalyst", "It Spreads","Kill a mob near a Sculk Catalyst."));
-        // Bukkit Bukkit
-
-        advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
-        advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
-        advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
-        advancements.add(new Advancement("minecraft:husbandry/make_a_sign_glow", "Glow and Behold","Make the text of a sign glow."));
+        advancements.add(new Advancement("minecraft:husbandry/tadpole_in_a_bucket", "Bukkit Bukkit", "Catch a Tadpole in a Bucket."));
+        advancements.add(new Advancement("minecraft:husbandry/allay_deliver_cake_to_note_block", "Birthday Song","Have an Allay drop a Cake at a Note Block."));
+        advancements.add(new Advancement("minecraft:husbandry/leash_all_frog_variants", "When the Squad Hops into Town","Get each Frog variant on a Lead."));
+        advancements.add(new Advancement("minecraft:husbandry/froglights", "With Our Powers Combined!","Have all Froglights in your inventory."));
 
 
     }
@@ -187,8 +185,10 @@ public class Advancements {
 
         if (!advancementMessage.isEmpty()){
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle(advancementMessage);
+            eb.setTitle("Advancement Achieved");
+            eb.setDescription(advancementMessage);
             eb.setColor(new Color(0xE1F504B9, true));
+
             eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
             TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
             minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
