@@ -100,7 +100,7 @@ public class Api {
             senderMessage = "I tried to @ everyone or @ here. I shouldn't do that, but I did";
         }
         if (senderName != null) {
-            finalMessage = senderName + " » " + senderMessage;
+            finalMessage = senderName + " [Test Server] » " + senderMessage;
         } else {
             finalMessage = senderMessage;
         }

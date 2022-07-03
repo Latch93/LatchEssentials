@@ -1,5 +1,6 @@
 package lmp;
 
+import io.donatebot.api.Donation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,6 +10,8 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class LMPTimer extends BukkitRunnable {
     static int seconds = 0;
@@ -30,6 +33,10 @@ public class LMPTimer extends BukkitRunnable {
         int minuteOfHour = dateOne.getMinuteOfHour();
         int secondOfMinute = dateOne.getSecondOfMinute();
         if (secondOfMinute == 0) {
+//            if (minuteOfHour < 61){
+//                //Main.getDonations();
+//                LatchDiscord.setChannelDescription();
+//            }
             if (hourOfDay == 0) {
                 if (minuteOfHour == 0){
                     broadcastStaffApply();
@@ -43,7 +50,7 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 2) {
                 if (minuteOfHour == 0){
-                    broadcastTwitch();
+//                    broadcastTwitch();
                     broadcastLTS();
                 }
             } else if (hourOfDay == 3) {
@@ -61,7 +68,11 @@ public class LMPTimer extends BukkitRunnable {
                     broadcastStaffApply();
                 }
                 else if (minuteOfHour == 30) {
-                    broadcastEasyBloodmoon();
+                    try {
+                        broadcastEasyBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 6) {
                 if (minuteOfHour == 0) {
@@ -92,9 +103,13 @@ public class LMPTimer extends BukkitRunnable {
             } else if (hourOfDay == 8) {
                 if (minuteOfHour == 0) {
                     broadcastLTS();
-                    broadcastTwitch();
+//                    broadcastTwitch();
                 } else if (minuteOfHour == 30) {
-                    broadcastEasyBloodmoon();
+                    try {
+                        broadcastEasyBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 9) {
                 if (minuteOfHour == 0) {
@@ -127,7 +142,11 @@ public class LMPTimer extends BukkitRunnable {
                     broadcastInvite();
                     broadcastLTS();
                 } else if (minuteOfHour == 30) {
-                    broadcastMediumBloodmoon();
+                    try {
+                        broadcastMediumBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 12) {
                 if (minuteOfHour == 0) {
@@ -157,10 +176,14 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 14) {
                 if (minuteOfHour == 0) {
-                    broadcastTwitch();
+//                    broadcastTwitch();
                     broadcastLTS();
                 } else if (minuteOfHour == 30) {
-                    broadcastEasyBloodmoon();
+                    try {
+                        broadcastEasyBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 15) {
                 if (minuteOfHour == 0) {
@@ -193,7 +216,11 @@ public class LMPTimer extends BukkitRunnable {
                     broadcastStaffApply();
                     broadcastQuests();
                 } else if (minuteOfHour == 30) {
-                    broadcastEasyBloodmoon();
+                    try {
+                        broadcastEasyBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 18) {
                 if (minuteOfHour == 0) {
@@ -222,10 +249,14 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 20) {
                 if (minuteOfHour == 0) {
-                    broadcastTwitch();
+//                    broadcastTwitch();
                     broadcastLTS();
                 } else if (minuteOfHour == 30) {
-                    broadcastMediumBloodmoon();
+                    try {
+                        broadcastMediumBloodmoon();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else if (hourOfDay == 21) {
                 if (minuteOfHour == 0) {
@@ -273,8 +304,7 @@ public class LMPTimer extends BukkitRunnable {
 
     public static void broadcastLotto() {
         Bukkit.broadcastMessage(ChatColor.GOLD + "Daily Lottery exists. To buy in, type -> " + ChatColor.AQUA + "/lmp lotto buyin  " + ChatColor.GOLD +
-                "See the total Lottery Prize with -> " + ChatColor.AQUA + "/lmp" +
-                " lotto total");
+                "See the total Lottery Prize with -> " + ChatColor.AQUA + "/lmp lotto total");
     }
 
     public static void broadcastInvite(){
@@ -282,7 +312,7 @@ public class LMPTimer extends BukkitRunnable {
     }
 
     public static void broadcastStaffApply(){
-        Bukkit.broadcastMessage(ChatColor.GOLD + "You can apply for staff in discord. Look for the " + ChatColor.AQUA + "#apply-for-staff " + ChatColor.GOLD + "channel.");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Do you want to help moderate players?\nDo you want to help grow this server?\nDo you want to watch new players on the server in vanish?\nWell you can apply for staff in discord. Look for the " + ChatColor.AQUA + "#apply-for-staff " + ChatColor.GOLD + "channel.");
     }
 
     public static void broadcastQuests(){
@@ -290,15 +320,12 @@ public class LMPTimer extends BukkitRunnable {
     }
 
     public static void broadcastLTS(){
-        Bukkit.broadcastMessage(ChatColor.GOLD + "Nominate items for the Limited Time Shop in discord. Shop resets every week U.S. Time.");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Nominate items for the Limited Time Shop in discord. Shop resets every week.");
     }
 
     public static void setEasyBloodMoon() throws IOException {
         File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
         FileConfiguration bloodmoonCfg = Api.getFileConfiguration(bloodmoonFile);
-        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
-        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
-        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Easy BloodMoon");
         List<String> hordeList = new ArrayList<>();
         hordeList.add("ZOMBIE");
         hordeList.add("SKELETON");
@@ -323,15 +350,14 @@ public class LMPTimer extends BukkitRunnable {
         dropList.add("APPLE:3:5");
         bloodmoonCfg.set("DropItemList", dropList);
         bloodmoonCfg.save(bloodmoonFile);
-        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        configCfg.set("deathBalancePercentage", 10.00);
+        configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
     }
 
     public static void setMediumBloodMoon() throws IOException {
         File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
         FileConfiguration bloodmoonCfg = Api.getFileConfiguration(bloodmoonFile);
-        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
-        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
-        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Medium BloodMoon");
         List<String> hordeList = new ArrayList<>();
         hordeList.add("ZOMBIE");
         hordeList.add("SKELETON");
@@ -365,15 +391,14 @@ public class LMPTimer extends BukkitRunnable {
         dropList.add("ANCIENT_DEBRIS:1:1");
         bloodmoonCfg.set("DropItemList", dropList);
         bloodmoonCfg.save(bloodmoonFile);
-        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        configCfg.set("deathBalancePercentage", 12.50);
+        configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
     }
 
     public static void setHardBloodMoon() throws IOException {
         File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
         FileConfiguration bloodmoonCfg = Api.getFileConfiguration(bloodmoonFile);
-        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
-        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
-        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Hard BloodMoon");
         List<String> hordeList = new ArrayList<>();
         hordeList.add("ZOMBIE");
         hordeList.add("SKELETON");
@@ -410,28 +435,51 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonCfg.set("ZombieBossItemMultiplier", 25);
         bloodmoonCfg.set("BaselineHordeSpawnrate", 400);
         bloodmoonCfg.save(bloodmoonFile);
-        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        configCfg.set("deathBalancePercentage", 15.00);
+        configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
     }
 
     public static void startBloodmoon() throws IOException {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule mobGriefing false"));
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bloodmoon start world"));
+        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
+        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
+        LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.GENERAL_CHANNEL_ID).sendMessage(bloodmoonLocalesCfg.getString("BloodMoonTitleBar") + " has started!").queue();
         Api.setDoSpawnersSpawn(true);
     }
 
     public static void stopBloodmoon() throws IOException {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule mobGriefing true"));
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bloodmoon stop world"));
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        configCfg.set("deathBalancePercentage", configCfg.getDouble("defaultDeathBalancePercentage"));
+        configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
         Api.setDoSpawnersSpawn(false);
     }
 
-    public static void broadcastEasyBloodmoon(){
+    public static void broadcastEasyBloodmoon() throws IOException {
+        LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.GENERAL_CHANNEL_ID).sendMessage("Easy Bloodmoon starts in 30 minutes.").queue();
+        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
+        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
+        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Easy Bloodmoon");
+        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
         Bukkit.broadcastMessage(ChatColor.RED + "Easy Bloodmoon starts in 30 minutes.");
     }
-    public static void broadcastMediumBloodmoon(){
+    public static void broadcastMediumBloodmoon() throws IOException {
+        LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.GENERAL_CHANNEL_ID).sendMessage("Medium Bloodmoon starts in 30 minutes.").queue();
+        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
+        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
+        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Medium Bloodmoon");
+        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
         Bukkit.broadcastMessage(ChatColor.RED + "Medium Bloodmoon starts in 30 minutes.");
     }
-    public static void broadcastHardBloodmoon(){
+    public static void broadcastHardBloodmoon() throws IOException {
+        LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getTextChannelById(Constants.GENERAL_CHANNEL_ID).sendMessage("Hard Bloodmoon starts in 30 minutes.").queue();
+        File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
+        FileConfiguration bloodmoonLocalesCfg = Api.getFileConfiguration(bloodmoonLocalesFile);
+        bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Hard Bloodmoon");
+        bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
         Bukkit.broadcastMessage(ChatColor.RED + "Hard Bloodmoon starts in 30 minutes.");
     }
 }

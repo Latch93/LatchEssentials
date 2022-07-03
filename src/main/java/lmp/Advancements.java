@@ -3,6 +3,7 @@ package lmp;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -176,22 +177,18 @@ public class Advancements {
     public static void showAdvancementInDiscord(PlayerAdvancementDoneEvent e){
         String advancement = e.getAdvancement().getKey().toString();
         String advancementMessage = "";
+        TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+        EmbedBuilder eb = new EmbedBuilder();
         int playerAchievementCount = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
-        for (Advancement advance : getAdvancements()){
-            if (advancement.equalsIgnoreCase(advance.getID())){
-                advancementMessage = e.getPlayer().getName() + " has made the advancement " + advance.getName() + "!" + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + getAdvancements().size();
+        for (Advancement advance : getAdvancements()) {
+            if (advancement.equalsIgnoreCase(advance.getID())) {
+                eb.setTitle(advance.getName() + "!");
+                eb.setColor(new Color(0xE1F504B9, true));
+                eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
+                advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + getAdvancements().size();
+                eb.setDescription(advancementMessage);
+                minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
             }
-        }
-
-        if (!advancementMessage.isEmpty()){
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle("Advancement Achieved");
-            eb.setDescription(advancementMessage);
-            eb.setColor(new Color(0xE1F504B9, true));
-
-            eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
-            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-            minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
         }
     }
 }

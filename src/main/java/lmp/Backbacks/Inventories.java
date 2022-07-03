@@ -48,7 +48,7 @@ public class Inventories {
         } else {
             inventoryCfg.set(titleUUID + Constants.YML_SIZE, inventoryCfg.getInt(titleUUID + Constants.YML_SIZE));
         }
-        inventoryCfg.set(titleUUID + ".name", playerName);
+        inventoryCfg.set(titleUUID + ".name", Bukkit.getOfflinePlayer(titleUUID).getName());
         inventoryCfg.set(titleUUID + ".isOpen", false);
         inventoryCfg.save(configFile);
     }

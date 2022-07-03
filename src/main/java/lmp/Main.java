@@ -1,5 +1,7 @@
 package lmp;
 
+import io.donatebot.api.DBClient;
+import io.donatebot.api.Donation;
 import lmp.Backbacks.BackPackCommand;
 import lmp.Backbacks.BackPackInventoryConfig;
 import lmp.Backbacks.BackpackTabComplete;
@@ -56,6 +58,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 public class Main extends JavaPlugin implements Listener {
@@ -84,6 +88,8 @@ public class Main extends JavaPlugin implements Listener {
     private static BossConfig bossCfgm;
 
     public static IPGeolocationAPI ipApi;
+    public static DBClient dbClient;
+
 
     @Override
     public void onEnable() {
@@ -139,8 +145,61 @@ public class Main extends JavaPlugin implements Listener {
             luckPerms = provider.getProvider();
         }
         ipApi = new IPGeolocationAPI("07eecf88b7f2468e90fe0326af707d66");
+        dbClient = new DBClient("625983914049142786", "PlXK5QShFmmlb4q9qILoRc1lXqLsZVG72aOEnAiaaQi2oXfAI5X5EuIRLGBp1qa");
+
     }
 
+    public static void getDonations(){
+        String[] statuses = {"Completed", "Reversed", "Refunded"};
+
+        CompletableFuture<Donation[]> future = dbClient.getNewDonations(statuses);
+// Blocking Example
+//        try {
+//            // Array of Donation objects
+//            Donation[] donations = future.get();
+//            try {
+//                System.out.println("count: " + donations.length);
+//                System.out.println("RoleID: " + donations[0].getRoleID());
+//                System.out.println("Buyer Email: " + donations[0].getBuyerEmail());
+//                System.out.println("BuyerID: " + donations[0].getBuyerID());
+//                System.out.println("Is Recurring?: " + donations[0].getRecurring());
+//                System.out.println("Price: " + donations[0].getPrice());
+//                System.out.println("TransactionID: " + donations[0].getTransactionID());
+//                System.out.println("Date: " + donations[0].getDate());
+//                System.out.println("Product ID: " + donations[0].getProductID());
+//                System.out.println("Discord ID: " + donations[0].getSellerCustoms().get("Discord ID"));
+//            } catch (ArrayIndexOutOfBoundsException e ) {
+//                System.out.println();
+//            }
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+
+// Non-blocking Example
+        CompletableFuture.runAsync(() -> {
+            try {
+                Donation[] donations = future.get();
+                try {
+                    System.out.println("count: " + donations.length);
+                    for (Donation donation : donations){
+                        System.out.println("RoleID: " + donation.getRoleID());
+                        System.out.println("Buyer Email: " + donation.getBuyerEmail());
+                        System.out.println("BuyerID: " + donation.getBuyerID());
+                        System.out.println("Is Recurring?: " + donation.getRecurring());
+                        System.out.println("Price: " + donation.getPrice());
+                        System.out.println("TransactionID: " + donation.getTransactionID());
+                        System.out.println("Date: " + donation.getDate());
+                        System.out.println("Product ID: " + donation.getProductID());
+                        System.out.println("Discord ID: " + donation.getSellerCustoms().get("Discord ID"));
+                    }
+                } catch (ArrayIndexOutOfBoundsException e ) {
+                    System.out.println();
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e){
         BossBattle.bossHurtEvent(e);
@@ -149,6 +208,10 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) throws IOException {
         BossBattle.bossBattleEnded(e);
+    }
+
+    public DBClient getDbClient(){
+        return dbClient;
     }
 
     private void registerTasks() {
@@ -171,7 +234,6 @@ public class Main extends JavaPlugin implements Listener {
     public void onLogin(PlayerJoinEvent e) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onLogin"))) {
             LatchDiscord.sendPlayerOnJoinMessage(e);
-            LatchDiscord.setChannelDescription(false);
             Bank.setLoginTime(e);
             Bank.getPlayerBalance(e.getPlayer());
             Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
@@ -187,7 +249,6 @@ public class Main extends JavaPlugin implements Listener {
     public void onLogout(PlayerQuitEvent event) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onLogout"))) {
             LatchDiscord.sendPlayerLogoutMessage(event);
-            LatchDiscord.setChannelDescription(true);
             Bank.setLogoutTime(event);
             Bank.setPlayerSessionSecondsPlayed(event);
             Bank.getPlayerBalance(event.getPlayer());
@@ -214,9 +275,9 @@ public class Main extends JavaPlugin implements Listener {
             TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
             assert minecraftChatChannel != null;
             minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
-            if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
-                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + LatchDiscord.getDiscordUserId(LatchDiscord.getDiscordUserName(e.getEntity().getName())) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
-            }
+//            if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
+//                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + LatchDiscord.getDiscordUserId(LatchDiscord.getDiscordUserName(e.getEntity().getName())) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
+//            }
         }
         if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
             DecimalFormat df = new DecimalFormat("0.00");
@@ -249,7 +310,7 @@ public class Main extends JavaPlugin implements Listener {
                 Objects.requireNonNull(LatchDiscord.jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
                 for (Player player : Bukkit.getOnlinePlayers()){
                     if (player.hasPermission("group.jr-mod")){
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " [Test Server] » " + ChatColor.AQUA + e.getMessage());
                     }
                 }
                 e.setCancelled(true);
@@ -415,7 +476,7 @@ public class Main extends JavaPlugin implements Listener {
                     LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         if (p.hasPermission("group.jr-mod")) {
-                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " [Test Server] » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
                         }
                     }
                 }

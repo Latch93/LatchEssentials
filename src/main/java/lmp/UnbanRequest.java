@@ -4,10 +4,12 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class UnbanRequest extends ListenerAdapter {
     public final long channelId;
@@ -30,7 +32,7 @@ public class UnbanRequest extends ListenerAdapter {
         List<String> unbanFormQuestions = new LinkedList<>();
         unbanFormQuestions.add("1.) What is your Minecraft username?");
         unbanFormQuestions.add("2.) Why were you banned?");
-        unbanFormQuestions.add("3.) Why do you think you should be unbanned?");
+        unbanFormQuestions.add("3.) Why do you think your ban should be revoked or shortened?");
         unbanFormAnswers.add(event.getMessage().getContentRaw());
         if (counter <= unbanFormQuestions.size()-1){
             event.getChannel().sendMessage(unbanFormQuestions.get(counter)).queue();
@@ -42,7 +44,7 @@ public class UnbanRequest extends ListenerAdapter {
             int appCounter = 0;
             StringBuilder unbanFormCompleted = new StringBuilder();
             unbanFormCompleted.append("Unban Form:\n[Discord Username :").append(event.getAuthor().getName()).append("] \n");
-            unbanFormCompleted.append("[Minecraft Username :").append(LatchDiscord.getMinecraftUserName(event.getAuthor().getName())).append("] \n");
+            unbanFormCompleted.append("[Minecraft Username :").append(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getMember().getId())))).append("] \n");
             for (String str : unbanFormAnswers){
                 unbanFormCompleted.append(unbanFormQuestions.get(appCounter)).append(" ---> ").append(str).append("\n");
                 appCounter++;

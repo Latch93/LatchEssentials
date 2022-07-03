@@ -30,12 +30,11 @@ public class StaffApplication extends ListenerAdapter {
         List<String> applicationQuestions = new LinkedList<>();
         applicationQuestions.add("1.) How old are you?");
         applicationQuestions.add("2.) What country do you live in?");
-        applicationQuestions.add("3.) What timezone do you live in?");
-        applicationQuestions.add("4.) What server are you applying for? Discord/Minecraft/Both");
-        applicationQuestions.add("5.) What role are you applying for? Mod/Builder/Helper");
-        applicationQuestions.add("6.) What qualifications do you have?");
-        applicationQuestions.add("7.) Why do you think you would be a good staff member?");
-        applicationQuestions.add("8.) How many hours per week are you able to be active on Discord?");
+        applicationQuestions.add("3.) What role are you applying for? Jr.Mod/Helper");
+        applicationQuestions.add("4.) Have you been a staff member on another Minecraft or Discord server?");
+        applicationQuestions.add("5.) Why do you think you would be a good staff member?");
+        applicationQuestions.add("6.) About how many hours per week are you able to be active in Discord and the Minecraft server?");
+        applicationQuestions.add("7.) Will you do your best to watch new players while in vanish to ensure they are following the rules?");
         applicationAnswers.add(event.getMessage().getContentRaw());
         if (counter <= applicationQuestions.size()-1){
             event.getChannel().sendMessage(applicationQuestions.get(counter)).queue();
@@ -43,7 +42,7 @@ public class StaffApplication extends ListenerAdapter {
         counter++;
         if (counter == applicationQuestions.size() + 1){
             counter = 1;
-            event.getChannel().sendMessage("\n-------------------\nThanks for applying! Latch will review your information and if \n he approves AND is in need of new staff, he will reach out to you. :smile:").queue();
+            event.getChannel().sendMessage("\n-------------------\nThanks for applying! Latch and his staff will review your information and if \n they approve AND is in need of new staff, he will reach out to you. :smile:").queue();
             int appCounter = 0;
             StringBuilder application = new StringBuilder();
             application.append("Application Submitted: [Username :").append(event.getAuthor().getName()).append("] \n");

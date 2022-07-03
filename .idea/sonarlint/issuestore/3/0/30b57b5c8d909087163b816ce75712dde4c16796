@@ -1,0 +1,67 @@
+
+`	java:S112T"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+`	java:S112u"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+a	java:S112–"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+a	java:S112·"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+a	java:S112Ø"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+a	java:S112ø"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+i
+java:S1192²"RDefine a constant instead of duplicating this literal "HordeMobWhitelist" 3 times.(ó‘Ë
+i
+java:S1192«"RDefine a constant instead of duplicating this literal "plugins/Bloodmoon" 3 times.(ìîÑ
+l
+java:S1192I"QDefine a constant instead of duplicating this literal "bloodmoon reload" 6 times.(‚¤êËøÿÿÿÿ
+a
+java:S1192Ã"JDefine a constant instead of duplicating this literal "APPLE:3:5" 3 times.(˜óù”
+o
+java:S1192³"SDefine a constant instead of duplicating this literal "HordeMinPopulation" 3 times.(›óóïüÿÿÿÿ
+m
+java:S1192º"QDefine a constant instead of duplicating this literal "ItemDropsMinimum" 3 times.(Äÿ¢Èÿÿÿÿÿ
+m
+java:S1192»"QDefine a constant instead of duplicating this literal "ItemDropsMaximum" 3 times.(Ïû®‹üÿÿÿÿ
+^
+java:S1192¯"GDefine a constant instead of duplicating this literal "ZOMBIE" 3 times.(†µ—
+n
+java:S1192­"RDefine a constant instead of duplicating this literal "BloodMoonTitleBar" 3 times.(Œ„ùµüÿÿÿÿ
+s
+java:S1192¸"WDefine a constant instead of duplicating this literal "MobDamageMultiplicator" 3 times.(Ã—²¦ÿÿÿÿÿ
+o
+java:S1192´"SDefine a constant instead of duplicating this literal "HordeMaxPopulation" 3 times.(Ğ‡™¾şÿÿÿÿ
+c
+java:S1192«"LDefine a constant instead of duplicating this literal "locales.yml" 3 times.(ìîÑ
+s
+java:S1192¼"WDefine a constant instead of duplicating this literal "BaselineHordeSpawnrate" 3 times.(ÍçŞøÿÿÿÿ
+m
+java:S1192¶"VDefine a constant instead of duplicating this literal "BloodMoonSpawnMobRate" 3 times.(ˆÊËÒ
+o
+java:S1192¹"SDefine a constant instead of duplicating this literal "ExperienceDropMult" 3 times.(ÔğØ€ıÿÿÿÿ
+e
+java:S1192°"IDefine a constant instead of duplicating this literal "SKELETON" 3 times.(¶³°ïøÿÿÿÿ
+g
+java:S1192©"KDefine a constant instead of duplicating this literal "config.yml" 3 times.(’‚ø©ÿÿÿÿÿ
+i
+java:S1192Ä"MDefine a constant instead of duplicating this literal "DropItemList" 3 times.(ñ¡ö¥üÿÿÿÿ
+t
+java:S1192©"XDefine a constant instead of duplicating this literal "plugins/Bloodmoon/world" 3 times.(’‚ø©ÿÿÿÿÿ
+h
+java:S1192µ"QDefine a constant instead of duplicating this literal "EnableZombieBoss" 3 times.(’˜Éİ
+n
+java:S1192·"WDefine a constant instead of duplicating this literal "MobHealthMultiplicator" 3 times.(°¨”ô
+K
+java:S1066‡"/Merge this if statement with the enclosing one.(»à«öøÿÿÿÿ
+B
+java:S1602",Remove useless curly braces around statement(ñß«é
+i
+java:S3776"SRefactor this method to reduce its Cognitive Complexity from 204 to the 15 allowed.(“–ış
+L
+java:S1854"6Remove this useless assignment to local variable "c1".(Ÿ£€¿
+=
+java:S1481"'Remove this unused "c1" local variable.(Ÿ£€¿
+C	java:S108K")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+C	java:S108l")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+D	java:S108")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+D	java:S108®")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+D	java:S108Ï")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+D	java:S108ï")Either remove or fill this block of code.(–Ø”§ÿÿÿÿÿ
+Q	java:S125Ò"<This block of commented-out lines of code should be removed.(èÕÜ:
+W	java:S125ç"<This block of commented-out lines of code should be removed.(É£ï‚úÿÿÿÿ
