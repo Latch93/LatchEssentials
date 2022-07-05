@@ -1,0 +1,45 @@
+
+b
+java:S1192"LDefine a constant instead of duplicating this literal "bossEnabled" 5 times.(ç‰¶Ø
+i
+java:S11920"NDefine a constant instead of duplicating this literal ".illegalItems" 3 times.(‹ üÂûÿÿÿÿ
+^
+java:S1192^"HDefine a constant instead of duplicating this literal "bossKey" 3 times.(šÎáŞ
+d
+java:S1192""IDefine a constant instead of duplicating this literal "bosses." 38 times.(²™­ªûÿÿÿÿ
+b
+java:S11929"LDefine a constant instead of duplicating this literal "chestRightY" 3 times.(©À®‘
+g
+java:S1192:"LDefine a constant instead of duplicating this literal "chestRightZ" 3 times.(Âııÿÿÿÿ
+g
+java:S11928"LDefine a constant instead of duplicating this literal "chestRightX" 3 times.(ÂÎ§¾ûÿÿÿÿ
+\
+java:S1192,"FDefine a constant instead of duplicating this literal ".cost" 4 times.(€éµÆ
+`
+java:S1192E"JDefine a constant instead of duplicating this literal ".bossName" 3 times.(Ö€áÿ
+a
+java:S1192&"FDefine a constant instead of duplicating this literal "world" 8 times.(êÑşøÿÿÿÿ
+b
+java:S1192\"LDefine a constant instead of duplicating this literal "playerName" 10 times.(Ÿ­Õ•
+d
+java:S1192]"IDefine a constant instead of duplicating this literal "bossUUID" 6 times.(ğŒĞáşÿÿÿÿ
+P
+java:S1118":Add a private constructor to hide the implicit public one.(†˜»
+n
+java:S3776"SRefactor this method to reduce its Cognitive Complexity from 101 to the 15 allowed.(¶Â®ùÿÿÿÿ
+V
+java:S1854/"@Remove this useless assignment to local variable "illegalItems".(øñ…´
+G
+java:S1481/"1Remove this unused "illegalItems" local variable.(øñ…´
+E
+java:S1874m"0Remove this use of "setScale"; it is deprecated.(ƒÕ—O
+E
+java:S1874m"0Remove this use of "ROUND_UP"; it is deprecated.(ƒÕ—O
+A
+java:S1481£"*Remove this unused "count" local variable.(æÕ¿¼
+D	java:S108¬")Either remove or fill this block of code.(–ŠúÃşÿÿÿÿ
+D	java:S108Ä")Either remove or fill this block of code.(–ŠúÃşÿÿÿÿ
+G
+java:S1874Ô"0Remove this use of "setScale"; it is deprecated.(¿±Óµ
+G
+java:S1874Ô"0Remove this use of "ROUND_UP"; it is deprecated.(¿±Óµ

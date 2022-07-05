@@ -118,5 +118,14 @@
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.10.14" level="project" />
     <orderEntry type="library" name="Maven: io.ipgeolocation:ipgeolocation:1.0.12" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.luckperms:api:5.4" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../api/coreprotect-21.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

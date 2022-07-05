@@ -17,6 +17,9 @@ import lmp.LatchTwitchBot.LatchTwitchBotTabComplete;
 import lmp.PlayerShops.*;
 import io.ipgeolocation.api.IPGeolocationAPI;
 import lmp.PlayerShops.LMPCommandTabComplete;
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
+import net.coreprotect.event.CoreProtectPreLogEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -28,6 +31,7 @@ import net.luckperms.api.util.Tristate;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -45,6 +49,7 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -89,8 +94,8 @@ public class Main extends JavaPlugin implements Listener {
 
     public static IPGeolocationAPI ipApi;
     public static DBClient dbClient;
-
-
+    public static Plugin coreProtect;
+    public static CoreProtect coreProtectApi;
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
@@ -146,7 +151,8 @@ public class Main extends JavaPlugin implements Listener {
         }
         ipApi = new IPGeolocationAPI("07eecf88b7f2468e90fe0326af707d66");
         dbClient = new DBClient("625983914049142786", "PlXK5QShFmmlb4q9qILoRc1lXqLsZVG72aOEnAiaaQi2oXfAI5X5EuIRLGBp1qa");
-
+        Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
+        CoreProtectAPI coreProtectApi = ((CoreProtect) coreProtect).getAPI();
     }
 
     public static void getDonations(){
@@ -536,6 +542,19 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerChestItemRemove(InventoryClickEvent event) {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChestItemRemove"))) {
             LatchDiscord.banPlayerStealing(event);
+        }
+        if (event.getInventory().getHolder() instanceof Block) {
+            Block chest = (Block) event.getInventory().getHolder();
+            if (chest.getType().equals(Material.CHEST)) {
+                List<String[]> lookup = coreProtectApi.getAPI().blockLookup((Block) event.getInventory().getHolder(), 20024000);
+                System.out.println("Array Length: " + lookup.size());
+                for (String[] value : lookup) {
+                    CoreProtectAPI.ParseResult result = coreProtectApi.getAPI().parseResult(value);
+                    System.out.println("Player: " + result.getPlayer());
+                    System.out.println("TimeStamp: " + result.getTimestamp());
+                    System.out.println("asda: " + result.getActionString());
+                }
+            }
         }
     }
 

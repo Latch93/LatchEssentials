@@ -1,0 +1,40 @@
+
+g
+java:S1192Û"KDefine a constant instead of duplicating this literal ".discordId" 4 times.(»«âıÿÿÿÿ
+]
+java:S1192Ö"FDefine a constant instead of duplicating this literal "world" 4 times.(ÊÛéÅ
+o
+java:S1192ß"SDefine a constant instead of duplicating this literal ".isPlayerInDiscord" 4 times.(ˆÀÏÄøÿÿÿÿ
+_
+java:S1192±"HDefine a constant instead of duplicating this literal "players" 3 times.(‘¼šø
+h
+java:S1192ï"LDefine a constant instead of duplicating this literal "Terminated " 3 times.(¶Öè¡ùÿÿÿÿ
+K
+java:S1066›"/Merge this if statement with the enclosing one.(ÜÔ¹’şÿÿÿÿ
+E
+java:S1066Ø"/Merge this if statement with the enclosing one.(í—¶z
+F
+java:S1066Ù"/Merge this if statement with the enclosing one.(ˆß®¹
+F
+java:S1066Ú"/Merge this if statement with the enclosing one.(ı­—ñ
+K
+java:S1066ï"/Merge this if statement with the enclosing one.(†”öøÿÿÿÿ
+K
+java:S1066ğ"/Merge this if statement with the enclosing one.(÷¢ÈÌûÿÿÿÿ
+k
+java:S1104*"UMake twitchBot a static final constant or non-public and provide accessors if needed.(¥´¦Ş
+E
+java:S1444*"/Make this "public static twitchBot" field final(¥´¦Ş
+P
+java:S1118'":Add a private constructor to hide the implicit public one.(ÿ¨Üœ
+?	java:S108Å")Either remove or fill this block of code.(™¡•‰
+L
+java:S1751Í"5Remove this "break" statement or make it conditional.(›ûä·
+Y
+java:S1126¡"BReplace this if-then-else statement by a single method invocation.(˜Òî˜
+I
+java:S1128"3Remove this unused import 'io.netty.util.Constant'.(ş«‚ï
+[
+java:S1128"@Remove this unused import 'org.apache.commons.lang.ObjectUtils'.(¸ÿĞĞûÿÿÿÿ
+>
+java:S1068)"(Remove this unused "perm" private field.(Éõ£‚
