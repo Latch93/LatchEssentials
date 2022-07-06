@@ -1,0 +1,195 @@
+ShopName: LMP
+DisplayName: '&9&lLMP Shop'
+signs:
+  text: '[LMP]'
+  NeedPermissionToCreateSign: true
+shop:
+  NameTag:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:NAME_TAG
+      - amount:1
+    PriceType: MONEY
+    Price: 1750
+    Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 6
+  Quick_Smelt_Stick:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eAuto-Smelt items in furnace by left-clicking on furnace for 5 XP per item. Cost: &c$%price%'
+    RewardType: ITEM
+    PriceType: money
+    Price: 10000
+    Reward:
+    - - type:STICK
+      - amount:1
+      - enchantment:MENDING#1
+      - name:&6Quick Smelt Stick!
+      - 'lore1:Auto-Smelt items in furnace by left-clicking on furnace for 5 XP per item.'
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    InventoryLocation: 5
+    ExtraPermission: ''
+  Quick_Brew_Stick:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eAuto-Brew potions in brewing stand by left-clicking on stand for 35 XP per brew. Cost: &c$%price%'
+    RewardType: ITEM
+    PriceType: money
+    Price: 10000
+    Reward:
+    - - type:STICK
+      - amount:1
+      - enchantment:AQUA_AFFINITY#1
+      - name:&6Quick Brew Stick!
+      - 'lore1:Auto-Brew potions in brewing stand by left-clicking on stand for 35 XP per brew.'
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    InventoryLocation: 4
+    ExtraPermission: ''
+  Mobile_Spawner_Pickaxe:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eMine spawners and place them where you want, for $5k per placement. Cost: &c$%price%'
+    RewardType: ITEM
+    PriceType: money
+    Price: 50000
+    Reward:
+    - - type:IRON_PICKAXE
+      - amount:1
+      - enchantment:SILK_TOUCH#2
+      - enchantment:UNBREAKING#10
+      - enchantment:MENDING#1
+      - name:&6Mobile Spawner Pickaxe!
+      - 'lore1:Mine spawners and place them where you want, for $5k per placement.'
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    InventoryLocation: 2
+    ExtraPermission: ''
+  Slime_Chunk_Finder:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eFind Slime Chunks with the click of your mouse Cost: &c$%price%'
+    RewardType: ITEM
+    PriceType: money
+    Price: 35000
+    Reward:
+    - - type:SLIME_BLOCK
+      - amount:1
+      - enchantment:MENDING#1
+      - name:&6Slime Chunk Finder
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    InventoryLocation: 1
+    ExtraPermission: ''
+  Custom_Nether_Portal_Stick:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:Click on the Custom Nether Portal Block to set a nether portal for a cost. Cost: &c$%price%'
+    RewardType: ITEM
+    PriceType: money
+    Price: 10000
+    Reward:
+    - - type:STICK
+      - amount:1
+      - name:&6Custom Nether Portal Stick
+      - 'lore1:Custom Nether Portal Stick'
+      - 'lore2:Left click on an Obsidian to set a nether portal for a cost.'
+      - 'lore3:Left click on the Nether Portal Block to change the direction one way.'
+      - 'lore4:Sneak and left click on the Nether Portal Block to change the other way.'
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    InventoryLocation: 3
+    ExtraPermission: ''
+
+  # Food_blockade:
+  #   MenuItem:
+  #   - name:&4&lNot available
+  #   - type:BARRIER
+  #   RewardType: NOTHING
+  #   PriceType: NOTHING
+  #   Message: '&cNot available!'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 23
+  # Complex:
+  #   MenuItem:
+  #   - type:TORCH
+  #   - amount:1
+  #   - name:&9Torch
+  #   - 'lore1:&cAn example that shows how complex shopitems can be.'
+  #   - 'lore2:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   - 'lore3:&eClick &2right &eto sell &c%price_right% &efor &b%reward_right%&e.'
+  #   - 'lore4:&eClick your &2mousewheel &eto sell &c%price_middle% &efor &b%reward_middle%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:TORCH
+  #     - amount:16
+  #   PriceType: MONEY
+  #   Price: 160
+  #   Message: '&eYou bought %reward%! Money left: &c%left%'
+  #   RewardType_right: MONEY
+  #   Reward_right: 80
+  #   PriceType_right: ITEM
+  #   Price_right:
+  #   - type:TORCH
+  #   - amount:16
+  #   Message_right: '&eYou just sold %price_right%!'
+  #   RewardType_middle: MONEY
+  #   Reward_middle: 5
+  #   PriceType_middle: ITEMALL
+  #   Price_middle:
+  #   - - type:TORCH
+  #   Message_middle: '&eYou just sold %price_middle%!'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 25
+  # VeryComplex:
+  #   MenuItem:
+  #   - type:LOG
+  #   - amount:1
+  #   - name:&9Log
+  #   - 'lore1:&cAn other example that shows how complex shopitems can be.'
+  #   - 'lore2:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   - 'lore3:&eClick &2right &eto sell &c%price_right% &efor &b%reward_right%&e.'
+  #   - 'lore4:&eClick &2shift left &eto buy &b%reward_shift_left% &efor &c%price_shift_left%&e.'
+  #   - 'lore5:&eClick &2shift right &eto sell &c%price_shift_right% &efor &b%reward_shift_right%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:LOG
+  #     - amount:16
+  #   PriceType: MONEY
+  #   Price: 100
+  #   Message: '&eYou bought %reward%! Money left: &c%left%'
+  #   RewardType_right: MONEY
+  #   Reward_right: 50
+  #   PriceType_right: ITEM
+  #   Price_right:
+  #   - - type:LOG
+  #     - amount:16
+  #   Message_right: '&eYou just sold %price_right%!'
+  #   RewardType_shift_left: ITEMALL
+  #   Reward_shift_left:
+  #   - type:LOG
+  #   - amount:1
+  #   PriceType_shift_left: MONEY
+  #   Price_shift_left: 10
+  #   Message_shift_left: '&eYou bought %reward_shift_left%! Money left: &c%left%'
+  #   RewardType_shift_right: MONEY
+  #   Reward_shift_right: 5
+  #   PriceType_shift_right: ITEMALL
+  #   Price_shift_right:
+  #   - type:LOG
+  #   - amount:1
+  #   Message_shift_right: '&eYou just sold %price_shift_right%!'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 27
+  Back:
+    MenuItem:
+    - lore:&8Back to Menu
+    - name:&cBack
+    - amount:1
+    - type:REDSTONE
+    RewardType: SHOP
+    Reward: menu
+    PriceType: NOTHING
+    Message: '&6Leaving the LMP Shop...'
+    ExtraPermission: ''
+    InventoryLocation: 10

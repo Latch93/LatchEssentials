@@ -1,0 +1,261 @@
+ShopName: WoodShop
+DisplayName: '&9&lWood Shop'
+signs:
+  text: '[WS]'
+  NeedPermissionToCreateSign: true
+shop:
+
+  OakLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Oak_Log
+      - amount:64
+    MenuItem:
+    - type:Oak_Log
+    - amount:64
+    - name:%amount% Oak Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 1
+    ExtraPermission: ''
+
+  BirchLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Birch_Log
+      - amount:64
+    MenuItem:
+    - type:Birch_Log
+    - amount:64
+    - name:%amount% Birch Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 2
+    ExtraPermission: ''
+
+  JungleLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Jungle_Log
+      - amount:64
+    MenuItem:
+    - type:Jungle_Log
+    - amount:64
+    - name:%amount% Jungle Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 3
+    ExtraPermission: ''
+
+  SpruceLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Spruce_Log
+      - amount:64
+    MenuItem:
+    - type:Spruce_Log
+    - amount:64
+    - name:%amount% Spruce Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 4
+    ExtraPermission: ''
+
+  AcaciaLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Acacia_Log
+      - amount:64
+    MenuItem:
+    - type:Acacia_Log
+    - amount:64
+    - name:%amount% Acacia Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 5
+    ExtraPermission: ''
+
+  DarkOakLog:
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:Dark_Oak_Log
+      - amount:64
+    MenuItem:
+    - type:Dark_Oak_Log
+    - amount:64
+    - name:%amount% Dark Oak Logs for &c%price%&e.
+    Message: ''
+    InventoryLocation: 6
+    ExtraPermission: ''
+
+  OakSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Oak_Sapling
+      - amount:1
+    MenuItem:
+    - type:Oak_Sapling
+    - amount:1
+    - name:%amount% Oak Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 10
+    ExtraPermission: ''
+
+  BirchSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Birch_Sapling
+      - amount:1
+    MenuItem:
+    - type:Birch_Sapling
+    - amount:1
+    - name:%amount% Birch Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 11
+    ExtraPermission: ''
+
+  JungleSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Jungle_Sapling
+      - amount:1
+    MenuItem:
+    - type:Jungle_Sapling
+    - amount:1
+    - name:%amount% Jungle Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 12
+    ExtraPermission: ''
+
+  SpruceSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Spruce_Sapling
+      - amount:1
+    MenuItem:
+    - type:Spruce_Sapling
+    - amount:1
+    - name:%amount% Spruce Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 13
+    ExtraPermission: ''
+
+  AcaciaSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Acacia_Sapling
+      - amount:1
+    MenuItem:
+    - type:Acacia_Sapling
+    - amount:1
+    - name:%amount% Acacia Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 14
+    ExtraPermission: ''
+
+  DarkOakSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 375
+    Reward:
+    - - type:Dark_Oak_Sapling
+      - amount:1
+    MenuItem:
+    - type:Dark_Oak_Sapling
+    - amount:1
+    - name:%amount% Dark Oak Sapling for &c%price%&e.
+    Message: ''
+    InventoryLocation: 15
+    ExtraPermission: ''
+
+  CrimsonSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 550
+    Reward:
+    - - type:Crimson_Fungus
+      - amount:1
+    MenuItem:
+    - type:Crimson_Fungus
+    - amount:1
+    - name:%amount% Crimson Fungus for &c%price%&e.
+    Message: ''
+    InventoryLocation: 16
+    ExtraPermission: ''
+
+  CrimsonWood:
+    RewardType: ITEM
+    PriceType: money
+    Price: 500
+    Reward:
+    - - type:Crimson_Stem
+      - amount:32
+    MenuItem:
+    - type:Crimson_Stem
+    - amount:32
+    - name:%amount% Crimson Stem for &c%price%&e.
+    Message: ''
+    InventoryLocation: 7
+    ExtraPermission: ''
+
+  WarpedSapling:
+    RewardType: ITEM
+    PriceType: money
+    Price: 550
+    Reward:
+    - - type:Warped_Fungus
+      - amount:1
+    MenuItem:
+    - type:Warped_Fungus
+    - amount:1
+    - name:%amount% Warped Fungus for &c%price%&e.
+    Message: ''
+    InventoryLocation: 17
+    ExtraPermission: ''
+
+  WarpedWood:
+    RewardType: ITEM
+    PriceType: money
+    Price: 500
+    Reward:
+    - - type:Warped_Stem
+      - amount:32
+    MenuItem:
+    - type:Warped_Stem
+    - amount:32
+    - name:%amount% Warp Stem for &c%price%&e.
+    Message: ''
+    InventoryLocation: 8
+    ExtraPermission: ''
+
+
+
+  back:
+    MenuItem:
+    - lore:&8Back to Menu
+    - name:&cBack
+    - amount:1
+    - type:REDSTONE
+    RewardType: SHOP
+    Reward: menu
+    PriceType: NOTHING
+    Message: '&6Leaving the Wood Shop...'
+    ExtraPermission: ''
+    InventoryLocation: 19

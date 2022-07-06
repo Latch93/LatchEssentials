@@ -1,6 +1,7 @@
 package lmp;
 
 import io.donatebot.api.Donation;
+import lmp.DiscordText.LMPCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -33,10 +34,14 @@ public class LMPTimer extends BukkitRunnable {
         int minuteOfHour = dateOne.getMinuteOfHour();
         int secondOfMinute = dateOne.getSecondOfMinute();
         if (secondOfMinute == 0) {
-//            if (minuteOfHour < 61){
-//                //Main.getDonations();
-//                LatchDiscord.setChannelDescription();
-//            }
+            if (minuteOfHour % 5 == 0){
+                if (Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("randomSpectate"))){
+                    LMPCommand.spectateInsideRandomPlayer(Objects.requireNonNull(Bukkit.getPlayer("latch93")));
+                }
+            }
+            if (minuteOfHour < 61){
+                Main.getDonations();
+            }
             if (hourOfDay == 0) {
                 if (minuteOfHour == 0){
                     broadcastStaffApply();

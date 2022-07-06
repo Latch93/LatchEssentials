@@ -148,6 +148,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 //                if (userId.equals(Constants.SERVER_OWNER_ID) && message.equalsIgnoreCase(Constants.CLEAR_ALL_COMMAND)) {
 //                    clearAllMessages(channel, messageId);
 //                }
+                if (message.equalsIgnoreCase("!discordID")) {
+                    channel.sendMessage("Hi " + senderName + "! Your Discord UserID is " + messageSender.getUser().getId()).queue();
+                }
                 // Gets online players
                 if (channel.getId().equals(Constants.MINECRAFT_CHAT_CHANNEL_ID) && message.equalsIgnoreCase(Constants.ONLINE_COMMAND)){
                     ArrayList<String> onlinePlayers = new ArrayList<>();
@@ -157,8 +160,14 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     StringBuilder onlinePlayerMessage = new StringBuilder();
                     int count = 1;
                     for (Player player : Bukkit.getOnlinePlayers()){
+                        File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
+                        FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
                         if (Boolean.FALSE.equals(Api.isPlayerInvisible(player.getUniqueId().toString()))){
-                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + "\n");
+                            String afk = "";
+                            if (Boolean.TRUE.equals(playerDataCfg.getBoolean("afk"))){
+                                afk = "(AFK)";
+                            }
+                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + " " + afk + "\n");
                             onlinePlayers.add(player.getDisplayName());
                             count++;
                         }
@@ -166,7 +175,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
                     if (!onlinePlayers.isEmpty()){
                         eb.setColor(new Color(0xC6D13EFF, true));
-                        eb.setTitle("Online Players: " + onlinePlayers.size() + "/20");
+                        eb.setTitle("Online Players: " + onlinePlayers.size() + "/35");
                         eb.setDescription(onlinePlayerMessage.toString());
                     } else {
                         eb.setColor(new Color(0xC6D5042E, true));
@@ -183,12 +192,18 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     StringBuilder onlinePlayerMessage = new StringBuilder();
                     int count = 1;
                     for (Player player : Bukkit.getOnlinePlayers()){
+                        File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
+                        FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+                        String afk = "";
+                        if (Boolean.TRUE.equals(playerDataCfg.getBoolean("afk"))){
+                            afk = "(AFK)";
+                        }
                         if (Boolean.TRUE.equals(Api.isPlayerInvisible(player.getUniqueId().toString()))){
-                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + " (Invisible)" + "\n");
+                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + " (Invisible) " + afk + "\n");
                             onlinePlayers.add(player.getDisplayName());
                             count++;
                         } else {
-                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + "\n");
+                            onlinePlayerMessage.append( Api.convertMinecraftMessageToDiscord(null, count + ".) " + player.getDisplayName()) + " " + afk + "\n");
                             onlinePlayers.add(player.getDisplayName());
                             count++;
                         }
@@ -217,7 +232,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 //                    FileConfiguration
 //                    clearAllUserMessages(channel, messageId, userID);
 //                }
-
                 // get the
                 if (channel.getId().equalsIgnoreCase(Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(Constants.LATCH93BOT_USER_ID)){
                     if (message.toLowerCase().contains("!searchdiscord")){
@@ -527,10 +541,10 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         }
         String finalMessage = "";
         if (Boolean.TRUE.equals(isReply)){
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + ChatColor.GRAY + " [Test Server] » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
-                   ChatColor.GRAY + " [Test Server] » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " [Test Server] » " + ChatColor.WHITE + message;
+            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                   ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
         } else {
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " [Test Server] » " + message;
+            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message;
         }
 
         return finalMessage;
@@ -689,13 +703,13 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             } else {
                 TextChannel modChannel = jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
                 assert modChannel != null;
-                modChannel.sendMessage(":white_check_mark: [Test Server] » " + discordUserName + " joined the server.").queue();
+                modChannel.sendMessage(":white_check_mark: » " + discordUserName + " joined the server.").queue();
             }
         } catch (NullPointerException e){
             TextChannel minecraftChannel = jda.getTextChannelById(setTestingChannel(Constants.MINECRAFT_CHAT_CHANNEL_ID));
             assert minecraftChannel != null;
             try {
-                minecraftChannel.sendMessage(":white_check_mark: [Test Server] » " + onPlayerJoinEvent.getPlayer().getName() + " joined the server.").queue();
+                minecraftChannel.sendMessage(":white_check_mark: » " + onPlayerJoinEvent.getPlayer().getName() + " joined the server.").queue();
             } catch (NullPointerException ignored){
 
             }
@@ -718,12 +732,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             } else {
                 TextChannel modChannel = jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
                 assert modChannel != null;
-                modChannel.sendMessage(":x: [Test Server] » " + discordUserName + " left the server.").queue();
+                modChannel.sendMessage(":x: » " + discordUserName + " left the server.").queue();
             }
         } catch (NullPointerException e){
             TextChannel minecraftChannel = jda.getTextChannelById(setTestingChannel(Constants.MINECRAFT_CHAT_CHANNEL_ID));
             assert minecraftChannel != null;
-            minecraftChannel.sendMessage(":x: [Test Server] » " + onPlayerQuitEvent.getPlayer().getName() + " left the server.").queue();
+            minecraftChannel.sendMessage(":x: » " + onPlayerQuitEvent.getPlayer().getName() + " left the server.").queue();
         }
     }
 

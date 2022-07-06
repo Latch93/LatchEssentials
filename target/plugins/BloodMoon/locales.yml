@@ -1,0 +1,34 @@
+# Plugin version. Please do not tamper
+LocalesVersion: 0.8.1
+
+# Locales file. use $n to create a new line
+# Some entries can accept a parameter, which will be $d
+# You can completely silence a line by assigning "%void%"
+# You can use color codes. Refer to https://dev.bukkit.org/projects/color-chat for more info
+
+BloodMoonTitleBar: Medium Bloodmoon
+DeathSuffix: during a BloodMoon!
+DaysBeforeBloodMoon: '%void%'
+BloodMoonRightNow: '&ca BloodMoon is taking place right now!'
+BloodMoonTomorrow: '%void%'
+BloodMoonTonight: '%void%'
+BloodMoonWarningTitle: '%void%'
+BloodMoonWarningBody: '&cExperience is multiplied, and mobs have bonus drops$n&cMobs
+  are stronger and apply special debuffs'
+BloodMoonEndingMessage: '&a&lThe BloodMoon fades away... for now'
+DyingResultsInInventoryLoss: '%void%'
+DyingResultsInExperienceLoss: '%void%'
+PluginReloaded: '&aPlugin has been reloaded successfully'
+NoBloodMoonInWorld: '&oThere are no BloodMoon in you current world'
+CommandNotFound: '&cCommand&o&f $d &r&cdoes not exist!'
+NoPermission: '&cYou do not have the permission to do that!'
+AllowedCommands: '&6Supported commands are: &f&o$d'
+BedNotAllowed: '&cYou cannot sleep during a &4BloodMoon'
+WorldIsPermanentBloodMoon: '&cThis whole world is permanently in a BloodMoon!'
+CannotStopBloodMoon: '&cYou cannot stop the BloodMoon in this world!'
+GeneralError: '&c&oThere was an error processing your request'
+ZombieBossSpawned: '&f&l$b &fhas arrived!'
+ZombieBossName: Jerry Sr. Sr.
+BossSlain: '&l$p &2has slain &6Jerry Sr. Sr.!'
+HordeArrived: '&cA horde has descended!'
+NoPlayerOfName: '&cNo player of name &f$p &ccould be found in world &f$w'

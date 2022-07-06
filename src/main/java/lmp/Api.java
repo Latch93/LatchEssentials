@@ -13,19 +13,19 @@ import net.luckperms.api.util.Tristate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.ObjectUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -100,7 +100,7 @@ public class Api {
             senderMessage = "I tried to @ everyone or @ here. I shouldn't do that, but I did";
         }
         if (senderName != null) {
-            finalMessage = senderName + " [Test Server] » " + senderMessage;
+            finalMessage = senderName + " » " + senderMessage;
         } else {
             finalMessage = senderMessage;
         }
@@ -365,6 +365,90 @@ public class Api {
                         e.setCancelled(true);
                         player.sendMessage(ChatColor.RED + "You can't use /back into the arena. Use /warp coliseum to collect your things.");
                     }
+                }
+            }
+        }
+    }
+
+    public static void placeBlockLog(BlockPlaceEvent event) throws IOException {
+        if ((event.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world") ) && (event.getBlock().getType().equals(Material.TNT) || event.getBlock().getType().equals(Material.END_CRYSTAL))){
+            FileConfiguration blockPlaceLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_PLACE_LOG_FILE_NAME));
+            Date date = new Date();
+            Player player = event.getPlayer();
+            blockPlaceLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
+            blockPlaceLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
+            blockPlaceLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
+            blockPlaceLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
+            blockPlaceLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
+            blockPlaceLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_PLACE_LOG_FILE_NAME));
+        }
+    }
+
+    public static void blockBreakLog(BlockBreakEvent event) throws IOException {
+        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
+            if (!event.getPlayer().hasPermission("group.mod")) {
+                if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
+                    LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (p.hasPermission("group.jr-mod")) {
+                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+                        }
+                    }
+                }
+            }
+            if (!event.getPlayer().hasPermission("group.mod")){
+                if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
+                    LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                }
+            }
+            FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+            Date date = new Date();
+            Player player = event.getPlayer();
+            blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
+            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
+            blockBreakLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+        }
+    }
+
+    public static void combineChestplateAndElytra(PrepareAnvilEvent e){
+        ItemStack leftSideItem = null;
+        ItemStack rightSideItem = null;
+        if (e.getInventory().getItem(0) != null && e.getInventory().getItem(1) != null) {
+            leftSideItem = e.getInventory().getItem(0);
+            rightSideItem = e.getInventory().getItem(1);
+            if (rightSideItem != null){
+                assert leftSideItem != null;
+                if (leftSideItem.getType().equals(Material.NETHERITE_CHESTPLATE) && rightSideItem.getType().equals(Material.ELYTRA)) {
+                    leftSideItem.getEnchantments();
+                    rightSideItem.getEnchantments();
+                    Map<Enchantment, Integer> chestplateEnchantments = leftSideItem.getEnchantments();
+                    Map<Enchantment, Integer> elytraEnchantments = rightSideItem.getEnchantments();
+                    Map<Enchantment,Integer> finalEnchantments = new HashMap<>();
+                    for (Map.Entry<Enchantment, Integer> chestplateEnchant : chestplateEnchantments.entrySet()) {
+                        for (Map.Entry<Enchantment, Integer> elytraEnchant : elytraEnchantments.entrySet()) {
+                            if (chestplateEnchant.getKey().equals(elytraEnchant.getKey())){
+                                if (chestplateEnchant.getValue() > elytraEnchant.getValue()){
+                                    finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
+                                } else {
+                                    finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
+                                }
+                            }
+                            if (!chestplateEnchantments.containsKey(elytraEnchant.getKey())){
+                                finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
+                            }
+                        }
+                        if (!elytraEnchantments.containsKey(chestplateEnchant.getKey())){
+                            finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
+                        }
+                    }
+
+                    ItemStack elytra = new ItemStack(Material.ELYTRA, 1);
+                    elytra.addUnsafeEnchantments(finalEnchantments);
+                    Bukkit.getServer().getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> e.getInventory().setRepairCost(50));
+                    e.setResult(elytra);
                 }
             }
         }

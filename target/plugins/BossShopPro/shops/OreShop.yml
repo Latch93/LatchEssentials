@@ -1,0 +1,273 @@
+ShopName: OreShop
+DisplayName: '&e&lOres'
+signs:
+  text: '[Ores]'
+  NeedPermissionToCreateSign: false
+shop:
+  copper_ingot:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:COPPER_INGOT
+      - amount:1
+    PriceType: MONEY
+    Price: 50
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 1
+
+  copper_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:COPPER_BLOCK
+      - amount:1
+    PriceType: MONEY
+    Price: 250
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 2
+
+  copper_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:COPPER_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 1000
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 3
+
+  iron_ingot:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:IRON_INGOT
+      - amount:1
+    PriceType: MONEY
+    Price: 200
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 4
+
+  iron_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:IRON_BLOCK
+      - amount:1
+    PriceType: MONEY
+    Price: 1250
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 5
+
+  iron_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:IRON_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 5000
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 6
+
+  gold_ingot:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:GOLD_INGOT
+      - amount:1
+    PriceType: MONEY
+    Price: 300
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 7
+
+  gold_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:GOLD_BLOCK
+      - amount:1
+    PriceType: MONEY
+    Price: 1500
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 8
+
+  gold_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:GOLD_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 6500
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 9
+
+  lapis_lazuli:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:LAPIS_LAZULI
+      - amount:1
+    PriceType: MONEY
+    Price: 35
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 10
+
+  lapis_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:LAPIS_BLOCK
+      - amount:1
+    PriceType: MONEY
+    Price: 250
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 11
+
+  lapis_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:LAPIS_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 1000
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 12
+
+
+  redstone:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:REDSTONE
+      - amount:1
+    PriceType: MONEY
+    Price: 75
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 13
+
+  redstone_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:REDSTONE_BLOCK
+      - amount:1
+    PriceType: MONEY
+    Price: 500
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 14
+
+  redstone_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:REDSTONE_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 2750
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 15
+
+  coal_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:COAL_BLOCK
+      - amount:8
+    PriceType: MONEY
+    Price: 375
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 16
+
+  coal_blocks:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:COAL_BLOCK
+      - amount:64
+    PriceType: MONEY
+    Price: 2500
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 17
+
+  netherite_ingot:
+    MenuItem:
+    - '%rewarditem_1%'
+    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+    RewardType: ITEM
+    Reward:
+    - - type:NETHERITE_INGOT
+      - amount:1
+    PriceType: MONEY
+    Price: 75000
+    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+    ExtraPermission: ''
+    InventoryLocation: 18
+
+  back:
+    MenuItem:
+    - lore:&8Back to Menu
+    - name:&cBack
+    - amount:1
+    - type:REDSTONE
+    RewardType: SHOP
+    Reward: menu
+    PriceType: NOTHING
+    Message: '&6Leaving the Ore Shop...'
+    ExtraPermission: ''
+    InventoryLocation: 19
+
+  

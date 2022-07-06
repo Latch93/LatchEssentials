@@ -28,7 +28,6 @@ lmp\CustomPortals.class
 lmp\SlimeChunkFinder.class
 lmp\BossBattle.class
 lmp\PortalBlocker.class
-lmp\MobileSpawner.class
 lmp\Backbacks\BackpackTabComplete.class
 lmp\DiscordStaffChatCommand.class
 lmp\UnbanRequest.class

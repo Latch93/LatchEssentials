@@ -1,0 +1,40 @@
+# Time to exempt a player from moving because of entering/exiting a vehicle
+# Increase in case of false positives
+ENTERED_EXITED_TIME: 250
+# Time to exempt a player from moving because of teleporting
+# Increase in case of false positives
+TELEPORT_TIME: 1500
+# Time to exempt a player from moving because of exiting fly mode
+# Changing this value is almost never required
+EXIT_FLY_TIME: 2000
+# Time to exempt a player from moving because of joining the server
+# If your server is slow when a player joins, increasing this value is important
+# Shouldn't be lower than 1500 or higher than 5000
+JOIN_TIME: 2000
+# Time to exempt a player from moving because of taking damage
+# Can be decreased very slightly to increase detection
+# Increasing in case of false positives is almost never necessary and is not advised
+DAMAGE_TIME: 3000
+# Time to exempt a player from moving because of taking damage with knockback effects
+# Can be decreased very slightly to increase detection
+# Increase in case of false positives, but shouldn't be necessary 
+KNOCKBACK_DAMAGE_TIME: 4000
+# Time to exempt a player from moving because of taking damage from an explosion
+# Can be decreased very slightly to increase detection
+# Increasing in case of false positives is almost never necessary and is not advised
+EXPLOSION_DAMAGE_TIME: 5000
+# Amount of seconds to extend a players velocitized state after receiving velocity again
+VELOCITY_EXTENSION: 2
+# Time a player is considered to have a change in velocity
+VELOCITY_TIME: 1000
+# This is a set value and shouldn't be changed unless you know what you're doing
+VELOCITY_PREVENT: 2000
+# This is a set value and shouldn't be changed unless you know what you're doing
+VELOCITY_MAXTIMES: 2
+# Minimum travel distance for move to be considered a teleport and subsequently be ignored
+# This is a set value and shouldn't be changed unless you know what you're doing
+TELEPORT_MIN: 400
+# The change milliseconds between two keepalives before considering a player to be lagging
+# Decrease this in case of clientside lag-related false positives
+# Do not lower below 50 or increase above 75
+LAG_DETERMINATION: 60

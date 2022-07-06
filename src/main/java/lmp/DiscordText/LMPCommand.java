@@ -47,25 +47,29 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("withdraw")){
                     double amount = Double.parseDouble(args[1]);
-                    if (amount <= Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player))){
-                        Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
-                        ItemStack paper = new ItemStack(Material.PAPER, 1);
-                        ItemMeta im = paper.getItemMeta();
-                        assert im != null;
-                        im.setLore(Collections.singletonList("MoneyOrder - " +player.getName() + " - " + amount));
-                        paper.setItemMeta(im);
-                        World world = player.getWorld();
-                        Location dropLocation = player.getLocation();
-                        world.dropItem(dropLocation, paper);
-                        player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
-                        FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
-                        Date date = new Date();
-                        moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
-                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
-                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
-                        moneyOrderLogCfg.save(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
+                    if (amount > 499) {
+                        if (amount <= Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player))) {
+                            Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
+                            ItemStack paper = new ItemStack(Material.PAPER, 1);
+                            ItemMeta im = paper.getItemMeta();
+                            assert im != null;
+                            im.setLore(Collections.singletonList("MoneyOrder - " + player.getName() + " - " + amount));
+                            paper.setItemMeta(im);
+                            World world = player.getWorld();
+                            Location dropLocation = player.getLocation();
+                            world.dropItem(dropLocation, paper);
+                            player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
+                            FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
+                            Date date = new Date();
+                            moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
+                            moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
+                            moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
+                            moneyOrderLogCfg.save(Api.getConfigFile(Constants.YML_MONEY_ORDER_LOG_FILE_NAME));
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Can't withdraw more than your current balance.");
+                        }
                     } else {
-                        player.sendMessage(ChatColor.RED + "Can't withdraw more than your current balance.");
+                        player.sendMessage(ChatColor.RED + "Can't withdraw less than $500.");
                     }
                 } else if (args[0].equalsIgnoreCase("deposit")){
                     Inventory playerInv = player.getInventory();
@@ -265,6 +269,8 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("help")){
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("spectate")){
+                    spectateInsideRandomPlayer(player);
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e){
@@ -276,6 +282,17 @@ public class LMPCommand implements CommandExecutor {
         }
 
         return false;
+    }
+
+    public static void spectateInsideRandomPlayer(Player player) {
+        Random rand = new Random();
+        int n = rand.nextInt(Bukkit.getOnlinePlayers().size());
+        ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!onlinePlayers.get(n).getName().equalsIgnoreCase("latch93") && Boolean.FALSE.equals(Api.isPlayerInvisible(onlinePlayers.get(n).getUniqueId().toString()))){
+            player.setSpectatorTarget(onlinePlayers.get(n));
+        } else {
+            spectateInsideRandomPlayer(player);
+        }
     }
 
 }

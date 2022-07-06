@@ -1,0 +1,1813 @@
+ShopName: LimitedShop
+DisplayName: '&9&lLimited Time Shop'
+Command: lts
+signs:
+  text: '[LTS]'
+  NeedPermissionToCreateSign: true
+shop:
+  sneaky_cave_pants_netherite:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward:
+    - - enchantment:UNBREAKING#5
+      - enchantment:FIRE_ASPECT#2
+      - enchantment:SHARPNESS#6
+      - enchantment:MENDING#1
+      - 'lore1: Blood Sucker'
+      - 'lore2: 30% Chance to get one heart from a mob'
+      - type:IRON_SWORD
+      - amount:1
+      - name:&6&lBlood Sucker
+    PriceType: money
+    Price: 350000
+    Message: '&2You have bought a new armor piece for &c%price%&2.'
+    ExtraPermission: ''
+    InventoryLocation: 1
+
+  glass_block:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward: 
+    - - type:PISTON
+      - amount:8
+    Message: '&eYou bought %itemname%!'
+    ExtraPermission: '' 
+    InventoryLocation: 2
+ 
+  glass_block2:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    PriceType: money
+    Price: 1500
+    Reward:
+    - - type:OBSERVER
+      - amount:8
+    Message: '&eYou bought %itemname%!'
+    ExtraPermission: '' 
+    InventoryLocation: 3
+
+  redstone_lamp_rod:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    PriceType: money
+    Price: 1000
+    Reward:
+    - - type:CRYING_OBSIDIAN
+      - amount:8
+    Message: '&eYou bought %itemname%!'
+    ExtraPermission: '' 
+    InventoryLocation: 4
+
+  calcite:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    PriceType: money
+    Price: 750
+    Reward:
+    - - type:WHITE_WOOL
+      - amount:32
+    Message: '&eYou bought %itemname%!'
+    ExtraPermission: '' 
+    InventoryLocation: 5
+
+  wither_skeleton_head2:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTlhZDM2NjQxZGRkN2MxZTdhYzMxNzczNDQzZjAxOTZmMDE2MzFiZTA3MWU2MjBiYzdmNjUyM2UzYzg1OTg0MyJ9fX0=
+      - name:&f&lLime Party Crab Head
+    PriceType: money
+    Price: 2500
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 6
+
+  smooth_sandstone_chest_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjNmNTljMjZhM2I3NWE1ZDQxMWIxMjAzNmRkN2U0MjExNGI4ZDcxYThjZjVhMTJmZGVlZDI5NDNlMzYzN2NlNiJ9fX0=
+      - name:&f&lDemogorgan Head
+    PriceType: money
+    Price: 2500
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 7
+
+  warden_plushie_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTBjN2NlZWNjODliNTY0MjNhOWU4YWFiMTE3NjRkZTI5MDIyNjU4MzA5YTUyNjY2M2JmMzQyNGY0N2NhZDlmOCJ9fX0=
+      - name:&f&Sonic Head
+    PriceType: money
+    Price: 2500
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 8
+
+  king_steve_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2YmUyYjdkNGZjOWUzNWVjYjgxOTRjMDAzNGU4NzZiN2ZjMGY3ZThkNjJhYTI5YWI3ZWI4NDYxZDJiNzIyNCJ9fX0=
+      - name:&f&lHooded Penguin Head
+    PriceType: money
+    Price: 2500
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 9
+
+  technoblade:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2ZlOTcyNWM5NTA0NzJlNDY5YjlmY2NhZTMyZjYxYmNlZmViZGI1ZWE5Y2U5YzkyZDU4MTcxZmZiN2EzMzZmZSJ9fX0=
+      - name:&f&lTechnoblade Head
+    PriceType: money
+    Price: 1
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 10
+
+  human_technoblade_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTljNTkxZDU2ZWE4NzlhM2Q3NThiYTFlOTNiYmRkM2Y1MDUxMmFlZGExNmQ1MDUxOWVmNTk2MzUwZTAxYzFhYiJ9fX0=
+      - name:&f&lHuman Technoblade Head
+    PriceType: money
+    Price: 1
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 11
+
+  hero_technoblade_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGQ4M2E3NTg1MmVmNmMzZDE5YWNhZDg2NDUwNTk1OTgxZTFiY2VjZDIwNGI5MDJiYTNiNWZmZWFiOWFmZjhlIn19fQ==
+      - name:&f&lHerobrine Technoblade Head
+    PriceType: money
+    Price: 1
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 12
+  techno2_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTQxOWMzNTA0ZjY2ODRiMGE1NWZkMDY5Y2NhZGUyZWI2NTk3MjRjYThiYjEwYzIwZjJkZTUwNWFhNGMyZGVmYiJ9fX0=
+      - name:&f&lTechnoblade Head
+    PriceType: money
+    Price: 5000
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 13
+
+  techno_plushie_head2:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTk5YWM3OTRlMzlhZjQyOGEyN2JlZGE1NTQxY2RiMzdjNWQyZjhhZThmYmI5Y2Y1NTcwMzJkMDUwN2I2YTE0OSJ9fX0=
+      - name:&f&lTechnoblade Plushie Head
+    PriceType: money
+    Price: 1
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 14
+
+  princess_technoblade_head:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&8Click to get it for &c%price%&e.
+    RewardType: ITEM
+    Reward: 
+    - - type:PLAYER_HEAD
+      - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmU1NjdjMGM5N2Y3ZDVkNGU1ZDVjM2UyNmQyODYyZDJmZTMyMTA3NDQzYzQ0NWY0Y2Y3YmIzNzBkMjE0NDFjZCJ9fX0=
+      - name:&f&lPrincess Technoblade Head
+    PriceType: money
+    Price: 1
+    Message: ''
+    ExtraPermission: ''
+    InventoryLocation: 15
+
+  chewbaccas-bowcaster:
+    MenuItem:
+    - '%rewarditem_1%'
+    - lore:&cCosts %price%.
+    RewardType: ITEM
+    Reward:
+    - - enchantment:UNBREAKING#3
+      - enchantment:QUICK_CHARGE#3
+      - enchantment:MULTISHOT#1
+      - enchantment:MENDING#1
+      - type:CROSSBOW
+      - amount:1
+      - name:&6Technoblade's Rocket Launcher
+    PriceType: money
+    Price: 50000
+    Message: '&2You have bought a %itemname% for &c%price%&2.'
+    ExtraPermission: ''
+    InventoryLocation: 16
+
+# wood_shovel:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&cCosts %price%.
+#     RewardType: ITEM
+#     Reward:
+#     - - enchantment:SILK_TOUCH#1
+#       - enchantment:EFFICIENCY#4
+#       - enchantment:SHARPNESS#2 
+#       - enchantment:FIRE_ASPECT#3
+#       - enchantment:LOOTING#2
+#       - enchantment:KNOCKBACK#5
+#       - type:WOODEN_SHOVEL
+#       - amount:1
+#       - name:&6Shovel O' Dreams
+#     PriceType: money
+#     Price: 15000
+#     Message: '&2You have bought a %itemname% for &c%price%&2.'
+#     ExtraPermission: ''
+#     InventoryLocation: 2
+# sneaky_cave_pants_netherite:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:PROTECTION#4
+  #     - enchantment:BLAST_PROTECTION#5
+  #     - enchantment:FIRE_PROTECTION#5
+  #     - enchantment:UNBREAKING#3
+  #     - enchantment:MENDING#1
+  #     - enchantment:SWIFT_SNEAK#5
+  #     - type:NETHERITE_LEGGINGS
+  #     - amount:1
+  #     - name:&7&oSNEAKY Cave Pants
+  #   PriceType: money
+  #   Price: 425000
+  #   Message: '&2You have bought a new armor piece for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+  # tnt_block:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 1500
+  #   Reward:
+  #   - - type:TNT
+  #     - amount:8
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 6
+
+  # red_easter_egg_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmUzMmE3ZGU3YTY3MmNjNjhmYTdhMjcyYmFhNmE4OWViZDQ0MGMzMmRjZjQ0ZTc3MDU3MDY4OTg5MDQyZjdjNiJ9fX0=
+  #     - name:&f&lRed Easter Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # chest_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzM5MGVlZGUzODFiYjg0NDdmN2Q3MmUxNWI1NjM0NzY4M2UwMmMxN2M5YjhmYzZiZWNkNzI2ZjBhNTJjN2ZjMSJ9fX0=
+  #     - name:&f&lChest Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # fries_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTA1ODI2YjM3YTdmN2IyM2MzYWM5ZGRhOTdmNDc0NGQxMjAzNDBkNmZhNDRmOTM3ZTJiNzlmOGQzOTVmIn19fQ==
+  #     - name:&f&lFries Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+# RottenEgg:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+#     RewardType: ITEM
+#     Reward:
+#     - - type:TURTLE_EGG
+#       - enchantment:FIRE_ASPECT#4
+#       - enchantment:SHARPNESS#4
+#       - enchantment:THORNS#10
+#       - enchantment:KNOCKBACK#4
+#       - amount:1
+#     PriceType: MONEY
+#     Price: 25000
+#     Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+#     ExtraPermission: ''
+#     InventoryLocation: 4
+# the_fork_trident:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&8Click to get it for &c%price%&e.
+#     RewardType: ITEM
+#     PriceType: money
+#     Price: 82500
+#     Reward:
+#     - - enchantment:UNBREAKING#4
+#       - enchantment:MENDING#1
+#       - enchantment:SHARPNESS#3
+#       - enchantment:FIRE_ASPECT#2
+#       - enchantment:SHARPNESS#3
+#       - enchantment:LOYALTY#3
+#       - enchantment:CHANNELING#3
+#       - enchantment:IMPALING#6
+#       - type:TRIDENT
+#       - amount:1
+#       - name:&eThe Fork
+#     Message: '&eYou bought %itemname%!'
+#     ExtraPermission: '' 
+#     InventoryLocation: 2
+# burnt_cactus_chestplate:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&cCosts %price%.
+#     RewardType: ITEM
+#     Reward:
+#     - - enchantment:PROTECTION#4
+#       - enchantment:UNBREAKING#4
+#       - enchantment:BLAST_PROTECTION#3
+#       - enchantment:FIRE_PROTECTION#3
+#       - enchantment:PROJECTILE_PROTECTION#3
+#       - enchantment:MENDING#1
+#       - enchantment:THORNS#8
+#       - type:DIAMOND_CHESTPLATE
+#       - amount:1
+#       - name:&2Burnt Cactus Chestplate
+#     PriceType: money
+#     Price: 70000
+#     Message: '&2You have bought a %itemname% for &c%price%&2.'
+#     ExtraPermission: ''
+#     InventoryLocation: 1
+# mr_guardian_head:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&8Click to get it for &c%price%&e.
+#     RewardType: ITEM
+#     Reward: 
+#     - - type:PLAYER_HEAD
+#       - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY2MmU5ZDk4MDI5YmZmYjg5ZjM1M2JkM2Y4OGQ5NGI2MzE4ZTgwYjk1M2I2MWIwYmZhNDI5ZjM1ZTY3MDExIn19fQ==
+#       - name:&f&lMr. Guardian Head
+#     PriceType: money
+#     Price: 500
+#     Message: ''
+#     ExtraPermission: ''
+#     InventoryLocation: 7
+
+#   chicken_on_nest_head:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&8Click to get it for &c%price%&e.
+#     RewardType: ITEM
+#     Reward: 
+#     - - type:PLAYER_HEAD
+#       - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGIwZWJjNTNlNmFlNWNlNGQxODU4NTUxMTRjOTBlNDIyYmNlNjg3ZGI4ZTFiMGQ3NTdiZWMzODRjNzVmNWM4ZSJ9fX0=
+#       - name:&f&lChicken on Nest Head
+#     PriceType: money
+#     Price: 500
+#     Message: ''
+#     ExtraPermission: ''
+#     InventoryLocation: 8
+
+#   mooshroom_pilot_head:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&8Click to get it for &c%price%&e.
+#     RewardType: ITEM
+#     Reward: 
+#     - - type:PLAYER_HEAD
+#       - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODg4ODdlMjlmODAwM2U3ZjNkM2VlNDhkODNhY2YwYThlM2NmMGQ4NmU0ZDdlYmNlOWZhOThlMmY0NzkxOGU2ZCJ9fX0=
+#       - name:&f&lMooshroom Pilot Head
+#     PriceType: money
+#     Price: 500
+#     Message: ''
+#     ExtraPermission: ''
+#     InventoryLocation: 9
+
+# snorkel:
+#     MenuItem:
+#     - '%rewarditem_1%'
+#     - lore:&cCosts %price%.
+#     RewardType: ITEM
+#     Reward:
+#     - - enchantment:PROTECTION#5
+#       - enchantment:AQUA_AFFINITY#1
+#       - enchantment:UNBREAKING#4
+#       - enchantment:BLAST_PROTECTION#6
+#       - enchantment:RESPIRATION#5
+#       - enchantment:FIRE_PROTECTION#5
+#       - enchantment:PROJECTILE_PROTECTION#5
+#       - enchantment:MENDING#1
+#       - enchantment:THORNS#3
+#       - type:NETHERITE_HELMET
+#       - amount:1
+#       - name:Snorkel
+#     PriceType: money
+#     Price: 150000
+#     Message: '&2You have bought a %itemname% for &c%price%&2.'
+#     ExtraPermission: ''
+#     InventoryLocation: 1
+
+  # hammer_bro_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVmNDVmNDVhNGI5YTE2ZGZkOWMwYzMwNGRkMTE2NDkzNzg0NzcyMWQ0OWU4NDViZGFhZWQ4YzA0YjQ4YmVkYiJ9fX0=
+  #     - name:&f&lHammer Bro Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # dream_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTRlNDQwYzAwMmFkZGFiMTRiYTYzMzBkYmQ2YjdhMmU3NWJmNDc5Yjk5N2IyMTg5YTdhMTJjNjA2NDYwMDJiNSJ9fX0=
+  #     - name:&f&lDream Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # evoker_plushie_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWRlN2RkZDVkMmUwZDRhOWVmZWJhZWExYzZiOTFlYTBhZTA1YjhmOTY3NTEyOGQ4Y2FiYWMyOWZmZDQyOTk1NyJ9fX0=
+  #     - name:&f&lEvoker Plushie Head
+  #   PriceType: money
+  #   Price: 500
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+    # pointed_dripstone:
+    # MenuItem:
+    # - '%rewarditem_1%'
+    # - lore:&8Click to get it for &c%price%&e.
+    # RewardType: ITEM
+    # PriceType: money
+    # Price: 500
+    # Reward:
+    # - - type:POINTED_DRIPSTONE
+    #   - amount:8
+    # Message: '&eYou bought %itemname%!'
+    # InventoryLocation: 5
+    # ExtraPermission: ''
+
+# pickaxe_diamond:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:EFFICIENCY#6
+  #     - enchantment:SILK_TOUCH#4
+  #     - enchantment:MENDING#1
+  #     - enchantment:KNOCKBACK#2
+  #     - enchantment:UNBREAKING#4
+  #     - enchantment:SMITE#2
+  #     - type:DIAMOND_PICKAXE
+  #     - amount:1
+  #     - name:Silky Pick
+  #   PriceType: money
+  #   Price: 27500
+  #   Message: '&2You have bought a new armor piece for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+
+  # amethyst_block:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 500
+  #   Reward:
+  #   - - type:BUDDING_AMETHYST
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+  #  crown_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjM5ZmQxMzdlOTk1ZGEyNjRkZjI0NDhmZjlmNjM1NzI4YjQ4Y2ExMGVhYzdhNjE0N2YzMWU3YzE5MDE3NTBmOSJ9fX0=
+  #     - name:&f&lCrown Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # handicapped_ahead_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjU2ZTBlNmQwNDNlZjFiMmYzMzIyZDM4ZjZiMjg5ODU3ZDEyMzZjZDI4NDgxODJjZjdkNjA1YTRmYjVjODIxOCJ9fX0=
+  #     - name:&f&lFor Handicapped Ahead Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # no_entry_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjNiMzI5YzEwNTI3N2JmNGE4NTYyMWUzZTVhNDk2ZTJhYTM3NjU4NTY2ZTA3ZGZhMWNkYmI3YmI2YzE5YTVhNiJ9fX0=
+  #     - name:&f&lNo Entry Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9 
+
+  # slick_stompers:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&cCosts %price%.
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - enchantment:UNBREAKING#3
+  #       - enchantment:MENDING#1
+  #       - enchantment:FEATHER_FALLING#5
+  #       - enchantment:PROTECTION#5
+  #       - enchantment:FIRE_PROTECTION#5
+  #       - enchantment:SOUL_SPEED#5
+  #       - type:NETHERITE_BOOTS
+  #       - amount:1
+  #       - name:&eSlick Stompers
+  #     PriceType: money
+  #     Price: 35000
+  #     Message: '&2You have bought %itemname% for &c%price%&2.'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 12
+
+
+
+  # enderman_zombie_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmM3MzJhZmRkNTNmYTgwZGJmMjI0ZmE1ZjhkMDIyN2FiZTU1M2UwMWU4ODIwYjlmYjA1NGZhYmY0ZGEzYjUwNSJ9fX0=
+  #     - name:&f&lEnderman Zombie Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # baby_creeper_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjBhYzE4YWNkZjg3ZDk4MGI5ZmRjZDk1Yzc5Yzk3NDNjOTlkMDY5NGE5MGQ5NmU1ZmY0ZjA2ZWU3ODgxNTQwMyJ9fX0=
+  #     - name:&f&lBaby Creeper Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # stormtrooper_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGU3M2QyMmZiZDAyY2MwMjllMGJiNjBkNDU3NWIzZjE2ZDZjMjgwODQ0ZGU0MGQwYTNmYzU3ZTUyZmFlNWZhMiJ9fX0=
+  #     - name:&f&lStormtrooper Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+  # pink_donut_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTM1NzJhMWJhMDY2MzI0NWQ1N2JjMTQ2Yjk3OWU5MWMwN2EwMmExYzg5YWQzZjg3NTFiYWZlMmFiMTg4NjQ0In19fQ==
+  #     - name:&f&lPink Donut Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # jump_king_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTdkMDFjMDI5ZmZkODQ5YmI1NjE4MDU2MDk4MDRiMDE4MjcxNGZjYjYyOTA2M2I3ODc1MjM0MmFiZTIzMWFlNSJ9fX0=
+  #     - name:&f&Jump King Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # computer_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzEyZTE3YTE5MjI3OWQzZmQzYzM5YTRhNGNkYzFiYTY5M2NiNTA5MmNkOTQzNmFhMWU5OGNjMmU2MDcyZGMwIn19fQ==
+  #     - name:&f&lComputer Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # sans_thanos_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzVjNmRkZGJmOTVhMjhlN2I1MTBmZWFlZDNjYzgyYTE2ZjJlZTk5MWI1YWRlNDA1MWIwNjU4ZjZjODc1NGVlNCJ9fX0=
+  #     - name:&f&lSans Thanos Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # batman_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWI2YmRmYjg5NTlmMTQzYzBkMDUwNDE1ZjdiZmM5NzJiNzBmZmNiOTMwOTQ1NmIxZmUxNjNlYmQwY2JiZmYyOSJ9fX0=
+  #     - name:&f&lBatman Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # twitch_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjI1ODA0ODliMmQ0NGU1ZDlhOWIzZjgzNmVmMjE5ZjAzMTI5OTJkNDBiMTRkOTlmNTZjNWFmMDVjNDBmNzE1In19fQ==
+  #     - name:&f&lTwitch Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # easter_bunny_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmM4ODFhNTgxYWI3ZmIxOTAwOGFkZjUzOTcyN2U2YjJlMjBkN2UyNTZjNjJmYzNlYThhZjExMmJiZTU2YmYwZCJ9fX0=
+  #     - name:&f&lEaster Bunny Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # kermit_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzBkYjdjN2FjNmY1Y2UwZDU2MGY4MTM2Mzg0NTkxM2FhMWJhYWQ5MmYyMTQ5NDMxZTM3MTM0NTkxNzBhZTY0ZCJ9fX0=
+  #     - name:&f&lKermit Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # pink_fallguy_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQxMGVjNjgwMTYxOWIwNTk1Y2FkZGM5ZGFhNmRlMGY5ZjI3NDQ0YzlmNjIzMjYzNGJmY2Y4OGJmN2YxMjNhYiJ9fX0=
+  #     - name:&f&lPink Fall Guy Head
+  #   PriceType: money
+  #   Price: 250
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  back:
+    MenuItem:
+    - lore:&8Back to Menu
+    - name:&cBack
+    - amount:1
+    - type:REDSTONE
+    RewardType: SHOP
+    Reward: menu
+    PriceType: NOTHING
+    Message: '&6Leaving the Limited Time Shop...'
+    ExtraPermission: ''
+    InventoryLocation: 10
+
+  # red_snail_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2EyMDhjM2ZjN2U1ZWI1MDllOTU3ZmM0MGE3ZmI2NTU3MGExMDJjN2E5OWU1ZmRmNWE4NDJiMzVhMGNjYWFiYyJ9fX0=
+  #     - name:&f&lRed Snail Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 3
+
+  # mystery_magma_slime_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTllOGFjYzg2ZWRjOTU2Y2M2MTY3MDQ5MmJiZTRhY2YyMTYxZGE5M2I3ODRiYmEzZGFkYjZiODBhYjUyOGNlNSJ9fX0=
+  #     - name:&f&lMystery Magma Slime Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 4
+
+  # potato_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNThmZDZhOWZkODU3Mjc3MzZkZmU0NTFiNzU0MjcxZWE5MTI5ODEzNjcxNGZlNDRmYTcyYjFkOWI5YmQ5MzRhMyJ9fX0=
+  #     - name:&f&lPotato Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 5
+
+  # barrier_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWZkMjQwMDAwMmFkOWZiYmJkMDA2Njk0MWViNWIxYTM4NGFiOWIwZTQ4YTE3OGVlOTZlNGQxMjlhNTIwODY1NCJ9fX0=
+  #     - name:&f&lBarrier Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 6
+
+  # pig_spawner_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: item
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2IzOWQyNTVjZTNmNDg3ZTk0MzJkN2RlOTdiOTI5NGMzYTgxZWJiNTk4NjNhZDBlZmRiOTIzOGUzMDYxODQ1NCJ9fX0=
+  #     - name:&f&lPig Spawner Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 7
+
+  # diamond_bee_head:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: item
+  #   Reward: 
+  #   - - type:PLAYER_HEAD
+  #     - customskull:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2JmM2UyMTg4OWUyYTVkZTBmMzU4ZGUwYzFiYWI1YTIyYjU5NTZkZDUwNjFlYTk2YjQwNDk1MDAwYWJiMmE4NCJ9fX0=
+  #     - name:&f&lDiamond Bee Head
+  #   PriceType: money
+  #   Price: 1000
+  #   Message: ''
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # TurtleEgg:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:TURTLE_EGG
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 1000
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+
+  # tnt_block:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 250
+  #   Reward:
+  #   - - type:TNT
+  #     - amount:4
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 9
+
+  # honey_block:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 500
+  #   Reward:
+  #   - - type:HONEY_BLOCK
+  #     - amount:8
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 9
+
+  # slime_block:
+  # MenuItem:
+  # - '%rewarditem_1%'
+  # - lore:&8Click to get it for &c%price%&e.
+  # RewardType: ITEM
+  # PriceType: money
+  # Price: 250
+  # Reward:
+  # - - type:SLIME_BLOCK
+  #   - amount:20
+  # Message: '&eYou bought %itemname%!'
+  # ExtraPermission: '' 
+  # InventoryLocation: 9
+  # bookshelf:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 75
+  #   Reward:
+  #   - - type:BOOKSHELF
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   InventoryLocation: 9
+  #   ExtraPermission: ''
+
+  # chewbaccas-bowcaster:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:UNBREAKING#3
+  #     - enchantment:QUICK_CHARGE#5
+  #     - enchantment:MULTISHOT#1
+  #     - enchantment:MENDING#1
+  #     - enchantment:PIERCING#5 
+  #     - type:CROSSBOW
+  #     - amount:1
+  #     - name:&6Bowcaster
+  #   PriceType: money
+  #   Price: 8750
+  #   Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # physics_breaker:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&cCosts %price%.
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - enchantment:UNBREAKING#3
+  #       - enchantment:MENDING#1
+  #       - enchantment:FEATHER_FALLING#5
+  #       - enchantment:PROTECTION#5
+  #       - enchantment:FIRE_PROTECTION#5
+  #       - type:DIAMOND_BOOTS
+  #       - amount:1
+  #       - name:&ePhysics Breaker
+  #     PriceType: money
+  #     Price: 7500
+  #     Message: '&2You have bought %itemname% for &c%price%&2.'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 9
+
+    # full_conduit_kit:
+    #   MenuItem:
+    #   - '%rewarditem_1%'
+    #   - lore:&cCosts %price%.
+    #   RewardType: ITEM
+    #   Reward:
+    #   - - type:CONDUIT
+    #     - amount:1
+    #     - name:Full Conduit Kit
+    #   - - type:DARK_PRISMARINE
+    #     - amount:42
+    #     - name:Dark Prismarine
+    #   PriceType: money
+    #   Price: 7500
+    #   Message: '&2You have bought a %itemname% for &c%price%&2.'
+    #   ExtraPermission: ''
+    #   InventoryLocation: 9
+
+  # snorkel:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&cCosts %price%.
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - enchantment:RESPIRATION#5
+  #       - enchantment:AQUA_AFFINITY#1
+  #       - enchantment:UNBREAKING#3
+  #       - enchantment:PROTECTION#5
+  #       - enchantment:MENDING#1
+  #       - type:DIAMOND_HELMET
+  #       - amount:1
+  #       - name:Snorkel
+  #     PriceType: money
+  #     Price: 15000
+  #     Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 9
+
+  # wither_rose:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 750
+  #   Reward:
+  #   - - type:WITHER_ROSE
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   InventoryLocation: 1
+  #   ExtraPermission: ''
+
+  # holy_latch_apple:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   - 'lore2:&eClick &2right &eto buy &c%price_right% &efor &b%reward_right%&e.'
+  #   - 'lore3:&eClick &2shift left &eto buy &b%reward_shift_left% &efor &c%price_shift_left%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:FIRE_ASPECT#2
+  #     - enchantment:SHARPNESS#4
+  #     - type:ENCHANTED_GOLDEN_APPLE
+  #     - amount:1
+  #     - name:&6&lHoly Latch Apple
+  #   PriceType: MONEY
+  #   Price: 1500
+  #   RewardType_right: ITEM
+  #   Reward_right:
+  #   - - enchantment:FIRE_ASPECT#2
+  #     - enchantment:SHARPNESS#4
+  #     - type:ENCHANTED_GOLDEN_APPLE
+  #     - amount:10
+  #     - name:&6&lHoly Latch Apple
+  #   PriceType_right: MONEY
+  #   Price_right: 15000
+  #   RewardType_shift_left: ITEM
+  #   Reward_shift_left:
+  #   - - enchantment:FIRE_ASPECT#2
+  #     - enchantment:SHARPNESS#4
+  #     - type:ENCHANTED_GOLDEN_APPLE
+  #     - amount:64
+  #     - name:&6&lHoly Latch Apple
+  #   PriceType_shift_left: MONEY
+  #   Price_shift_left: 96000
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 4
+
+  # terracotta:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&8Click to get it for &c%price%&e.
+  #     RewardType: ITEM
+  #     PriceType: money
+  #     Price: 200
+  #     Reward:
+  #     - - type:TERRACOTTA
+  #       - amount:64
+  #     Message: '&eYou bought %itemname%!'
+  #     InventoryLocation: 1
+  #     ExtraPermission: ''
+  # op_trident:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 17500
+  #   Reward:
+  #   - - enchantment:UNBREAKING#5
+  #     - enchantment:SHARPNESS#3
+  #     - enchantment:FIRE_ASPECT#2
+  #     - enchantment:SHARPNESS#3
+  #     - enchantment:LOYALTY#2
+  #     - enchantment:CHANNELING#3
+  #     - enchantment:IMPALING#4
+  #     - type:TRIDENT
+  #     - amount:1
+  #     - name:&ePoseidon
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 9
+
+ # beacon:
+ #    MenuItem:
+ #    - '%rewarditem_1%'
+ #    - lore:&8Click to get it for &c%price%&e.
+ #    RewardType: ITEM
+ #    PriceType: money
+ #    Price: 30000
+ #    Reward:
+ #    - - type:BEACON
+ #      - amount:1
+ #    Message: '&eYou bought %itemname%!'
+ #    InventoryLocation: 1
+ #    ExtraPermission: ''
+  
+ #  hoes_mad:
+ #    MenuItem:
+ #    - '%rewarditem_1%'
+ #    - lore:&cCosts %price%.
+ #    RewardType: ITEM
+ #    Reward:
+ #    - - enchantment:UNBREAKING#1
+ #      - enchantment:SHARPNESS#10
+ #      - enchantment:FIRE_ASPECT#1
+ #      - type:DIAMOND_HOE
+ #      - amount:1
+ #      - name:&eHoe's Mad
+ #    PriceType: money
+ #    Price: 15000
+ #    Message: '&2You have bought a new weapon for &c%price%&2.'
+ #    ExtraPermission: ''
+ #    InventoryLocation: 2
+
+  # op_shield:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 25000
+  #   Reward:
+  #   - - enchantment:UNBREAKING#5
+  #     - enchantment:SHARPNESS#3
+  #     - enchantment:FIRE_ASPECT#2
+  #     - enchantment:PROTECTION#5
+  #     - type:SHIELD
+  #     - amount:1
+  #     - name:&eFBI Open Up!!!
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 9
+
+   # stone_bricks:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #     - type:STONE_BRICKS
+  #     - amount:64
+  #   PriceType: MONEY
+  #   Price: 100
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+
+  # elytra:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 30000
+  #   Reward:
+  #   - - type:ELYTRA
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: '' 
+  #   InventoryLocation: 9
+
+  # bow_die_amazon:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:PUNCH#3
+  #     - enchantment:POWER#6
+  #     - enchantment:INFINITY#1
+  #     - enchantment:FLAME#1
+  #     - enchantment:UNBREAKING#1
+  #     - type:BOW
+  #     - amount:1
+  #     - name:Die Amazon Die
+  #   PriceType: money
+  #   Price: 12500
+  #   Message: '&2You have bought a new enchanted bow for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # shulker_box:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:BLUE_SHULKER_BOX
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 12500
+  #   Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+   # big_boi_britches_diamond:
+   #  MenuItem:
+   #  - '%rewarditem_1%'
+   #  - lore:&cCosts %price%.
+   #  RewardType: ITEM
+   #  Reward:
+   #  - - enchantment:PROTECTION#4
+   #    - enchantment:BLAST_PROTECTION#5
+   #    - enchantment:FIRE_PROTECTION#6
+   #    - enchantment:UNBREAKING#3
+   #    - enchantment:MENDING#1
+   #    - type:DIAMOND_LEGGINGS
+   #    - amount:1
+   #    - name:Big Boi Britches
+   #  PriceType: money
+   #  Price: 15000
+   #  Message: '&2You have bought a new armor piece for &c%price%&2.'
+   #  ExtraPermission: ''
+   #  InventoryLocation: 2
+  
+   # holy_latch_apple:
+   #    MenuItem:
+   #    - '%rewarditem_1%'
+   #    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+   #    RewardType: ITEM
+   #    Reward:
+   #    - - enchantment:FIRE_ASPECT#2
+   #      - enchantment:SHARPNESS#4
+   #      - type:ENCHANTED_GOLDEN_APPLE
+   #      - amount:1
+   #      - name:&6&lHoly Latch Apple
+   #    PriceType: MONEY
+   #    Price: 1500
+   #    Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+   #    ExtraPermission: ''
+   #    InventoryLocation: 1
+
+  # protecc_chestplate_diamond:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:PROTECTION#5
+  #     - enchantment:KNOCKBACK#4
+  #     - enchantment:FIRE_ASPECT#2
+  #     - type:DIAMOND_CHESTPLATE
+  #     - amount:1
+  #     - name:Protecc
+  #   PriceType: money
+  #   Price: 7500
+  #   Message: '&2You have bought a new armor piece for &c%price%&2.'
+  #   ExtraPermission: ''
+
+  # hopper:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:HOPPER
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 125
+  #   Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # sword_of_ryleh:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:SMITE#3
+  #     - enchantment:BANE_OF_ARTHROPODS#3
+  #     - enchantment:SHARPNESS#5
+  #     - enchantment:UNBREAKING#3 
+  #     - type:DIAMOND_SWORD
+  #     - amount:1
+  #     - name:&6Sword of R'yleh
+  #   PriceType: money
+  #   Price: 8750
+  #   Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # diamonds:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:DIAMOND
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 500
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  # InventoryLocation: 9
+
+  # latch_apple:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:ENCHANTED_GOLDEN_APPLE
+  #     - amount:1
+  #     - name:&6&lLatch Apple
+  #   PriceType: MONEY
+  #   Price: 1000
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+
+  # shulker_box:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:WHITE_SHULKER_BOX
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 12500
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # here_is_johnny:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:FORTUNE#3
+  #     - enchantment:EFFICIENCY#6
+  #     - enchantment:SHARPNESS#5 
+  #     - type:DIAMOND_AXE
+  #     - amount:1
+  #     - name:&6Here's Johnny
+  #   PriceType: money
+  #   Price: 8750
+  #   Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # TurtleEgg:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:TURTLE_EGG
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 2250
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # potato:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:KNOCKBACK#4
+  #     - enchantment:SHARPNESS#5
+  #     - enchantment:FIRE_ASPECT#1 
+  #     - type:POTATO
+  #     - amount:1
+  #     - name:&cNorway!
+  #   PriceType: money
+  #   Price: 750
+  #   Message: '&2You have bought Norway! for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+  # protection_5_book:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - type:ENCHANTED_BOOK
+  #       - enchantment:PROTECTION#4
+  #       - amount:1
+  #       - name:Protection IV Book
+  #     PriceType: MONEY
+  #     Price: 3750
+  #     Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 2
+  # da_boots:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&cCosts %price%.
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - enchantment:UNBREAKING#3
+  #       - enchantment:MENDING#1
+  #       - enchantment:FEATHER_FALLING#10
+  #       - enchantment:THORNS#5
+  #       - enchantment:DEPTH_STRIDER#3
+  #       - type:DIAMOND_BOOTS
+  #       - amount:1
+  #       - name:&eDa Boots
+  #     PriceType: money
+  #     Price: 15000
+  #     Message: '&2You have bought %itemname% for &c%price%&2.'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 8
+  
+
+  # gold_digger:
+  #     MenuItem:
+  #     - '%rewarditem_1%'
+  #     - lore:&cCosts %price%.
+  #     RewardType: ITEM
+  #     Reward:
+  #     - - enchantment:KNOCKBACK#1
+  #       - enchantment:FORTUNE#3
+  #       - enchantment:UNBREAKING#20
+  #       - enchantment:EFFICIENCY#10
+  #       - enchantment:FIRE_ASPECT#1 
+  #       - type:GOLDEN_SHOVEL
+  #       - amount:1
+  #       - name:&6Gold Digger
+  #     PriceType: money
+  #     Price: 15000
+  #     Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #     ExtraPermission: ''
+  #     InventoryLocation: 2
+
+  # beacon:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&81/2 OFF - Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 25000
+  #   Reward:
+  #   - - type:BEACON
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   InventoryLocation: 9
+  #   ExtraPermission: ''
+
+  # op_bow:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:UNBREAKING#3
+  #     - enchantment:POWER#5
+  #     - enchantment:MENDING#1
+  #     - enchantment:FLAME#1
+  #     - enchantment:INFINITY#1
+  #     - type:BOW
+  #     - amount:1
+  #     - name:&eOne and Only Bow
+  #   PriceType: money
+  #   Price: 25000
+  #   Message: '&2You have bought a new weapon for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  #  toast:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:KNOCKBACK#4
+  #     - enchantment:SHARPNESS#5
+  #     - enchantment:FIRE_ASPECT#1 
+  #     - type:BREAD
+  #     - amount:1
+  #     - name:&cTOAST!
+  #   PriceType: money
+  #   Price: 750
+  #   Message: '&2You have bought toast for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+
+  # punch_stick:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:KNOCKBACK#2
+  #     - type:STICK
+  #     - amount:1
+  #     - name:&cPUNCH!
+  #   PriceType: money
+  #   Price: 1250
+  #   Message: '&2You have bought a new weapon for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+
+  # one_and_only_hoe:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:UNBREAKING#5
+  #     - enchantment:SHARPNESS#2
+  #     - enchantment:KNOCKBACK#4
+  #     - type:DIAMOND_HOE
+  #     - amount:1
+  #     - name:&eOne and Only Hoe
+  #   PriceType: money
+  #   Price: 2500
+  #   Message: '&2You have bought a new weapon for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+
+  # chestplate_diamond:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:FIRE_PROTECTION#2
+  #     - enchantment:PROJECTILE_PROTECTION#2
+  #     - enchantment:THORNS#1
+  #     - enchantment:BLAST_PROTECTION#2
+  #     - type:DIAMOND_CHESTPLATE
+  #     - amount:1
+  #     - name:John Cena
+  #   PriceType: money
+  #   Price: 7500
+  #   Message: '&2You have bought a new armor piece for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 8
+
+  # pickaxe_diamond:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:EFFICIENCY#5
+  #     - enchantment:SHARPNESS#4
+  #     - enchantment:MENDING#1
+  #     - enchantment:KNOCKBACK#2
+  #     - enchantment:UNBREAKING#1
+  #     - enchantment:SMITE#2
+  #     - type:DIAMOND_PICKAXE
+  #     - amount:1
+  #     - name:OP Pick
+  #   PriceType: money
+  #   Price: 10000
+  #   Message: '&2You have bought a new armor piece for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # sword_diamond:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:SHARPNESS#3
+  #     - enchantment:UNBREAKING#1
+  #     - enchantment:KNOCKBACK#1
+  #     - enchantment:SMITE#2
+  #     - enchantment:BANE_OF_ARTHROPODS#2
+  #     - type:DIAMOND_SWORD
+  #     - amount:1
+  #     - name:&1&lNoble Sword
+  #   PriceType: money
+  #   Price: 3500
+  #   Message: '&2You have bought a new weapon for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 9
+
+  # garden_supplies:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - 'lore1:&eYou need 10 free item slots to purchase this kit.'
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:CARROT
+  #     - amount:1
+  #     - name:&f&lGardening Kit
+  #   - - type:WHEAT_SEEDS
+  #     - amount:1
+  #   - - type:POTATO
+  #     - amount:1
+  #   - - type:MELON_SEEDS
+  #     - amount:1
+  #   - - type:PUMPKIN_SEEDS
+  #     - amount:1
+  #   - - type:SUGAR_CANE
+  #     - amount:1
+  #   - - type:CACTUS
+  #     - amount:1
+  #   - - type:COCOA_BEANS
+  #     - amount:1
+  #   - - type:NETHER_WART
+  #     - amount:1
+  #   - - type:CHORUS_FLOWER
+  #     - amount:1
+  #   PriceType: MONEY
+  #   Price: 2500
+  #   Message: '&eYou bought 1 %itemname%! &eMoney left: &c%left%'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 1
+
+  # enderchest:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - type:ENDER_CHEST
+  #     - amount:1
+  #     - name:&f&lEnderchest
+  #   PriceType: money
+  #   Price: 750
+  #   Message: '&2You have bought 1 enderchest for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # enchanted_fishing_rod:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&cCosts %price%.
+  #   RewardType: ITEM
+  #   Reward:
+  #   - - enchantment:UNBREAKING#5
+  #     - enchantment:LUCK_OF_THE_SEA#3
+  #     - enchantment:MENDING#1
+  #     - enchantment:LURE#3 
+  #     - type:FISHING_ROD
+  #     - amount:1
+  #     - name:&6Daiwa MiniSpin Stik
+  #   PriceType: money
+  #   Price: 8750
+  #   Message: '&2You have bought a %itemname% for &c%price%&2.'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+  # axolotl_bucket:
+  #   MenuItem:
+  #   - '%rewarditem_1%'
+  #   - lore:&8Click to get it for &c%price%&e.
+  #   RewardType: ITEM
+  #   PriceType: money
+  #   Price: 2500
+  #   Reward:
+  #   - - type:AXOLOTL_BUCKET
+  #     - amount:1
+  #   Message: '&eYou bought %itemname%!'
+  #   ExtraPermission: ''
+  #   InventoryLocation: 2
+
+ # Netherite_Ingot:
+ #    MenuItem:
+ #    - '%rewarditem_1%'
+ #    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+ #    RewardType: ITEM
+ #    PriceType: money
+ #    Price: 10000
+ #    Reward:
+ #    - - type:NETHERITE_INGOT
+ #      - amount:1
+ #    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+ #    InventoryLocation: 5
+ #    ExtraPermission: ''
+
+ #  pigstep_music_disc:
+ #    MenuItem:
+ #    - '%rewarditem_1%'
+ #    - 'lore1:&eClick &2left &eto buy &b%reward% &efor &c%price%&e.'
+ #    RewardType: ITEM
+ #    PriceType: money
+ #    Price: 1000
+ #    Reward:
+ #    - - type:MUSIC_DISC_PIGSTEP
+ #      - amount:1
+ #    Message: '&eYou bought %itemname%! &eMoney left: &c%left%'
+ #    InventoryLocation: 6
+ #    ExtraPermission: ''
+
+ # garden_supplies:
+ #    MenuItem:
+ #    - '%rewarditem_1%'
+ #    - 'lore1:&eYou need 20 free item slots to purchase this kit.'
+ #    RewardType: ITEM
+ #    Reward:
+ #    - - type:CARROT
+ #      - amount:1
+ #    - - type:WHEAT_SEEDS
+ #      - amount:1
+ #    - - type:POTATO
+ #      - amount:1
+ #    - - type:MELON_SEEDS
+ #      - amount:1
+ #    - - type:PUMPKIN_SEEDS
+ #      - amount:1
+ #    - - type:SUGAR_CANE
+ #      - amount:1
+ #    - - type:CACTUS
+ #      - amount:1
+ #    - - type:COCOA_BEANS
+ #      - amount:1
+ #    - - type:NETHER_WART
+ #      - amount:1
+ #    - - type:CHORUS_FLOWER
+ #      - amount:1
+ #    - - type:BAMBOO
+ #      - amount:1
+ #    - - type:GLOW_BERRIES
+ #      - amount:1
+ #    - - type:CRIMSON_FUNGUS
+ #      - amount:1
+ #    - - type:WARPED_FUNGUS
+ #      - amount:1
+ #    - - type:SEA_PICKLE
+ #      - amount:1
+ #    - - type:KELP
+ #      - amount:1
+ #    - - type:BROWN_MUSHROOM
+ #      - amount:1
+ #    - - type:RED_MUSHROOM
+ #      - amount:1
+ #    - - type:SEA_PICKLE
+ #      - amount:1
+ #    - - type:SWEET_BERRIES
+ #      - amount:1
+ #    PriceType: MONEY
+ #    Price: 35000
+ #    Message: '&eYou bought garden supplies! &eMoney left: &c%left%'
+ #    ExtraPermission: ''
+ #    InventoryLocation: 2
