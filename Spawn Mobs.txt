@@ -1,0 +1,16 @@
+In order to Spawn a Mob, you must have the proper spelling. So double check the spelling of the mob name.
+
+This is a list of mobs you can spawn:
+  Blaze
+  Creeper
+  Drowned
+  Giant
+  Phantom
+  Pillager
+  Ravager
+  Silverfish
+  Skeleton
+  Warden
+  Zombie
+  
+  
