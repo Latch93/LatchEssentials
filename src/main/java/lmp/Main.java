@@ -2,6 +2,7 @@ package lmp;
 
 import io.donatebot.api.DBClient;
 import io.donatebot.api.Donation;
+import io.ipgeolocation.api.IPGeolocationAPI;
 import lmp.Backbacks.BackPackCommand;
 import lmp.Backbacks.BackPackInventoryConfig;
 import lmp.Backbacks.BackpackTabComplete;
@@ -9,17 +10,22 @@ import lmp.Backbacks.Inventories;
 import lmp.Bank.Bank;
 import lmp.Bank.BankConfig;
 import lmp.Configurations.*;
+import lmp.DiscordText.LMPCommand;
+import lmp.DiscordText.LMPCommandTabComplete;
+import lmp.DiscordText.LMPConfig;
 import lmp.LatchTwitchBot.LatchTwitchBotCommand;
 import lmp.LatchTwitchBot.LatchTwitchBotConfig;
-import lmp.DiscordText.LMPCommand;
-import lmp.DiscordText.LMPConfig;
 import lmp.LatchTwitchBot.LatchTwitchBotTabComplete;
-import lmp.PlayerShops.*;
-import io.ipgeolocation.api.IPGeolocationAPI;
-import lmp.PlayerShops.LMPCommandTabComplete;
+import lmp.PlayerShops.PlayerShops;
+import lmp.PlayerShops.PlayerShopsCommand;
+import lmp.PlayerShops.PlayerShopsInventoryConfig;
+import lmp.PlayerShops.PlayerShopsTabComplete;
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.NodeEqualityPredicate;
@@ -28,10 +34,13 @@ import net.luckperms.api.util.Tristate;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.block.Chest;
+import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -43,23 +52,30 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.security.auth.login.LoginException;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import static lmp.LatchDiscord.jda;
 
 
 public class Main extends JavaPlugin implements Listener {
@@ -90,15 +106,19 @@ public class Main extends JavaPlugin implements Listener {
     public static IPGeolocationAPI ipApi;
     public static DBClient dbClient;
 
+    public static Plugin coreProtect;
+    public static CoreProtectAPI coreProtectAPI;
 
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
         getServer().getPluginManager().registerEvents(this, this);
-        try {
-            new LatchDiscord();
-        } catch (LoginException e) {
-            e.printStackTrace();
+        if (Boolean.FALSE.equals(getIsParameterInTesting("startDiscord"))) {
+            try {
+                new LatchDiscord();
+            } catch (LoginException e) {
+                e.printStackTrace();
+            }
         }
         whitelistCfgm = new WhitelistConfig();
         playerShopsInventoryCfgm = new PlayerShopsInventoryConfig();
@@ -139,61 +159,119 @@ public class Main extends JavaPlugin implements Listener {
         addSculkSensorRecipe();
         addBundleRecipe();
         addLatchAppleRecipe();
-        LMPTimer.runTimer();
+        if (Boolean.FALSE.equals(getIsParameterInTesting("runTimer"))) {
+            LMPTimer.runTimer();
+        }
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             luckPerms = provider.getProvider();
         }
         ipApi = new IPGeolocationAPI("07eecf88b7f2468e90fe0326af707d66");
         dbClient = new DBClient("625983914049142786", "PlXK5QShFmmlb4q9qILoRc1lXqLsZVG72aOEnAiaaQi2oXfAI5X5EuIRLGBp1qa");
-
+        Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
+        coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
     }
-
     public static void getDonations(){
         String[] statuses = {"Completed", "Reversed", "Refunded"};
 
         CompletableFuture<Donation[]> future = dbClient.getNewDonations(statuses);
-// Blocking Example
-//        try {
-//            // Array of Donation objects
-//            Donation[] donations = future.get();
-//            try {
-//                System.out.println("count: " + donations.length);
-//                System.out.println("RoleID: " + donations[0].getRoleID());
-//                System.out.println("Buyer Email: " + donations[0].getBuyerEmail());
-//                System.out.println("BuyerID: " + donations[0].getBuyerID());
-//                System.out.println("Is Recurring?: " + donations[0].getRecurring());
-//                System.out.println("Price: " + donations[0].getPrice());
-//                System.out.println("TransactionID: " + donations[0].getTransactionID());
-//                System.out.println("Date: " + donations[0].getDate());
-//                System.out.println("Product ID: " + donations[0].getProductID());
-//                System.out.println("Discord ID: " + donations[0].getSellerCustoms().get("Discord ID"));
-//            } catch (ArrayIndexOutOfBoundsException e ) {
-//                System.out.println();
-//            }
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-
 // Non-blocking Example
         CompletableFuture.runAsync(() -> {
             try {
-                Donation[] donations = future.get();
+                FileConfiguration donationsCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
+                // Array of Donation objects
+                List<Donation> list = Arrays.asList(future.get());
+
+                List<Donation> sorted = list.stream()
+                        .sorted(Comparator.comparing(Donation::getDate))
+                        .collect(Collectors.toList());
                 try {
-                    System.out.println("count: " + donations.length);
-                    for (Donation donation : donations){
-                        System.out.println("RoleID: " + donation.getRoleID());
-                        System.out.println("Buyer Email: " + donation.getBuyerEmail());
-                        System.out.println("BuyerID: " + donation.getBuyerID());
-                        System.out.println("Is Recurring?: " + donation.getRecurring());
-                        System.out.println("Price: " + donation.getPrice());
-                        System.out.println("TransactionID: " + donation.getTransactionID());
-                        System.out.println("Date: " + donation.getDate());
-                        System.out.println("Product ID: " + donation.getProductID());
-                        System.out.println("Discord ID: " + donation.getSellerCustoms().get("Discord ID"));
+                    if (donationsCfg.getInt("numberOfDonations") < sorted.size()) {
+                        int previousDonationCount = donationsCfg.getInt("numberOfDonations");
+                        int currentDonationCount = sorted.size();
+                        for (int i = previousDonationCount; i <= currentDonationCount - 1; i++) {
+//                            String discordID = "123";
+//                            if (sorted.get(i).getSellerCustoms().get("What is your Discord User ID?") != null && !sorted.get(i).getSellerCustoms().get("What is your Discord User ID?").isEmpty()){
+//                                discordID = sorted.get(i).getSellerCustoms().get("What is your Discord User ID?");
+//                            }
+                            String transactionId = sorted.get(i).getTransactionID();
+                            String buyerID = sorted.get(i).getBuyerID();
+                            String buyerEmail = sorted.get(i).getBuyerEmail();
+                            String productID = sorted.get(i).getProductID();
+                            String price = sorted.get(i).getPrice();
+                            Boolean isRecurring = sorted.get(i).getRecurring();
+                            Date purchaseDate = sorted.get(i).getDate();
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".transactionID", transactionId);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerID", buyerID);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerEmail", buyerEmail);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".roleID", sorted.get(i).getRoleID());
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".productID", productID);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".price", price);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".isRecurring", isRecurring);
+                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".date", purchaseDate);
+                            if (productID.equals(Constants.SPAWN_MOB_PRODUCT_ID) && Double.parseDouble(price) > 4.99){
+                                EntityType mobToSpawn = EntityType.CREEPER;
+                                if (sorted.get(i).getSellerCustoms().get("Enter the Mob Name") != null){
+                                    mobToSpawn = EntityType.valueOf(sorted.get(i).getSellerCustoms().get("Enter the Mob Name").toUpperCase());
+                                }
+                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
+                                assert latch != null;
+                                Location latchLocation = latch.getLocation();
+                                Objects.requireNonNull(latchLocation.getWorld()).spawnEntity(latchLocation, mobToSpawn);
+                            }
+                            if (productID.equals(Constants.KILL_LATCH_PRODUCT_ID) && Double.parseDouble(price) > 9.99){
+                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
+                                assert latch != null;
+                                latch.setHealth(0);
+                            }
+                            if (productID.equals(Constants.PLAY_CREEPER_SOUND_PRODUCT_ID) && Double.parseDouble(price) > 1.49){
+                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
+                                assert latch != null;
+                                latch.playSound(latch.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0);
+                            }
+                            if (productID.equals(Constants.BLINDNESS_EFFECT_PRODUCT_ID) && Double.parseDouble(price) > 1.49){
+                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
+                                assert latch != null;
+                                latch.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 6000, 1));
+                            }
+
+
+//                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".discordID", discordID);
+//                            if (productID.equalsIgnoreCase(Constants.DONOR_PRODUCT_ID) && !discordID.equalsIgnoreCase("123")){
+//                                String donorRoleName = "";
+//                                String minecraftID = Api.getMinecraftIdFromDCid(discordID);
+//                                if (Double.parseDouble(price) < 5.00){
+//                                    donorRoleName = "Donor";
+//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor");
+//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064302866714765"))).queue();
+//                                } else if (Double.parseDouble(price) > 9.99) {
+//                                    donorRoleName = "Donor+";
+//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor+");
+//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064735194599494"))).queue();
+//                                } else {
+//                                    donorRoleName = "Donor++";
+//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor++");
+//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064561399398480"))).queue();
+//                                }
+//                                OfflinePlayer minecraftMember = Bukkit.getOfflinePlayer(UUID.fromString(minecraftID));
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".discordName", LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(discordID).getUser().getName());
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".discordID", discordID);
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".minecraftName", minecraftMember.getName());
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".minecraftID", minecraftID);
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorRole", donorRoleName);
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorPurchaseDate", purchaseDate);
+//                                DateTime dateTime = new DateTime(purchaseDate);
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorEndDate", dateTime.plusDays(30).getMillis());
+//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".purchases.donations." + transactionId, transactionId);
+//                            }
+                        }
+                        donationsCfg.set("numberOfDonations", sorted.size());
+                        donationsCfg.save(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
                     }
-                } catch (ArrayIndexOutOfBoundsException e ) {
-                    System.out.println();
+                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e ) {
+                    System.out.println("ARRAYDONATIONERROR: " + e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -203,12 +281,33 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e){
         BossBattle.bossHurtEvent(e);
+
+    }
+
+    @EventHandler
+    public void EntityDeathEvent(EntityDeathEvent e) throws IOException {
+        if (e.getEntity().getType().equals(EntityType.VILLAGER)){
+            FileConfiguration villagerHurtLog = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_VILLAGER_HURT_LOG_FILE_NAME));
+            Date date = new Date();
+            Villager villager = (Villager) e.getEntity();
+            String id = "other";
+            if (e.getEntity().getKiller() != null) {
+                id = e.getEntity().getKiller().getUniqueId().toString();
+                villagerHurtLog.set(id + ".playerName", e.getEntity().getKiller().getName());
+            }
+            villagerHurtLog.set(id + "." + date + ".type", villager.getProfession().toString());
+            villagerHurtLog.set(id + "." + date + ".location.x", e.getEntity().getLocation().getBlockX());
+            villagerHurtLog.set(id + "." + date + ".location.y", e.getEntity().getLocation().getBlockY());
+            villagerHurtLog.set(id + "." + date + ".location.z", e.getEntity().getLocation().getBlockZ());
+            villagerHurtLog.save(Api.getConfigFile(Constants.YML_VILLAGER_HURT_LOG_FILE_NAME));
+        }
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) throws IOException {
         BossBattle.bossBattleEnded(e);
     }
+
 
     public DBClient getDbClient(){
         return dbClient;
@@ -222,10 +321,10 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
-        getLogger().info("discord_text is disabled");
-        LatchDiscord.stopBot();
         if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
+            Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
+            getLogger().info("discord_text is disabled");
+            LatchDiscord.stopBot();
             LatchDiscord.sendServerStoppedMessage();
         }
     }
@@ -240,8 +339,8 @@ public class Main extends JavaPlugin implements Listener {
             Bank.showLastSessionReward(e.getPlayer());
             Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
             Api.checkPlayerMemberStatus(e.getPlayer());
+            Api.updateUserInfo(e.getPlayer());
         }
-        Api.updateUserInfo(e.getPlayer());
     }
 
 
@@ -255,6 +354,7 @@ public class Main extends JavaPlugin implements Listener {
             Bank.setPlayerBalanceWithInterest(event.getPlayer());
             Api.stopTwitchBot(LatchTwitchBotCommand.twitchBotList, event.getPlayer());
         }
+        Api.turnOffXPFarmOnPlayerLogoff(event);
     }
 
     @EventHandler
@@ -266,27 +366,41 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public static void onPlayerDeath(PlayerDeathEvent e){
+    public static void onPlayerDeath(PlayerDeathEvent e) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerDeath"))) {
             EmbedBuilder eb = new EmbedBuilder();
-            eb.setTitle(e.getDeathMessage());
+            String worldPrefix = "[LMP] - ";
+            if (e.getEntity().getWorld().getName().equalsIgnoreCase("hardcore")){
+                worldPrefix = "[Hardcore] - ";
+            }
+            eb.setTitle(worldPrefix + e.getDeathMessage());
             eb.setColor(new Color(0xE1922E00, true));
             eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
             TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
             assert minecraftChatChannel != null;
             minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
-//            if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
-//                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + LatchDiscord.getDiscordUserId(LatchDiscord.getDiscordUserName(e.getEntity().getName())) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
-//            }
+            if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
+                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + Api.getDiscordIdFromMCid(e.getEntity().getUniqueId().toString()) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
+            }
+            if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
+                DecimalFormat df = new DecimalFormat("0.00");
+                double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(e.getEntity()));
+                double percentToRemove = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("deathBalancePercentage");
+                double amountToRemove = (playerBalance / 100.00) * percentToRemove;
+                Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(e.getEntity()), amountToRemove);
+                e.getEntity().sendMessage(ChatColor.YELLOW + "You lost " + ChatColor.RED + "$" + df.format(amountToRemove) + ChatColor.YELLOW + " because you died.");
+            }
+            if (e.getEntity().getWorld().getName().equalsIgnoreCase("hardcore")){
+                FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+                Player player = e.getEntity();
+                String uuid = player.getUniqueId().toString();
+                if (Boolean.TRUE.equals(hardcoreCfg.getBoolean(uuid + ".isAlive"))){
+                    hardcoreCfg.set(uuid + ".isAlive", false);
+                    hardcoreCfg.save(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+                }
+            }
         }
-        if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
-            DecimalFormat df = new DecimalFormat("0.00");
-            double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(e.getEntity()));
-            double percentToRemove = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("deathBalancePercentage");
-            double amountToRemove = (playerBalance / 100.00) * percentToRemove;
-            Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(e.getEntity()), amountToRemove);
-            e.getEntity().sendMessage(ChatColor.YELLOW + "You lost " + ChatColor.RED + "$" + df.format(amountToRemove) + ChatColor.YELLOW + " because you died.");
-        }
+
     }
 
     @EventHandler
@@ -306,38 +420,64 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerChatEvent(AsyncPlayerChatEvent e){
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChatEvent"))){
+            String worldPrefix = "[LMP] - ";
+            if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
+                worldPrefix = "[Hardcore] - ";
+            }
             if(Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))){
-                Objects.requireNonNull(LatchDiscord.jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
+                Objects.requireNonNull(jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
                 for (Player player : Bukkit.getOnlinePlayers()){
                     if (player.hasPermission("group.jr-mod")){
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " [Test Server] » " + ChatColor.AQUA + e.getMessage());
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
                     }
                 }
                 e.setCancelled(true);
             } else {
-                TextChannel minecraftChatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+                TextChannel minecraftChatChannel = jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
                 assert minecraftChatChannel != null;
-                minecraftChatChannel.sendMessage(Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
+                minecraftChatChannel.sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
             }
         }
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e){
-        User user = luckPerms.getUserManager().getUser(e.getPlayer().getUniqueId());
-        assert user != null;
-        if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT ).equals(Tristate.TRUE)){
-            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Go to Discord and type " + ChatColor.AQUA + "!link " + ChatColor.RED + " in the General channel"));
-            e.setCancelled(true);
+        if (Boolean.FALSE.equals(getIsParameterInTesting("linkingEnabled"))) {
+            User user = luckPerms.getUserManager().getUser(e.getPlayer().getUniqueId());
+            assert user != null;
+            if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT ).equals(Tristate.TRUE)) {
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Go to Discord and type " + ChatColor.AQUA + "!link " + ChatColor.RED + " in the General channel"));
+                e.setCancelled(true);
+            }
         }
     }
 
     @EventHandler
-    public void onCommandEvent(PlayerCommandPreprocessEvent event) {
+    public void onCommandEvent(PlayerCommandPreprocessEvent event) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onCommandEvent"))) {
             LatchDiscord.logPlayerBan(event, null);
             if (event.getMessage().equalsIgnoreCase("/back")){
                 Api.denyBackIntoBossArena(event);
+                Api.denyBackIntoXPFarm(event);
+            }
+            if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
+                event.setCancelled(Api.denyCommandInHardcore(event));
+            }
+            Api.denyCommandUseInXPFarm(event);
+        }
+        if (event.getMessage().equalsIgnoreCase("/mv tp hardcore")){
+            Api.addPlayerToHardcoreList(event);
+        }
+    }
+
+    @EventHandler
+    public void onTargetChange(EntityTargetEvent e){
+        if (e.getEntity().getType().equals(EntityType.WOLF)){
+            File bloodmoonLMPFile = new File("plugins/Bloodmoon", "lmp.yml");
+            FileConfiguration bloodmoonLMPCfg = Api.getFileConfiguration(bloodmoonLMPFile);
+            List<String> currentHordeList = bloodmoonLMPCfg.getStringList("hordeMobs");
+            if (e.getTarget() != null && currentHordeList.contains(e.getTarget().getUniqueId().toString())){
+                e.setCancelled(true);
             }
         }
     }
@@ -350,7 +490,9 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onInteract"))) {
-            RandomItem.getRandomItem(event);
+            RandomItem.getRandomItem1(event);
+            RandomItem.getRandomItem2(event);
+            RandomItem.getRandomItem3(event);
             try {
                 QuickSmelt.quickSmelt(event.getPlayer(), Api.getEconomy(), event);
                 QuickBrew.quickBrew(event.getPlayer(), Api.getEconomy(), event);
@@ -363,15 +505,24 @@ public class Main extends JavaPlugin implements Listener {
             if (event.getAction().toString().equals("RIGHT_CLICK_BLOCK") && event.getClickedBlock().getType().equals(Material.CRIMSON_BUTTON)){
                 BossBattle.startBossBattle(event);
             }
-            //Api.denyOpenChestDuringBossBattle(event);
+            Api.denyOpenChestDuringBossBattle(event);
             CustomPortals.setBlockToNetherPortal(event);
+            XPFarm.teleportPlayerToXPFarm(event);
+            XPFarm.teleportPlayerToSpawn(event);
+        }
+        if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
+            FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+            if (hardcoreCfg.getString(event.getPlayer().getUniqueId().toString()) == null || Boolean.FALSE.equals(hardcoreCfg.getBoolean(event.getPlayer().getUniqueId().toString() + "." + "isAlive") )) {
+                    event.getPlayer().setGameMode(GameMode.SURVIVAL);
+            }
+            event.setCancelled(Api.denyInteractInHardcore(event.getPlayer()));
         }
     }
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e){
         FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
         if (Boolean.FALSE.equals(configCfg.getBoolean("areSpawnersActive"))) {
-            if (e.getLocation().getWorld().toString().equalsIgnoreCase("world") && e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
+            if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equalsIgnoreCase("world") && e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
                 e.setCancelled(true);
             }
         }
@@ -422,82 +573,66 @@ public class Main extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onAnvilInventoryOpen(PrepareAnvilEvent e){
-        ItemStack leftSideItem = null;
-        ItemStack rightSideItem = null;
-        if (e.getInventory().getItem(0) != null && e.getInventory().getItem(1) != null) {
-            leftSideItem = e.getInventory().getItem(0);
-            rightSideItem = e.getInventory().getItem(1);
-            if (rightSideItem != null){
-                assert leftSideItem != null;
-                if (leftSideItem.getType().equals(Material.NETHERITE_CHESTPLATE) && rightSideItem.getType().equals(Material.ELYTRA)) {
-                    leftSideItem.getEnchantments();
-                    rightSideItem.getEnchantments();
-                    Map<Enchantment, Integer> chestplateEnchantments = leftSideItem.getEnchantments();
-                    Map<Enchantment, Integer> elytraEnchantments = rightSideItem.getEnchantments();
-                    Map<Enchantment,Integer> finalEnchantments = new HashMap<>();
-                    for (Map.Entry<Enchantment, Integer> chestplateEnchant : chestplateEnchantments.entrySet()) {
-                        for (Map.Entry<Enchantment, Integer> elytraEnchant : elytraEnchantments.entrySet()) {
-                            if (chestplateEnchant.getKey().equals(elytraEnchant.getKey())){
-                                if (chestplateEnchant.getValue() > elytraEnchant.getValue()){
-                                    finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
-                                } else {
-                                    finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
-                                }
-                            }
-                            if (!chestplateEnchantments.containsKey(elytraEnchant.getKey())){
-                                finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
-                            }
-                        }
-                        if (!elytraEnchantments.containsKey(chestplateEnchant.getKey())){
-                            finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
+        Api.combineChestplateAndElytra(e);
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent e){
+        if (e.getDamager() instanceof Player) {
+            Player player = (Player) e.getDamager();
+            ItemStack is = player.getInventory().getItemInMainHand();
+            ItemMeta im = null;
+            if (is.getItemMeta() != null){
+                im = is.getItemMeta();
+            }
+            if (im != null && im.getLore() != null){
+                if (im.getLore().get(0).equalsIgnoreCase("Blood Sucker")){
+                    double playerHealth = player.getHealth();
+                    if (playerHealth <= 18.00){
+                        int min = 0;
+                        int max = 10;
+                        int random_int = (int) Math.floor(Math.random() * (max - min + 1) + min);
+                        if (random_int > 7){
+                            player.setHealth(playerHealth + 2.00);
                         }
                     }
-
-                    ItemStack elytra = new ItemStack(Material.ELYTRA, 1);
-                    elytra.addUnsafeEnchantments(finalEnchantments);
-                    Bukkit.getServer().getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> e.getInventory().setRepairCost(50));
-                    e.setResult(elytra);
                 }
             }
         }
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) throws IOException {
+    public void onBlockBreak(BlockBreakEvent event) throws IOException, ExecutionException, InterruptedException {
         event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockBreak"))){
             Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), event, null, null, null);
             FarmMoney.rewardMoneyFromCrops(event, Api.getEconomy());
             MobileSpawner.setSpawnerOnBreak(event);
+            if (!Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "helper")){
+                Api.blockBreakLog(event);
+            }
         }
-        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
-            if (!event.getPlayer().hasPermission("group.mod")) {
-                if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
-                    LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (p.hasPermission("group.jr-mod")) {
-                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " [Test Server] » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
-                        }
-                    }
+        if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
+            FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+            String creeperHeadLocation = event.getBlock().getLocation().toString();
+            List<String> creeperLocationList = new ArrayList<>();
+            if (!creeperCfg.getStringList("locations").isEmpty()){
+                creeperLocationList = creeperCfg.getStringList("locations");
+            }
+            int indexToDelete = -1;
+            for (int i = 0; i < creeperLocationList.size(); i++){
+                if (creeperLocationList.get(i).equalsIgnoreCase(creeperHeadLocation)){
+                    indexToDelete = i;
                 }
             }
-            if (!event.getPlayer().hasPermission("group.mod")){
-                if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
-                    LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
-                }
+            if (indexToDelete != -1){
+                 creeperLocationList.remove(indexToDelete);
             }
-            FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
-            Date date = new Date();
-            Player player = event.getPlayer();
-            blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
-            blockBreakLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+            creeperCfg.set("locations", creeperLocationList);
+            creeperCfg.save(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+
         }
+
 //        Location chestLocation = new Location(Bukkit.getWorld("world"), 10000, 68, 10004);
 //        Chest chest = (Chest) chestLocation.getBlock().getState();
 //        chest.setCustomName("AutoMiner Chest");
@@ -513,13 +648,42 @@ public class Main extends JavaPlugin implements Listener {
             String child = e.getEntity().getName();
         }
     }
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent e){
+        List<String> doNotSpawnList = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getStringList("lightLevelMobs");
+        if (doNotSpawnList.contains(e.getEntity().getType().toString())){
+            if (e.getLocation().getBlock().getLightLevel() > 7){
+                File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
+                FileConfiguration bloodmoonCfg = Api.getFileConfiguration(bloodmoonFile);
+                if (Boolean.FALSE.equals(bloodmoonCfg.get("enabled"))){
+                    e.setCancelled(true);
+                }
+            }
+        }
+        Api.creeperBGone(e);
+    }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event){
+    public void onBlockPlace(BlockPlaceEvent event) throws IOException {
         event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockPlace"))) {
             Api.cancelEventsInPreviousSeason(event.getPlayer().getWorld().getName(), event.getPlayer().getName(), null, event, null, null);
             MobileSpawner.setSpawnerOnPlace(event, Api.getEconomy());
+            Api.placeBlockLog(event);
+        }
+        if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
+            if (event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getLore() != null){
+                if (event.getItemInHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Creepers BGone")){
+                    FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+                    List<String> creeperLocationList = new ArrayList<>();
+                    if (!creeperCfg.getStringList("locations").isEmpty()){
+                        creeperLocationList = creeperCfg.getStringList("locations");
+                    }
+                    creeperLocationList.add(event.getBlock().getLocation().toString());
+                    creeperCfg.set("locations", creeperLocationList);
+                    creeperCfg.save(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+                }
+            }
         }
         //AutoMiner.mineBlocks(event);
     }
@@ -533,10 +697,80 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChestItemRemove(InventoryClickEvent event) {
+    public void onPlayerChestItemRemove(InventoryClickEvent event) throws ExecutionException, InterruptedException, IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChestItemRemove"))) {
             LatchDiscord.banPlayerStealing(event);
         }
+        try {
+            if (Boolean.FALSE.equals(getIsParameterInTesting("chestProtect"))) {
+                if (event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world")) {
+                    if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() != null && event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world") && (event.getClickedInventory().getHolder() instanceof DoubleChest || event.getClickedInventory().getHolder() instanceof Chest || event.getClickedInventory().getHolder() instanceof ShulkerBox || event.getClickedInventory().getHolder() instanceof Barrel)) {
+                        OfflinePlayer olp = null;
+                        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
+                            FileConfiguration chestProtectCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CHEST_PROTECT_FILE_NAME));
+                            List<String> ignoreChestArr = chestProtectCfg.getStringList("ignoredChests");
+                            Player clicker = (Player) event.getWhoClicked();
+                            Block block = Bukkit.getWorld(event.getClickedInventory().getLocation().getWorld().getUID()).getBlockAt(event.getClickedInventory().getLocation());
+                            CoreProtectAPI.ParseResult result = null;
+                            if (!ignoreChestArr.contains(block.getLocation().toString())) {
+                                List<String[]> lookup = coreProtectAPI.blockLookup(block, 20024000);
+                                for (String[] value : lookup) {
+                                    result = coreProtectAPI.parseResult(value);
+                                    if (result.getActionString().equalsIgnoreCase("place")) {
+                                        olp = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(result.getPlayer())));
+                                        break;
+                                    }
+                                }
+                                try {
+                                    assert olp != null;
+                                    if (clicker.getUniqueId().equals(olp.getUniqueId())) {
+                                        ChestProtect.setApprovedAllPlayer(Api.getDiscordIdFromMCid(olp.getUniqueId().toString()), clicker.getName(), Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CHEST_PROTECT_FILE_NAME)));
+                                    } else {
+                                        if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(olp.getUniqueId().toString(), "chests"))) {
+                                            boolean isApprovedPlayer = false;
+                                            if (chestProtectCfg.contains(Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers")) {
+                                                List<String> approvedPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers");
+                                                if (approvedPlayers.contains(clicker.getUniqueId().toString())) {
+                                                    isApprovedPlayer = true;
+                                                }
+                                            }
+                                            if (chestProtectCfg.contains(Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString())) {
+                                                List<String> approvedChestPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString());
+                                                if (approvedChestPlayers.contains(clicker.getUniqueId().toString())) {
+                                                    isApprovedPlayer = true;
+                                                }
+                                            }
+                                            if (Boolean.FALSE.equals(isApprovedPlayer)) {
+                                                try {
+                                                    net.dv8tion.jda.api.entities.User chestOwner = LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(Api.getDiscordIdFromMCid(olp.getUniqueId().toString())).getUser();
+                                                    chestOwner.openPrivateChannel().flatMap(privateChannel -> {
+                                                        LatchDiscord.getJDA().addEventListener(new ChestProtect(privateChannel, chestOwner, event.getCurrentItem().getType().toString(), clicker.getName(), block.getLocation(), block));
+                                                        return privateChannel.sendMessage("Minecraft User Name: " + clicker.getName() + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(clicker.getName())) + "\n" +
+                                                                "Stole: " + event.getCurrentItem().getType().toString() + "\nLocation: " + block.getLocation().toString() + "\n" +
+                                                                "ChestType: " + block.getType() +
+                                                                "\n* Type -> !approveAll | If you are ok with this user accessing any of your chests and want to add them to your list of approved chest users\n" +
+                                                                "* Type -> !approveChest | If you want to approve this user to be able to use only this chest\n" +
+                                                                "* Type -> !deny | If are NOT ok with this user accessing your chests and want to report this player\n" +
+                                                                "* Type -> !ignoreChest | If you no longer want to be notified if someone takes from this chest\n" +
+                                                                "* Type -> !ignoreAll | If you no longer want to be notified if someone takes from any of your chests");
+                                                    }).queue(null, new ErrorHandler()
+                                                            .handle(ErrorResponse.CANNOT_SEND_TO_USER,
+                                                                    (ex) -> Api.messageInConsole(ChatColor.GOLD + "[ChestProtect] - " + ChatColor.RED + "Failed to send message to " + chestOwner.getName())));
+                                                } catch (NullPointerException ignore) {
+
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                } catch (NullPointerException ignored) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IllegalArgumentException ignored){}
     }
 
     public static boolean getIsParameterInTesting(String parameter){

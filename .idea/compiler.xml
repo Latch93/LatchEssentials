@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="LatchLMP" target="8" />
+      <module name="LatchLMP" target="1.8" />
       <module name="LatchLMP (1)" target="8" />
       <module name="LatchLMP (2)" target="8" />
     </bytecodeTargetLevel>

@@ -1,52 +1,54 @@
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\DiscordText\LMPCommandTabComplete.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\RandomItem.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\ExperienceManager.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LMPTimer.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Backbacks\BackPackCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\DiscordStaffChatCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\SlimeChunkFinder.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\CustomPortals.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Advancement.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Configurations\LotteryConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Bank\BankConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Constants.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\MobileSpawner.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PortalBlocker.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Api.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\DiscordText\LMPConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotRunnable.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerTabComplete.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Configurations\AdvancementConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsInventoryConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Main.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotTabComplete.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\BossBattle.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Lottery.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\DiscordText\LMPCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Bank\Bank.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PlayerShops\PlayerShops.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsTabComplete.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchDiscord.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\RandomTeleport.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\UnbanRequest.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Configurations\AutoSorterConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LTSNomination.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\QuickBrew.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PingTabList.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\StaffApplication.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Backbacks\BackPackInventoryConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBot.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Advancements.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\PingUtil.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\QuickSmelt.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Backbacks\Inventories.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\FarmMoney.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Configurations\WhitelistConfig.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\AutoMiner\AutoMiner.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Backbacks\BackpackTabComplete.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotCommand.java
-C:\Users\Latch\Documents\DiscordText\src\main\java\lmp\Configurations\BossConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsInventoryConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\SlimeChunkFinder.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotRunnable.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Lottery.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\DiscordText\LMPConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\RandomItem.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LMPTimer.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\XPFarm.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Bank\Bank.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Advancements.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LTSNomination.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Api.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PlayerShops\PlayerShops.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchDiscord.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\StaffApplication.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\UnbanRequest.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\CustomPortals.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Backbacks\BackpackTabComplete.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\QuickSmelt.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PingTabList.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PlayerShops\PlayerShopsTabComplete.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\MobileSpawner.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\DiscordText\LMPCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\DiscordText\LMPCommandTabComplete.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\FarmMoney.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Backbacks\Inventories.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Configurations\WhitelistConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PortalBlocker.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\RandomTeleport.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBotTabComplete.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Configurations\AdvancementConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Configurations\AutoSorterConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Bank\BankConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Constants.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\DiscordStaffChatCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\ExperienceManager.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\ChestProtect.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\QuickBrew.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Advancement.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\BossBattle.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\LatchTwitchBot\LatchTwitchBot.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Backbacks\BackPackCommand.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\AutoMiner\AutoMiner.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\PingUtil.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Configurations\BossConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\AutoMiner\AutoMinerTabComplete.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Configurations\LotteryConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Backbacks\BackPackInventoryConfig.java
+C:\Users\Latch\OneDrive - The Integration Group of Americas\Desktop\DiscordText\src\main\java\lmp\Main.java

@@ -13,12 +13,19 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class FarmMoney {
     private FarmMoney(){}
 
     public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ){
-        if (!event.getPlayer().getWorld().getName().equalsIgnoreCase("season1") && !event.getPlayer().getWorld().getName().equalsIgnoreCase("season4")){
+        ArrayList<String> deniedWorlds = new ArrayList<>();
+        deniedWorlds.add("season1");
+        deniedWorlds.add("season4");
+        deniedWorlds.add("season5");
+        deniedWorlds.add("hardcore");
+
+        if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())){
             FileConfiguration mainConfig = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME);
             OfflinePlayer player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
             DecimalFormat df = new DecimalFormat("0.00");

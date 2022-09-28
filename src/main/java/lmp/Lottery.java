@@ -1,5 +1,7 @@
 package lmp;
 
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.NewsChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,9 +36,9 @@ public class Lottery {
             double totalLottoAmount = (count * maxLottoAmount) + lotteryCfg.getDouble("additionalPrize");;
             Api.messageInConsole(ChatColor.GREEN + playerList.get(n));
             OfflinePlayer winningPlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerList.get(n)));
-            TextChannel announcementChannel = LatchDiscord.jda.getTextChannelById(Constants.ANNOUNCEMENT_CHANNEL_ID);
-            assert announcementChannel != null;
-            announcementChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(playerList.get(n)) + "> won the lottery!!! They won $" + totalLottoAmount).queue();
+            TextChannel lotteryWinnerChannel = LatchDiscord.jda.getTextChannelById(Constants.LOTTERY_WINNER_CHANNEL_ID);
+            assert lotteryWinnerChannel != null;
+            lotteryWinnerChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(playerList.get(n)) + "> won the lottery!!! They won $" + totalLottoAmount).queue();
             Api.getEconomy().depositPlayer(winningPlayer, totalLottoAmount);
             Bukkit.broadcastMessage(ChatColor.GOLD + winningPlayer.getName() + ChatColor.GREEN + " won the lottery!!! They won " + ChatColor.GOLD + "$" + totalLottoAmount );
             lotteryCfg.save(Api.getConfigFile(Constants.YML_LOTTERY_FILE_NAME));

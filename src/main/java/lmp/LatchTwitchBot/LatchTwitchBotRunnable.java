@@ -5,7 +5,9 @@ import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.chat.events.channel.DonationEvent;
 import com.github.twitch4j.chat.events.channel.SubscriptionEvent;
+import com.github.twitch4j.pubsub.enums.PubSubType;
 import com.github.twitch4j.pubsub.events.ChannelBitsEvent;
 import com.github.twitch4j.pubsub.events.FollowingEvent;
 
@@ -42,22 +44,25 @@ public class LatchTwitchBotRunnable implements Runnable {
                         .build();
                 twitchClient.getChat().joinChannel(twitchName);
                 twitchClient.getChat().sendMessage(twitchName, "Your TwitchBot is now enabled");
-                twitchClient.getChat().getEventManager().onEvent(ChannelMessageEvent.class, event -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + event.getUser().getName() + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " [Test Server] » " + ChatColor.AQUA + event.getMessage()));
+                twitchClient.getChat().getEventManager().onEvent(ChannelMessageEvent.class, event -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + event.getUser().getName() + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + event.getMessage()));
                 if (channelID != null){
                     twitchClient.getPubSub().listenForFollowingEvents(credential, channelID);
                     twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(credential, channelID);
                     twitchClient.getPubSub().listenForSubscriptionEvents(credential, channelID);
                     twitchClient.getPubSub().listenForCheerEvents(credential, channelID);
-                    twitchClient.getEventManager().onEvent(FollowingEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW FOLLOW" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " [Test Server] » " + ChatColor.AQUA + e.getData().getUsername() + ChatColor.GREEN + " just followed you!!!"));
-                    twitchClient.getPubSub().getEventManager().onEvent(SubscriptionEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW SUB" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " [Test Server] » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " just subscribed to you!!!"));
-                    twitchClient.getPubSub().getEventManager().onEvent(ChannelBitsEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " [Test Server] » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits."));
-                    twitchClient.getPubSub().getEventManager().onEvent(RewardRedeemedEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "CHANNEL POINTS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " [Test Server] » " + ChatColor.AQUA + e.getRedemption().getUser().getDisplayName() + ChatColor.GREEN + " redeemed " +
+                    twitchClient.getEventManager().onEvent(FollowingEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW FOLLOW" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUsername() + ChatColor.GREEN + " just followed you!!!"));
+                    twitchClient.getEventManager().onEvent(SubscriptionEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW SUB" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " just subscribed to you!!!"));
+                    twitchClient.getEventManager().onEvent(ChannelBitsEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits."));
+                    twitchClient.getEventManager().onEvent(RewardRedeemedEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "CHANNEL POINTS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getRedemption().getUser().getDisplayName() + ChatColor.GREEN + " redeemed " +
                             ChatColor.GOLD + e.getRedemption().getReward().getTitle() + ChatColor.GREEN + " for " + ChatColor.GOLD + e.getRedemption().getReward().getCost() + ChatColor.GREEN + " channel points"));
+                    twitchClient.getEventManager().onEvent(DonationEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "DONATION" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getAmount() + ChatColor.GREEN + " dollars. Message:" + e.getMessage()));
+                    twitchClient.getPubSub().getEventManager().getClass();
                 }
                 Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage(ChatColor.GREEN + "Your TwitchBot is now enabled");
                 if (Boolean.TRUE.equals(Thread.currentThread().isInterrupted())){
                     bot.stop();
                 }
+
             });
         }
 

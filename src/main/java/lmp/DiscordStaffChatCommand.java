@@ -27,10 +27,10 @@ public class DiscordStaffChatCommand implements CommandExecutor {
                         }
                         assert discordStaffChannel != null;
                         String convertedMessage = Api.convertMinecraftMessageToDiscord(playerName, String.valueOf(messageString));
-                        String[] messageArr = convertedMessage.split(" [Test Server] » ");
+                        String[] messageArr = convertedMessage.split(" » ");
                         for (Player p : Bukkit.getOnlinePlayers()){
                             if (p.hasPermission("group.jr-mod")){
-                                p.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + player.getDisplayName() + ChatColor.WHITE + " [Test Server] » " + ChatColor.AQUA + messageArr[1]);
+                                p.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + player.getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }
                         discordStaffChannel.sendMessage("[DTSC] - " + convertedMessage).queue();

@@ -36,7 +36,7 @@ public class QuickSmelt {
                             furnace.getInventory().setResult(new ItemStack(result.getType(), amountToSmelt + furnace.getInventory().getResult().getAmount()));
                             furnace.getInventory().setSmelting(null);
                             Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(player), 5 * amountToSmelt);
-                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "Smelted " + ChatColor.GOLD + amountToSmelt + Objects.requireNonNull(furnace.getInventory().getResult()).getType() + ChatColor.GREEN + " --- Balance: " + ChatColor.GOLD + df.format(Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player)))));
+                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "Smelted " + ChatColor.GOLD + amountToSmelt + " " + Objects.requireNonNull(furnace.getInventory().getResult()).getType() + ChatColor.GREEN + " --- Balance: " + ChatColor.GOLD + df.format(Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player)))));
                         }
                     } else {
                         furnace.setCookTimeTotal(80);
