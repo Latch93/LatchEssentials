@@ -5,6 +5,7 @@ public class Constants {
     public static final String DISCORD_BOT_TOKEN = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME).getString("botToken");
     public static final String PLUGIN_NAME = "DiscordText";
     public static final String SERVER_OWNER_NAME = "latch93";
+    public static final String LATCH_MINECRAFT_ID = "f4c77e52-de47-4174-8282-0d962d089301";
 
     // Whitelist channel messages
     public static final String USERNAME_DOES_NOT_EXIST_MESSAGE = "Username does not exist. Please try again. If you are on Bedrock, message Latch in the general channel.";
@@ -59,6 +60,29 @@ public class Constants {
     public static final String XBOX_MESSAGE_ID = "976310645198827532";
     public static final String JAVA_MESSAGE_ID = "976311072334155797";
     public static final String GENERAL_CHANNEL_ID = "625983914049142790";
+    public static final String ADMIN_CHANNEL_ID = "628708543440093215";
+    public static final String PIXELMON_BOT_ID = "999469341894508644";
+    public static final String PIXELMON_CHANNEL_ID = "1000272669742211134";
+
+    public static final String JUNIOR_MOD_CHANNEL_ID = "994766005526085662";
+
+    public static final String LOTTERY_WINNER_CHANNEL_ID = "1023974250975076352";
+
+    public static final String HE_HIM_ROLE_ID = "1007042989421502555";
+    public static final String SHE_HER_ROLE_ID = "1007043876407742595";
+    public static final String THEY_THEM_ROLE_ID = "1007043913422491658";
+    public static final String HE_THEM_ROLE_ID = "1007043944359657562";
+    public static final String SHE_THEM_ROLE_ID = "1007043971874295888";
+    public static final String ZE_HIR_ROLE_ID = "1007043994628407366";
+    public static final String HE_HIM_MESSAGE_ID = "1007042346145288263";
+    public static final String SHE_HER_MESSAGE_ID = "1007042292168794192";
+    public static final String THEY_THEM_MESSAGE_ID = "1007042234111250462";
+    public static final String HE_THEM_MESSAGE_ID = "1007042418954223717";
+    public static final String SHE_THEM_MESSAGE_ID = "1007042476504272986";
+    public static final String ZE_HIR_MESSAGE_ID = "1007042859049959475";
+
+    public static final String HARDCORE_ROLE_ID = "1024677957068935199";
+
 
     // Backpack commands
     public static final String BACKPACK_BUY_COMMAND = "buy";
@@ -128,6 +152,14 @@ public class Constants {
     public static final String YML_VILLAGER_HURT_LOG_FILE_NAME = "villagerHurtLog";
     public static final String YML_MONEY_ORDER_LOG_FILE_NAME = "moneyOrderLog";
     public static final String YML_DONATION_FILE_NAME = "donations";
+    public static final String YML_CHEST_PROTECT_FILE_NAME = "chestProtect";
+
+    public static final String YML_CREEPERS_B_GONE_FILE_NAME = "creeperbgone";
+    public static final String YML_RANDOM_ITEM_GEN_FILE_NAME = "randomItemGenItems";
+
+    public static final String YML_USER_DONATION_REWARD_FILE_NAME = "donationClaim";
+
+    public static final String YML_HARDCORE_FILE_NAME = "hardcore";
 
     public static final String INVALID_PARAMETERS = "Incorrect parameters. Please try again";
 
@@ -140,5 +172,9 @@ public class Constants {
 
     // Donation and Feature Purchase ID's
     public static final String DONOR_PRODUCT_ID = "SyiG6YMAa1";
+    public static final String SPAWN_MOB_PRODUCT_ID = "zv2dpX8IyW";
+    public static final String KILL_LATCH_PRODUCT_ID = "1Mgti5VsIP";
+    public static final String PLAY_CREEPER_SOUND_PRODUCT_ID = "byuQuHrLR2";
+    public static final String BLINDNESS_EFFECT_PRODUCT_ID = "gPwQMTFkbP";
 
 }

@@ -44,7 +44,7 @@ public class UnbanRequest extends ListenerAdapter {
             int appCounter = 0;
             StringBuilder unbanFormCompleted = new StringBuilder();
             unbanFormCompleted.append("Unban Form:\n[Discord Username :").append(event.getAuthor().getName()).append("] \n");
-            unbanFormCompleted.append("[Minecraft Username :").append(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getMember().getId())))).append("] \n");
+            unbanFormCompleted.append("[Minecraft Username :").append(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getAuthor().getId()))).getName()).append("] \n");
             for (String str : unbanFormAnswers){
                 unbanFormCompleted.append(unbanFormQuestions.get(appCounter)).append(" ---> ").append(str).append("\n");
                 appCounter++;

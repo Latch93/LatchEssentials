@@ -1,10 +1,11 @@
-package lmp.PlayerShops;
+package lmp.DiscordText;
 
 import lmp.Api;
 import lmp.Constants;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class LMPCommandTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> playerShopCommandList = new ArrayList<>();
+        playerShopCommandList.add("claim");
         playerShopCommandList.add("deposit");
         playerShopCommandList.add("help");
         playerShopCommandList.add("lotto");
@@ -45,7 +47,17 @@ public class LMPCommandTabComplete implements TabCompleter {
             try {
                 return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
             } catch (IndexOutOfBoundsException e) {
-                Api.messageInConsole(ChatColor.RED + "Incorrect LMP Lotto command.");
+                Api.messageInConsole(ChatColor.RED + "Incorrect LMP Withdraw command.");
+            }
+        }
+        else if (args[0].equalsIgnoreCase("claim")) {
+            for (Material material : Material.values()){
+                tabList.add(material.toString());
+            }
+            try {
+                return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
+            } catch (IndexOutOfBoundsException e) {
+                Api.messageInConsole(ChatColor.RED + "Incorrect LMP Claim command.");
             }
         }
         return StringUtil.copyPartialMatches(commandText, tabList, new ArrayList<>());

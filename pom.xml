@@ -25,6 +25,14 @@
             <id>fren_gor</id>
             <url>https://nexus.frengor.com/repository/public/</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+        <repository>
+            <id>jcenter-snapshot</id>
+            <url>https://oss.jfrog.org/artifactory/libs-snapshot/</url>
+        </repository>
     </repositories>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -88,7 +96,7 @@
         <dependency>
             <groupId>com.github.twitch4j</groupId>
             <artifactId>twitch4j</artifactId>
-            <version>1.9.0</version>
+            <version>1.10.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -105,6 +113,18 @@
             <artifactId>api</artifactId>
             <version>5.4</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>coreprotect-21.2</groupId>
+            <artifactId>net.coreprotect.coreprotect</artifactId>
+            <version>21.2</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/Latch/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>io.github.twitch4j.streamlabs4j</groupId>
+            <artifactId>streamlabs4j</artifactId>
+            <version>0.9.0</version>
         </dependency>
     </dependencies>
     <build>

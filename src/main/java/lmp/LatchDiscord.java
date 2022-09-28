@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -21,7 +20,6 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -29,22 +27,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.checkerframework.checker.units.qual.min;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import javax.security.auth.login.LoginException;
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
 
 public class LatchDiscord extends ListenerAdapter implements Listener {
@@ -108,6 +102,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "helper");
         } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.BUILDER_ROLE_ID)){
             Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "builder");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.HARDCORE_ROLE_ID)){
+            Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "hardcore");
         }
     }
 
@@ -298,8 +294,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
                         TextChannel applicationSubmittedChannel = jda.getTextChannelById(Constants.STAFF_APP_SUBMITTED_CHANNEL_ID);
                         event.getJDA().addEventListener(new StaffApplication(privateChannel, event.getAuthor(), applicationSubmittedChannel));
-                        return privateChannel.sendMessage("Please enter your application information line by line.\nPress enter after each question response.\n" +
-                                "\nResponsibilities as a Jr. Mod:\n1.)Watch new players on the server while in vanish.\n2.)Ensure new players are following the rules, i.e., not x-raying, griefing, stealing or being a jerk.\n" +
+                        return privateChannel.sendMessage("\nResponsibilities as a Jr. Mod:\n*** Watch new players on the server while in vanish.\n*** Ensure new players are following the rules, i.e., not x-raying, griefing, stealing or being a jerk.\n" +
+                                "Please enter your application information line by line.\nPress enter after each question response.\n" +
                                 "1.) How old are you?");
                     }).queue();
                 }
@@ -314,7 +310,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                     whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                 }
-                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.contains("yeet")) {
+                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.contains("Yeet")) {
                     TextChannel testChannel = jda.getTextChannelById(Constants.TEST_CHANNEL_ID);
                     FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                     GeolocationParams geoParams = new GeolocationParams();
@@ -328,16 +324,45 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         Api.messageInConsole(ChatColor.GREEN + "ip: " + playerDataCfg.getString("ip-address"));
                         Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
                         String ipInfo = ".ip-info.";
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "countryName", geolocation.getCountryName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "cityName", geolocation.getCity());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencyName", geolocation.getCurrency().getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "timezoneName", geolocation.getTimezone().getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "ipAddress", geolocation.getIPAddress());
+                        try {
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "countryName", geolocation.getCountryName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "cityName", geolocation.getCity());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencyName", geolocation.getCurrency().getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "timezoneName", geolocation.getTimezone().getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "ipAddress", geolocation.getIPAddress());
+                        } catch (NullPointerException ignore){
+
+                        }
                     }
 
                     whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                }
+                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!compare")){
+                    List<String> keep = Files.readAllLines(Paths.get("C:/Users/Latch/Downloads/keep.txt"));
+                    List<String> tableIDS = Files.readAllLines(Paths.get("C:/Users/Latch/Desktop/sqlt_data_1_2015_01.txt"));
+                    List<String> delete = new ArrayList<>();
+                    List<String> inTable = new ArrayList<>();
+                    int count = 0;
+                    FileConfiguration test = Api.getFileConfiguration(Api.getConfigFile("deleteList"));
+                    final Set<String> setToReturn = new HashSet<>();
+                    final Set<String> set1 = new HashSet<>();
+                    for (String yourInt : tableIDS) {
+                        if (!set1.add(yourInt)) {
+                            setToReturn.add(yourInt);
+                        }
+                        count++;
+                        System.out.println("Count: " + count);
+                    }
+                    test.set("keepList", setToReturn);
+                    test.save(Api.getConfigFile("deleteList"));
+                }
+                if (channel.getId().equals(Constants.PIXELMON_CHANNEL_ID) && message.contains("!startPixelmon")) {
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "startPixelmon.bat");
+                    File dir = new File("E:\\Pixelmon");
+                    pb.directory(dir);
+                    pb.start();
                 }
                 // Sends unban request to member
                 if (channel.getId().equals(Constants.UNBAN_REQUEST_CHANNEL_ID) && message.equalsIgnoreCase(Constants.UNBAN_REQUEST)) {
@@ -441,11 +466,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                 }
             }
-            // Toggles whitelist on and off in #staff-whitelist channel
-            String[] messageArr = message.split(" ");
-            if (messageArr[0].equalsIgnoreCase(Constants.TOGGLE_WHITELIST_COMMAND)){
-                whitelistToggle(messageArr[1], channel);
-            }
         }
 
         if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase("!joinTime")){
@@ -540,11 +560,43 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             colorCode = ChatColor.GREEN;
         }
         String finalMessage = "";
-        if (Boolean.TRUE.equals(isReply)){
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
-                   ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+        if (!event.getAuthor().getId().equalsIgnoreCase(Constants.PIXELMON_BOT_ID)){
+            if (Boolean.TRUE.equals(isReply)){
+                finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+            } else {
+                finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message;
+            }
         } else {
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] "  + senderName + " » " + message;
+            message = message.replace("[Pixelmon] - ", "");
+            ArrayList<String> systemMessages = new ArrayList<>();
+            systemMessages.add("left pixelmon server");
+            systemMessages.add("pixelmon server stopped!");
+            systemMessages.add("pixelmon server starting...");
+            systemMessages.add("joined pixelmon server");
+            systemMessages.add("[death] - ");
+            systemMessages.add("[advancement] - ");
+            Boolean isSystemMessage = false;
+            for (String systemMessage : systemMessages){
+                if (message.toLowerCase().contains(systemMessage)){
+                    isSystemMessage = true;
+                }
+            }
+            if (Boolean.TRUE.equals(isSystemMessage)){
+                finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Pixelmon" + ChatColor.WHITE + "]"  + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+            } else {
+                String[] messageArr = message.split(" » ");
+                senderName = messageArr[0];
+                StringBuilder messageString = new StringBuilder();
+                for (int i = 1; i < messageArr.length; i++){
+                    messageString.append(messageArr[i]);
+                }
+                if (messageArr.length == 1){
+                    finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Pixelmon" + ChatColor.WHITE + "] "  + ChatColor.GREEN + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+                } else {
+                    finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Pixelmon" + ChatColor.WHITE + "] "  + ChatColor.GREEN + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + messageString.toString();
+                }
+            }
         }
 
         return finalMessage;
@@ -552,7 +604,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        Api.messageInConsole(ChatColor.GOLD + event.getMember().getUser().getName() + ChatColor.RED + "left the discord.");
+        Api.messageInConsole(ChatColor.GOLD + event.getMember().getUser().getName() + ChatColor.RED + " left the discord.");
         TextChannel modChat = jda.getTextChannelById(setTestingChannel(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID));
         assert modChat != null;
         modChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").queue();
@@ -582,6 +634,31 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             if (event.getMessageId().equalsIgnoreCase(Constants.JAVA_MESSAGE_ID)){
                 event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.JAVA_ROLE_ID))).queue();
             }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.HE_HIM_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.HE_HIM_ROLE_ID))).queue();
+            }
+            // If She/Her
+            if (event.getMessageId().equalsIgnoreCase(Constants.SHE_HER_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.SHE_HER_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.THEY_THEM_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.THEY_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.HE_THEM_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.HE_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.SHE_THEM_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.SHE_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.ZE_HIR_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.ZE_HIR_ROLE_ID))).queue();
+            }
+
         }
     }
 
@@ -591,6 +668,49 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         String userID = event.getUserId();
         if (channel.getId().equalsIgnoreCase(Constants.RULES_CHANNEL_ID) && event.getMessageId().equalsIgnoreCase(Constants.RULES_CHANNEL_MESSAGE_ID)){
             event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.MEMBER_ROLE_ID))).queue();
+        }
+        if (channel.getId().equalsIgnoreCase(Constants.GET_ROLE_CHANNEL_ID)){
+            // If Xbox
+            if (event.getMessageId().equalsIgnoreCase(Constants.XBOX_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.XBOX_ROLE_ID))).queue();
+            }
+            // If Playstation
+            if (event.getMessageId().equalsIgnoreCase(Constants.PLAYSTATION_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.PLAYSTATION_ROLE_ID))).queue();
+            }
+            // If Mobile
+            if (event.getMessageId().equalsIgnoreCase(Constants.MOBILE_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.MOBILE_ROLE_ID))).queue();
+            }
+            // If Java
+            if (event.getMessageId().equalsIgnoreCase(Constants.JAVA_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.JAVA_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.HE_HIM_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.HE_HIM_ROLE_ID))).queue();
+            }
+            // If She/Her
+            if (event.getMessageId().equalsIgnoreCase(Constants.SHE_HER_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.SHE_HER_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.THEY_THEM_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.THEY_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.HE_THEM_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.HE_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.SHE_THEM_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.SHE_THEM_ROLE_ID))).queue();
+            }
+            // If He/Him
+            if (event.getMessageId().equalsIgnoreCase(Constants.ZE_HIR_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.ZE_HIR_ROLE_ID))).queue();
+            }
+
         }
     }
 
@@ -691,9 +811,6 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 eb.setTitle(Constants.DISCORD_USERNAME_LABEL+ discordUserName + Constants.MINECRAFT_USERNAME_LABEL + onPlayerJoinEvent.getPlayer().getName() + " \nJoined the server", null);
             } else {
                 eb.setTitle(Constants.DISCORD_USERNAME_LABEL + discordUserName + Constants.MINECRAFT_USERNAME_LABEL + onPlayerJoinEvent.getPlayer().getName() + " \nJoined the server for the first time", null);
-                TextChannel modChatChannel = jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
-                assert modChatChannel != null;
-                modChatChannel.sendMessage("New player has joined the server").queue();
             }
             eb.setColor(new Color(0xE134E502, true));
             TextChannel minecraftChannel = jda.getTextChannelById(setTestingChannel(Constants.MINECRAFT_CHAT_CHANNEL_ID));
@@ -850,12 +967,18 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             if (chestMaterial.equalsIgnoreCase("CHEST") && chestLocation.equals(event.getClickedInventory().getLocation())){
                 if (event.getCurrentItem() != null && !event.getWhoClicked().hasPermission("group.mod")) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + playerName + " 3d stole from bigboi's chest");
-                    TextChannel announcementChannel = jda.getTextChannelById(Constants.ANNOUNCEMENT_CHANNEL_ID);
+                    NewsChannel announcementChannel = jda.getNewsChannelById(Constants.ANNOUNCEMENT_CHANNEL_ID);
                     assert announcementChannel != null;
-                    announcementChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> will be temporarily banned for 3 days. Reason: Stealing from BigBoi's Chest. They tried to steal " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType() + " :)- Their MC username is: " + playerName).queue();
-                    TextChannel banLogChannel = jda.getTextChannelById(Constants.BAN_LOG_CHANNEL_ID);
+                    NewsChannel banLogChannel = jda.getNewsChannelById(Constants.BAN_LOG_CHANNEL_ID);
                     assert banLogChannel != null;
-                    banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> | Reason: Stealing from spawn chest | Item(s) stolen: " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType()).queue();
+                    if (event.getCurrentItem().getType().equals(Material.BEACON)){
+                        announcementChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> GOT BEACON'd and will be temporarily banned for 3 days. :)- Their MC username is: " + playerName).queue();
+                        banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> | Reason: They got BEACON'D ").queue();
+                    } else {
+                        announcementChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> will be temporarily banned for 3 days. Reason: Stealing from BigBoi's Chest. They tried to steal " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType() + " :)- Their MC username is: " + playerName).queue();
+                        banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> | Reason: Stealing from spawn chest | Item(s) stolen: " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType()).queue();
+
+                    }
                 }
             }
         } catch (NullPointerException ignored){

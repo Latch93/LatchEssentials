@@ -13,7 +13,13 @@ public class PingTabList extends BukkitRunnable {
 
     public void run() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            player.setPlayerListName(player.getDisplayName()+ ChatColor.WHITE + " - [" + ChatColor.GOLD + Api.getPlayerTime(player.getUniqueId().toString()) + ChatColor.WHITE +"] - [" + ChatColor.AQUA + PingUtil.getPing(player) + "ms" + ChatColor.WHITE + "]");
+//            [" + ChatColor.GOLD + Api.getPlayerTime(player.getUniqueId().toString()) + ChatColor.WHITE + "] -
+            if (Api.getPlayerTime(player.getUniqueId().toString()).isEmpty()){
+                player.setPlayerListName(player.getDisplayName()+ ChatColor.WHITE + " - [" + ChatColor.AQUA + PingUtil.getPing(player) + "ms" + ChatColor.WHITE + "]");
+            } else {
+                player.setPlayerListName(player.getDisplayName()+ ChatColor.WHITE + " - [" + ChatColor.GOLD + Api.getPlayerTime(player.getUniqueId().toString()) + ChatColor.WHITE + "] - [" + ChatColor.AQUA + PingUtil.getPing(player) + "ms" + ChatColor.WHITE + "]");
+
+            }
         }
     }
 }

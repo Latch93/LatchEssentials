@@ -17,24 +17,29 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -153,7 +158,7 @@ public class Api {
     }
 
     public static void cancelEventsInPreviousSeason(String worldName, String player, BlockBreakEvent blockBreakEvent, BlockPlaceEvent blockPlaceEvent, InventoryClickEvent inventoryClickEvent, PlayerPortalEvent playerPortalEvent){
-        if (worldName.equalsIgnoreCase("season1") || worldName.equalsIgnoreCase("season4")) {
+        if (worldName.equalsIgnoreCase("season1") || worldName.equalsIgnoreCase("season4") || worldName.equalsIgnoreCase("season5")) {
             if (player == null || !player.equalsIgnoreCase("Latch93")){
                 if (blockBreakEvent != null) {
                     blockBreakEvent.setCancelled(true);
@@ -318,6 +323,16 @@ public class Api {
             Main.luckPerms.getUserManager().saveUser(user);
         });
     }
+    public static Boolean doesPlayerHavePermission(String minecraftId, String groupName) throws ExecutionException, InterruptedException {
+        @NonNull CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        return userFuture.thenApplyAsync(user -> {
+            Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
+            return inheritedGroups.stream().anyMatch(g ->  g.getName().equals(groupName));
+        }).get();
+    }
+
+
+
 
     public static void removePlayerFromPermissionGroup(String minecraftId, String groupName){
         InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
@@ -359,9 +374,9 @@ public class Api {
         FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
         Location lastLocation = new Location(Bukkit.getWorld("world"), playerDataCfg.getDouble("lastlocation.x"), playerDataCfg.getDouble("lastlocation.y"), playerDataCfg.getDouble("lastlocation.z"));
         if (player.getWorld().equals(Bukkit.getWorld("world"))){
-            if (lastLocation.getBlockX() >= -3060 && lastLocation.getBlockX() <= -2972) {
-                if (lastLocation.getBlockY() >= 68 && lastLocation.getBlockY() <= 77) {
-                    if (lastLocation.getBlockZ() >=  32841 && lastLocation.getBlockZ() <= 32953) {
+            if (lastLocation.getBlockX() >= -2941 && lastLocation.getBlockX() <= -2798) {
+                if (lastLocation.getBlockY() >= 57 && lastLocation.getBlockY() <= 83) {
+                    if (lastLocation.getBlockZ() >=  32884 && lastLocation.getBlockZ() <= 33023) {
                         e.setCancelled(true);
                         player.sendMessage(ChatColor.RED + "You can't use /back into the arena. Use /warp coliseum to collect your things.");
                     }
@@ -370,6 +385,119 @@ public class Api {
         }
     }
 
+    public static void denyBackIntoXPFarm(PlayerCommandPreprocessEvent e){
+        Player player = e.getPlayer();
+        File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
+        FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+        Location lastLocation = new Location(Bukkit.getWorld("world"), playerDataCfg.getDouble("lastlocation.x"), playerDataCfg.getDouble("lastlocation.y"), playerDataCfg.getDouble("lastlocation.z"));
+        if (player.getWorld().equals(Bukkit.getWorld("world"))){
+            FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+            double lesserX = xpFarmCfg.getDouble("lesserX");
+            double greaterX = xpFarmCfg.getDouble("greaterX");
+            double lesserY = xpFarmCfg.getDouble("lesserY");
+            double greaterY = xpFarmCfg.getDouble("greaterY");
+            double lesserZ = xpFarmCfg.getDouble("lesserZ");
+            double greaterZ = xpFarmCfg.getDouble("greaterZ");
+            if (lastLocation.getBlockX() >= lesserX && lastLocation.getBlockX() <= greaterX) {
+                if (lastLocation.getBlockY() >= lesserY && lastLocation.getBlockY() <= greaterY) {
+                    if (lastLocation.getBlockZ() >=  lesserZ && lastLocation.getBlockZ() <= greaterZ) {
+                        e.setCancelled(true);
+                        player.sendMessage(ChatColor.RED + "You can't use /back into the XP Farm.");
+                    }
+                }
+            }
+        }
+    }
+
+    public static void creeperBGone(EntitySpawnEvent e) {
+        if (e.getEntity().getType().equals(EntityType.CREEPER)){
+            Location creeperSpawnLocation = e.getLocation();
+            FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+            List<String> creeperLocationList = new ArrayList<>();
+            if (!creeperCfg.getStringList("locations").isEmpty()){
+                creeperLocationList = creeperCfg.getStringList("locations");
+            }
+            for (int i = 0; i < creeperLocationList.size(); i++){
+                String creeperBGoneLocationString = creeperLocationList.get(i);
+                String[] firstCreeperArr = creeperBGoneLocationString.split(",");
+                String[] xCreeperLocationArr = firstCreeperArr[1].split("=");
+                String[] yCreeperLocationArr = firstCreeperArr[2].split("=");
+                String[] zCreeperLocationArr = firstCreeperArr[3].split("=");
+                double xCreeperBGoneLocation = Double.parseDouble(xCreeperLocationArr[1]);
+                double yCreeperBGoneLocation = Double.parseDouble(yCreeperLocationArr[1]);
+                double zCreeperBGoneLocation = Double.parseDouble(zCreeperLocationArr[1]);
+                double distance = Math.sqrt(Math.pow(xCreeperBGoneLocation - e.getLocation().getBlockX(), 2) +
+                        Math.pow(yCreeperBGoneLocation - e.getLocation().getBlockY(), 2) +
+                        Math.pow(zCreeperBGoneLocation - e.getLocation().getBlockZ(), 2));
+                if (distance <= 150){
+                    e.setCancelled(true);
+                }
+
+            }
+        }
+    }
+    public static void denyCommandUseInXPFarm(PlayerCommandPreprocessEvent e){
+        Player player = e.getPlayer();
+        ArrayList<String> playerBypassList = new ArrayList<>();
+        String message = e.getMessage().toLowerCase();
+        playerBypassList.add("7c1acf27-d21b-41a7-96b7-5b14e364ea0e");
+        playerBypassList.add("f4c77e52-de47-4174-8282-0d962d089301");
+        ArrayList<String> commandBypassList = new ArrayList<>();
+        commandBypassList.add("/bal");
+        commandBypassList.add("/lmp deposit");
+        commandBypassList.add("/lmp withdraw");
+        commandBypassList.add("/co i");
+
+        if (!commandBypassList.contains(message) && !playerBypassList.contains(e.getPlayer().getUniqueId().toString()) && player.getWorld().equals(Bukkit.getWorld("world"))){
+            FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+            Location lastLocation = e.getPlayer().getLocation();
+            double lesserX = xpFarmCfg.getDouble("lesserX");
+            double greaterX = xpFarmCfg.getDouble("greaterX");
+            double lesserY = xpFarmCfg.getDouble("lesserY");
+            double greaterY = xpFarmCfg.getDouble("greaterY");
+            double lesserZ = xpFarmCfg.getDouble("lesserZ");
+            double greaterZ = xpFarmCfg.getDouble("greaterZ");
+            if (lastLocation.getBlockX() >= lesserX && lastLocation.getBlockX() <= greaterX) {
+                if (lastLocation.getBlockY() >= lesserY && lastLocation.getBlockY() <= greaterY) {
+                    if (lastLocation.getBlockZ() >=  lesserZ && lastLocation.getBlockZ() <= greaterZ) {
+                        e.setCancelled(true);
+                        player.sendMessage(ChatColor.RED + "You can't use commands when at the farm");
+                    }
+                }
+            }
+        }
+    }
+
+    public static void stopXPFarm() throws IOException {
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+        Long timeStartedFarm = xpFarmCfg.getLong("timeStarted");
+        DateTime dateOne = new DateTime();
+        Long currentTime = dateOne.getMillis();
+        long timeDifference = currentTime - timeStartedFarm;
+        long timerLimit = xpFarmCfg.getLong("timer");
+        if (timeDifference > timerLimit) {
+            Player playerAtFarm = Bukkit.getPlayer(UUID.fromString(Objects.requireNonNull(xpFarmCfg.getString("playerIDUsingFarm"))));
+            double spawnX = xpFarmCfg.getDouble("spawnLocationX");
+            double spawnY = xpFarmCfg.getDouble("spawnLocationY");
+            double spawnZ = xpFarmCfg.getDouble("spawnLocationZ");
+            Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
+            assert playerAtFarm != null;
+            playerAtFarm.teleport(spawnLocation);
+            playerAtFarm.sendMessage(ChatColor.AQUA + "Your time is up!");
+            xpFarmCfg.set("isFarmInUse", false);
+            xpFarmCfg.save(Api.getConfigFile("xpFarm"));
+        }
+    }
+
+    public static void turnOffXPFarmOnPlayerLogoff(PlayerQuitEvent e) throws IOException {
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+        if (Boolean.TRUE.equals(xpFarmCfg.get("isFarmInUse"))){
+            if (e.getPlayer().getUniqueId().toString().equalsIgnoreCase(xpFarmCfg.getString("playerIDUsingFarm"))){
+                xpFarmCfg.set("isFarmInUse", false);
+                xpFarmCfg.save(Api.getConfigFile("xpFarm"));
+            }
+        }
+    }
     public static void placeBlockLog(BlockPlaceEvent event) throws IOException {
         if ((event.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world") ) && (event.getBlock().getType().equals(Material.TNT) || event.getBlock().getType().equals(Material.END_CRYSTAL))){
             FileConfiguration blockPlaceLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_PLACE_LOG_FILE_NAME));
@@ -384,32 +512,38 @@ public class Api {
         }
     }
 
-    public static void blockBreakLog(BlockBreakEvent event) throws IOException {
-        if (event.getBlock().getType().toString().contains("ORE") || event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
-            if (!event.getPlayer().hasPermission("group.mod")) {
+    public static void blockBreakLog(BlockBreakEvent event) throws IOException, ExecutionException, InterruptedException {
+        ArrayList<Material> materialBreakList = new ArrayList<>();
+        materialBreakList.add(Material.DIAMOND_ORE);
+        materialBreakList.add(Material.DEEPSLATE_DIAMOND_ORE);
+        materialBreakList.add(Material.IRON_ORE);
+        materialBreakList.add(Material.DEEPSLATE_IRON_ORE);
+        materialBreakList.add(Material.ANCIENT_DEBRIS);
+        if (materialBreakList.contains(event.getBlock().getType())) {
+            if (!Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "helper")) {
+                FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+                Date date = new Date();
+                Player player = event.getPlayer();
+                blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
+                blockBreakLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
+            }
+            if (!Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "mod")){
+                if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
+                    LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                }
                 if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
                     LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
                     for (Player p : Bukkit.getOnlinePlayers()) {
-                        if (p.hasPermission("group.jr-mod")) {
+                        if (Api.doesPlayerHavePermission(p.getUniqueId().toString(), "mod")) {
                             p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
                         }
                     }
                 }
             }
-            if (!event.getPlayer().hasPermission("group.mod")){
-                if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)){
-                    LatchDiscord.getJDA().getTextChannelById(Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", "  + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
-                }
-            }
-            FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
-            Date date = new Date();
-            Player player = event.getPlayer();
-            blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
-            blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
-            blockBreakLogCfg.save(Api.getConfigFile(Constants.YML_BLOCK_BREAK_LOG_FILE_NAME));
         }
     }
 
@@ -535,6 +669,7 @@ public class Api {
 
     public static void addRoleFromDiscord(String roleName){
         Main.luckPerms.getGroupManager().loadAllGroups();
+        Main.luckPerms.getGroupManager().loadAllGroups();
         CompletableFuture<Group> futureGroup = Main.luckPerms.getGroupManager().createAndLoadGroup(roleName);
         futureGroup.thenAcceptAsync(group -> {
             Main.luckPerms.getGroupManager().saveGroup(group);
@@ -546,4 +681,42 @@ public class Api {
         configCfg.set("areSpawnersActive", doSpawnersSpawn);
         configCfg.save(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
     }
+
+    public static boolean denyCommandInHardcore(PlayerCommandPreprocessEvent e){
+        boolean denyCommand = true;
+        ArrayList<String> allowedCommandList = new ArrayList<>();
+        allowedCommandList.add("/mv spawn");
+        allowedCommandList.add("/spawn");
+        allowedCommandList.add("/msg");
+        allowedCommandList.add("/r");
+        if (allowedCommandList.contains(e.getMessage().toLowerCase())){
+            denyCommand = false;
+        } else {
+            e.getPlayer().sendMessage(ChatColor.RED + "You can't use that command in this world.");
+        }
+        return denyCommand;
+    }
+    public static boolean denyInteractInHardcore(Player p){
+        boolean denyInteract = true;
+        FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+        if (Boolean.FALSE.equals(hardcoreCfg.getBoolean(p.getUniqueId().toString() + ".isAlive"))){
+            p.setGameMode(GameMode.SPECTATOR);
+        } else {
+            denyInteract = false;
+        }
+        return denyInteract;
+    }
+
+    public static void addPlayerToHardcoreList(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+        if (hardcoreCfg.getString(e.getPlayer().getUniqueId().toString()) == null || Boolean.FALSE.equals(hardcoreCfg.getBoolean(e.getPlayer().getUniqueId().toString() + "." + "isAlive") )) {
+            Player player = e.getPlayer();
+            String uuid = player.getUniqueId().toString();
+            hardcoreCfg.set(uuid + ".isAlive", true);
+            hardcoreCfg.set(uuid + ".uuid", uuid);
+            hardcoreCfg.set(uuid + ".name", player.getName());
+            hardcoreCfg.save(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+        }
+    }
+
 }

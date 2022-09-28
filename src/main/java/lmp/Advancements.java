@@ -76,7 +76,7 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:story/shiny_gear", "Cover Me with Diamonds","Have any type of diamond armor in your inventory."));
         advancements.add(new Advancement("minecraft:story/smelt_iron", "Acquire Hardware","Have an iron ingot in your inventory."));
         advancements.add(new Advancement("minecraft:story/upgrade_tools", "Getting an Upgrade","Have a stone pickaxe in your inventory."));
-        advancements.add(new Advancement("minecraft:adventure/voluntary_exile", "","Kill a raider mob wearing an ominous banner."));
+        advancements.add(new Advancement("minecraft:adventure/voluntary_exile", "Voluntary Exile","Kill a raider mob wearing an ominous banner."));
         advancements.add(new Advancement("minecraft:adventure/hero_of_the_village", "Hero of the Village","Be in a certain radius from the village center when a raid ends in victory."));
         advancements.add(new Advancement("minecraft:adventure/spyglass_at_ghast", "Is it a Balloon?","Look at a Ghast through a Spyglass."));
         advancements.add(new Advancement("minecraft:adventure/spyglass_at_parrot", "Is it a Bird?","Look at a Parrot through a Spyglass."));
@@ -179,14 +179,23 @@ public class Advancements {
         String advancementMessage = "";
         TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
         EmbedBuilder eb = new EmbedBuilder();
+        String worldPrefix = "[LMP] - ";
+        if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
+            worldPrefix = "[Hardcore] - ";
+        }
         int playerAchievementCount = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
         for (Advancement advance : getAdvancements()) {
-            if (advancement.equalsIgnoreCase(advance.getID())) {
-                eb.setTitle(advance.getName() + "!");
+            if (advancement.equalsIgnoreCase(advance.getID()) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
+                eb.setTitle(worldPrefix + advance.getName() + "!");
                 eb.setColor(new Color(0xE1F504B9, true));
                 eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
-                advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + getAdvancements().size();
+                if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
+                    advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria();
+                } else {
+                    advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + getAdvancements().size();
+                }
                 eb.setDescription(advancementMessage);
+                assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
             }
         }

@@ -1,14 +1,14 @@
 package lmp.DiscordText;
 
+import io.ipgeolocation.api.Geolocation;
 import lmp.*;
 
-import io.ipgeolocation.api.Geolocation;
 import io.ipgeolocation.api.GeolocationParams;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.InheritanceNode;
-import net.md_5.bungee.protocol.packet.Chat;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -18,15 +18,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.checkerframework.checker.units.qual.A;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class LMPCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -190,94 +193,150 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("removeHomes")){
                     for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
-                        FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
+                        FileConfiguration conf = Api.getFileConfiguration(file);
                         if (conf.isSet("homes")){
+                            System.out.println("true: " + file.getName());
                             conf.set("homes", null);
                         }
                         if (conf.isSet("logoutlocation")){
-                            conf.set("logoutlocation.world", "4326982f-e536-46cb-8360-aa3de8a064fb");
-                            conf.set("logoutlocation.x", 17323.5);
-                            conf.set("logoutlocation.y", 72.0);
-                            conf.set("logoutlocation.z", -4279.5);
-                            conf.set("logoutlocation.yaw", 89.13036346435547);
-                            conf.set("logoutlocation.pitch", 22.564151763916016);
+                            System.out.println("true2: " + file.getName());
+                            conf.set("logoutlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
+                            conf.set("logoutlocation.x", -189.5);
+                            conf.set("logoutlocation.y", 159.0);
+                            conf.set("logoutlocation.z", -106.7);
+                            conf.set("logoutlocation.yaw", -91.05023193359375);
+                            conf.set("logoutlocation.pitch", 23.699981689453125);
                             conf.set("logoutlocation.world-name", "world");
                         }
                         if (conf.isSet("lastlocation")){
-                            conf.set("lastlocation.world", "4326982f-e536-46cb-8360-aa3de8a064fb");
-                            conf.set("lastlocation.x", 17323.5);
-                            conf.set("lastlocation.y", 72.0);
-                            conf.set("lastlocation.z", -4279.5);
-                            conf.set("lastlocation.yaw", 89.13036346435547);
-                            conf.set("lastlocation.pitch", 22.564151763916016);
+                            System.out.println("true3: " + file.getName());
+                            conf.set("lastlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
+                            conf.set("lastlocation.x", -189.5);
+                            conf.set("lastlocation.y", 159.0);
+                            conf.set("lastlocation.z", -106.7);
+                            conf.set("lastlocation.yaw", -91.05023193359375);
+                            conf.set("lastlocation.pitch", 23.699981689453125);
                             conf.set("lastlocation.world-name", "world");
                         }
                         try {
                             conf.save(file);
+                            System.out.println("true 4: " + file.getName());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("link") && args[1] != null){
-                    boolean hasMemberRole = false;
-                    Member discordMember = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(args[1]);
-                    for (Role role : Objects.requireNonNull(discordMember.getRoles())){
-                        if ("Member".equalsIgnoreCase(role.getName())){
-                            hasMemberRole = true;
+                    try {
+                        boolean hasMemberRole = false;
+                        Member discordMember = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(args[1]);
+                        for (Role role : Objects.requireNonNull(discordMember.getRoles())) {
+                            if ("Member".equalsIgnoreCase(role.getName())) {
+                                hasMemberRole = true;
+                            }
                         }
-                    }
-                    if (Boolean.TRUE.equals(hasMemberRole)){
-                        User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
-                        assert user != null;
-                        user.setPrimaryGroup("member");
-                        InheritanceNode member = InheritanceNode.builder("member").value(true).build();
-                        InheritanceNode defaultNode = InheritanceNode.builder("default").build();
-                        user.data().add(member);
-                        user.data().remove(defaultNode);
-                        Main.luckPerms.getUserManager().saveUser(user);
-                        GeolocationParams geoParams = new GeolocationParams();
-                        geoParams.setFields("geo,time_zone,currency");
-                        geoParams.setIncludeSecurity(true);
-                        File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
-                        FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-                        geoParams.setIPAddress(playerDataCfg.getString("ip-address"));
-                        Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
-                        String ipInfo = ".ip-info.";
-                        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", discordMember.getUser().getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordId", discordMember.getId());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordNickname", discordMember.getNickname());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftId", player.getUniqueId().toString());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".joinTime", discordMember.getTimeJoined().toLocalDateTime().toString());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "countryName", geolocation.getCountryName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "cityName", geolocation.getCity());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencyName", geolocation.getCurrency().getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "timezoneName", geolocation.getTimezone().getName());
-                        whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "ipAddress", geolocation.getIPAddress());
-                        try {
-                            whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        if (Boolean.TRUE.equals(hasMemberRole)) {
+                            User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
+                            assert user != null;
+                            user.setPrimaryGroup("member");
+                            InheritanceNode member = InheritanceNode.builder("member").value(true).build();
+                            InheritanceNode defaultNode = InheritanceNode.builder("default").build();
+                            user.data().add(member);
+                            user.data().remove(defaultNode);
+                            Main.luckPerms.getUserManager().saveUser(user);
+                            GeolocationParams geoParams = new GeolocationParams();
+                            geoParams.setFields("geo,time_zone,currency");
+                            geoParams.setIncludeSecurity(true);
+                            File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
+                            FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+                            geoParams.setIPAddress(playerDataCfg.getString("ip-address"));
+                            Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
+                            String ipInfo = ".ip-info.";
+                            FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", discordMember.getUser().getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordId", discordMember.getId());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordNickname", discordMember.getNickname());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftId", player.getUniqueId().toString());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".joinTime", discordMember.getTimeJoined().toLocalDateTime().toString());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "countryName", geolocation.getCountryName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "cityName", geolocation.getCity());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencyName", geolocation.getCurrency().getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "timezoneName", geolocation.getTimezone().getName());
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "ipAddress", geolocation.getIPAddress());
+                            try {
+                                TextChannel modChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
+                                assert modChatChannel != null;
+                                DonationClaimRewards.createDonationUserFile();
+                                modChatChannel.sendMessage("<@971160639932362783> New player has joined the server. Discord Name: " + discordMember.getUser().getName() + " | Minecraft Name: " + player.getName()).queue();
+                                whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You need to react to the rules in the " + ChatColor.AQUA + "Discord Rules Channel " + ChatColor.RED + "before you can link your account.");
                         }
-                        player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "You need to react to the rules in the " + ChatColor.AQUA + "Discord Rules Channel " + ChatColor.RED + "before you can link your account.");
+                    } catch (NullPointerException e){
+                        player.sendMessage(ChatColor.RED + "Incorrect link command. Type " + ChatColor.AQUA + "!link" + ChatColor.RED + " in discord and paste the command again.");
                     }
                 } else if (args[0].equalsIgnoreCase("help")){
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
                 } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("spectate")){
                     spectateInsideRandomPlayer(player);
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("uncraft")){
+                    ItemStack item = player.getInventory().getItemInMainHand();
+                    ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
+                    for (Recipe recipe : Bukkit.getServer().getRecipesFor(item)) {
+                        ArrayList<ItemStack> ingredients = new ArrayList<>();
+                        if (recipe instanceof ShapedRecipe) {
+                            ShapedRecipe shaped = (ShapedRecipe) recipe;
+                            for (ItemStack ingredient : shaped.getIngredientMap().values()) {
+                                if (ingredient != null){
+                                    ItemStack fixed = new ItemStack(ingredient.getType(), 1);
+                                    ingredients.add(fixed);
+                                }
+                            }
+                        } else if (recipe instanceof ShapelessRecipe) {
+                            ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
+                            for (ItemStack ingredient : shapeless.getIngredientList()) {
+                                if (ingredient != null){
+                                    ItemStack fixed = new ItemStack(ingredient.getType(), 1);
+                                    ingredients.add(fixed);
+                                }
+                            }
+                        } else if (recipe instanceof FurnaceRecipe) {
+                            FurnaceRecipe furnace = (FurnaceRecipe) recipe;
+                            ItemStack fixed = new ItemStack(furnace.getInput().getType(), 1);
+                            ingredients.add(fixed);
+                        }
+                        recipes.add(ingredients);
+                    }
+                    int count = 0;
+                    for (ArrayList<ItemStack> recipeIngredients : recipes){
+                        ArrayList<Material> ingredientsInRecipe = new ArrayList<>();
+                        for (ItemStack ingredient : recipeIngredients){
+                            System.out.println("Recipe #" + count + " | " + ingredient.getType() + " | " + Collections.frequency(recipeIngredients,ingredient));
+                        }
+                        count++;
+                    }
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationList")){
+                    DonationClaimRewards.createDonationUserFile();
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationItem")){
+                    DonationClaimRewards.addItemToClaim(args[1]);
+                } else if (args[0].equalsIgnoreCase("claim")){
+                    DonationClaimRewards.claimItems(player);
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e){
             player.sendMessage(ChatColor.RED + "An error has occurred. Please review your command and try again.");
-        } catch (NullPointerException e){
-            player.sendMessage(ChatColor.RED + "An error has occurred. If you are linking your Discord and Minecraft accounts, you need to be a member in Discord.");
-        } catch (IOException e) {
+        }
+//        catch (NullPointerException | NumberFormatException e){
+//            player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
+//        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
