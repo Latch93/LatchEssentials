@@ -4,6 +4,9 @@ import lmp.Api;
 import lmp.Backbacks.Inventories;
 import lmp.Constants;
 
+import lmp.LatchDiscord;
+import lmp.LatchTwitchBot.LatchTwitchBotRunnable;
+import net.dv8tion.jda.api.entities.Member;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class PlayerShops {
     private PlayerShops(){
@@ -59,7 +63,7 @@ public class PlayerShops {
         }
     }
 
-    public static void purchaseItemFromPlayer(InventoryClickEvent e, Economy econ, Player player) {
+    public static void purchaseItemFromPlayer(InventoryClickEvent e, Economy econ, Player player) throws ExecutionException, InterruptedException {
         OfflinePlayer offlineBuyer = null;
         OfflinePlayer offlineSeller = null;
 
@@ -85,28 +89,59 @@ public class PlayerShops {
                 } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
                     rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
                 }
+//                else if (e.getClick().toString().equalsIgnoreCase("MIDDLE")){
+//                    middleClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
+//                }
             } else {
                 e.setCancelled(true);
             }
         }
     }
 
-    private static void leftClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) {
+    private static void leftClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
         if (buyerBalance < itemCost){
             player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
         } else {
+            if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null){
+                Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
+                assert seller != null;
+                seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought 1 " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemCost).queue()));
+            }
             setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, 1);
         }
         e.setCancelled(true);
     }
 
-    private static void rightClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) {
+    private static void rightClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
         e.setCancelled(true);
         if (Objects.requireNonNull(e.getCurrentItem()).getAmount() >= 10) {
+            int itemTotalAmount = e.getCurrentItem().getAmount();
+            int itemTotalCost = itemCost * itemTotalAmount;
+            if (buyerBalance < itemTotalCost){
+                player.sendMessage(ChatColor.RED + "Not enough money to buy these " + itemTotalAmount + " items.");
+            } else {
+                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null)){
+                    Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
+                    assert seller != null;
+                    seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought " + itemTotalAmount + " " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));
+                }
+                setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, itemTotalAmount);
+            }
+        }
+        e.setCancelled(true);
+    }
+    private static void middleClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
+        e.setCancelled(true);
+        if (Objects.requireNonNull(e.getCurrentItem()).getAmount() != 0) {
             int itemTotalCost = itemCost * 10;
             if (buyerBalance < itemTotalCost){
                 player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
             } else {
+                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null)){
+                    Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
+                    assert seller != null;
+                    seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought 10 " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));
+                }
                 setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, 10);
             }
         }

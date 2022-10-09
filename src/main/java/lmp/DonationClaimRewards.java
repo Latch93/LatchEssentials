@@ -15,21 +15,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class DonationClaimRewards {
-    public static void createDonationUserFile() throws IOException {
+    public static void createDonationUserFile(String uuid) throws IOException {
         FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
-        for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
-            FileConfiguration conf = Api.getFileConfiguration(file);
-            String[] temp = file.getName().split(".yml");
-            String userUUID = temp[0];
-            String players = "players.";
-            List<String> itemsToGive = new ArrayList<>();
-            if (userDonationCfg.get(players + userUUID + ".uuid") == null) {
-                userDonationCfg.set(players + userUUID + ".itemsToGive", itemsToGive);
-                userDonationCfg.set(players + userUUID + ".uuid", userUUID);
-                userDonationCfg.set(players + userUUID + ".playerName", conf.getString("last-account-name"));
-                userDonationCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
-                System.out.println(temp[0]);
-            }
+        File playerDataFile = new File("plugins/Essentials/userdata", uuid + ".yml");
+        FileConfiguration conf = Api.getFileConfiguration(playerDataFile);
+
+        String players = "players.";
+        List<String> itemsToGive = new ArrayList<>();
+        if (userDonationCfg.get(players + uuid + ".uuid") == null) {
+            userDonationCfg.set(players + uuid + ".itemsToGive", itemsToGive);
+            userDonationCfg.set(players + uuid + ".uuid", uuid);
+            userDonationCfg.set(players + uuid + ".playerName", conf.getString("last-account-name"));
+            userDonationCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+            System.out.println(uuid);
         }
     }
 

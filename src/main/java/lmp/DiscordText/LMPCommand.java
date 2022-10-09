@@ -20,16 +20,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.units.qual.A;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class LMPCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -225,10 +219,11 @@ public class LMPCommand implements CommandExecutor {
                             e.printStackTrace();
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("link") && args[1] != null){
+                } else if (args[0].equalsIgnoreCase("link") && args[1] != null) {
+                    Member discordMember = null;
                     try {
                         boolean hasMemberRole = false;
-                        Member discordMember = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(args[1]);
+                        discordMember = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(args[1]);
                         for (Role role : Objects.requireNonNull(discordMember.getRoles())) {
                             if ("Member".equalsIgnoreCase(role.getName())) {
                                 hasMemberRole = true;
@@ -246,9 +241,10 @@ public class LMPCommand implements CommandExecutor {
                             GeolocationParams geoParams = new GeolocationParams();
                             geoParams.setFields("geo,time_zone,currency");
                             geoParams.setIncludeSecurity(true);
-                            File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
-                            FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-                            geoParams.setIPAddress(playerDataCfg.getString("ip-address"));
+//                            File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
+//                            FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+//                            System.out.println("ASDASD: " + Objects.requireNonNull(player.getAddress()).getAddress().toString());
+                            geoParams.setIPAddress(Objects.requireNonNull(player.getAddress()).getAddress().toString());
                             Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
                             String ipInfo = ".ip-info.";
                             FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
@@ -259,6 +255,17 @@ public class LMPCommand implements CommandExecutor {
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftId", player.getUniqueId().toString());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".joinTime", discordMember.getTimeJoined().toLocalDateTime().toString());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
+                            whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                            try {
+                                TextChannel modChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
+                                assert modChatChannel != null;
+                                modChatChannel.sendMessage("<@971160639932362783> New player has joined the server. Discord Name: " + discordMember.getUser().getName() + " | Minecraft Name: " + player.getName()).queue();
+                                whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            DonationClaimRewards.createDonationUserFile(player.getUniqueId().toString());
+                            whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "countryName", geolocation.getCountryName());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "cityName", geolocation.getCity());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencyName", geolocation.getCurrency().getName());
@@ -266,27 +273,30 @@ public class LMPCommand implements CommandExecutor {
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "timezoneName", geolocation.getTimezone().getName());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "ipAddress", geolocation.getIPAddress());
-                            try {
-                                TextChannel modChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
-                                assert modChatChannel != null;
-                                DonationClaimRewards.createDonationUserFile();
-                                modChatChannel.sendMessage("<@971160639932362783> New player has joined the server. Discord Name: " + discordMember.getUser().getName() + " | Minecraft Name: " + player.getName()).queue();
-                                whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
                             player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
+                            whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                         } else {
                             player.sendMessage(ChatColor.RED + "You need to react to the rules in the " + ChatColor.AQUA + "Discord Rules Channel " + ChatColor.RED + "before you can link your account.");
                         }
-                    } catch (NullPointerException e){
-                        player.sendMessage(ChatColor.RED + "Incorrect link command. Type " + ChatColor.AQUA + "!link" + ChatColor.RED + " in discord and paste the command again.");
+                    } catch (NullPointerException e) {
+                        player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
+                        TextChannel modChatChannel = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
+                        assert modChatChannel != null;
+                        assert discordMember != null;
+                        modChatChannel.sendMessage(discordMember.getEffectiveName() + " maybe didn't link their accounts correctly. They should still be linked up well enough to play with all of the features. This is for Latch to debug. Minecraft Name: " + player.getName()).queue();
                     }
                 } else if (args[0].equalsIgnoreCase("help")){
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
                 } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("spectate")){
                     spectateInsideRandomPlayer(player);
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("uncraft")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("trtp")){
+                    RandomTeleport.teleportPlayerRandomly(player);
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("resetAllBalances")){
+                    resetPlayerBalances(Api.getAllMinecraftIDOfLinkedPlayers());
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("resetNPBalances")){
+                    resetAllNonLinkedPlayerBalances(Api.getMinecraftIDOfLinkedPlayersNotInDiscord());
+                }
+                if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("uncraft")){
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
                     for (Recipe recipe : Bukkit.getServer().getRecipesFor(item)) {
@@ -322,8 +332,6 @@ public class LMPCommand implements CommandExecutor {
                         }
                         count++;
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationList")){
-                    DonationClaimRewards.createDonationUserFile();
                 } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationItem")){
                     DonationClaimRewards.addItemToClaim(args[1]);
                 } else if (args[0].equalsIgnoreCase("claim")){
@@ -333,14 +341,39 @@ public class LMPCommand implements CommandExecutor {
         } catch (ArrayIndexOutOfBoundsException e){
             player.sendMessage(ChatColor.RED + "An error has occurred. Please review your command and try again.");
         }
-//        catch (NullPointerException | NumberFormatException e){
-//            player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
-//        }
+        catch (NullPointerException | NumberFormatException e){
+            player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
+        }
         catch (IOException e) {
             e.printStackTrace();
         }
 
         return false;
+    }
+
+    public static void resetAllNonLinkedPlayerBalances(ArrayList<String> whitelistArr) throws IOException {
+        for (String essPlayerID : whitelistArr){
+            if (!essPlayerID.contains(".")){
+                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
+                FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+                if (Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName() != null){
+                    playerDataCfg.set("money", 5000.00);
+                    playerDataCfg.save(playerDataFile);
+                }
+            }
+        }
+    }
+
+    public static void resetPlayerBalances(ArrayList<String> arrIDToReset) throws IOException {
+        for (String essPlayerID : arrIDToReset){
+            if (!essPlayerID.contains(".")){
+                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
+                FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+                System.out.println("Name to reset: " + Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName());
+//                    playerDataCfg.set("money", 5000.00);
+                    playerDataCfg.save(playerDataFile);
+            }
+        }
     }
 
     public static void spectateInsideRandomPlayer(Player player) {

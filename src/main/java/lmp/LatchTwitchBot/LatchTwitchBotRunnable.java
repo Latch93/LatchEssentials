@@ -12,12 +12,21 @@ import com.github.twitch4j.pubsub.events.ChannelBitsEvent;
 import com.github.twitch4j.pubsub.events.FollowingEvent;
 
 import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
+import lmp.Api;
 import lmp.Constants;
 
+import lmp.RandomTeleport;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 public class LatchTwitchBotRunnable implements Runnable {
         LatchTwitchBot bot;
@@ -44,20 +53,25 @@ public class LatchTwitchBotRunnable implements Runnable {
                         .build();
                 twitchClient.getChat().joinChannel(twitchName);
                 twitchClient.getChat().sendMessage(twitchName, "Your TwitchBot is now enabled");
-                twitchClient.getChat().getEventManager().onEvent(ChannelMessageEvent.class, event -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + event.getUser().getName() + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + event.getMessage()));
+                twitchClient.getChat().getEventManager().onEvent(ChannelMessageEvent.class, e -> {
+                    try {
+                        twitchChatResponseMessage(e);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
                 if (channelID != null){
-                    twitchClient.getPubSub().listenForFollowingEvents(credential, channelID);
-                    twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(credential, channelID);
-                    twitchClient.getPubSub().listenForSubscriptionEvents(credential, channelID);
-                    twitchClient.getPubSub().listenForCheerEvents(credential, channelID);
-                    twitchClient.getEventManager().onEvent(FollowingEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW FOLLOW" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUsername() + ChatColor.GREEN + " just followed you!!!"));
-                    twitchClient.getEventManager().onEvent(SubscriptionEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW SUB" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " just subscribed to you!!!"));
-                    twitchClient.getEventManager().onEvent(ChannelBitsEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits."));
-                    twitchClient.getEventManager().onEvent(RewardRedeemedEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "CHANNEL POINTS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getRedemption().getUser().getDisplayName() + ChatColor.GREEN + " redeemed " +
-                            ChatColor.GOLD + e.getRedemption().getReward().getTitle() + ChatColor.GREEN + " for " + ChatColor.GOLD + e.getRedemption().getReward().getCost() + ChatColor.GREEN + " channel points"));
-                    twitchClient.getEventManager().onEvent(DonationEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "DONATION" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getAmount() + ChatColor.GREEN + " dollars. Message:" + e.getMessage()));
-                    twitchClient.getPubSub().getEventManager().getClass();
+                    this.twitchClient.getPubSub().listenForFollowingEvents(credential, channelID);
+                    this.twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(credential, channelID);
+                    this.twitchClient.getPubSub().listenForSubscriptionEvents(credential, channelID);
+                    this.twitchClient.getPubSub().listenForCheerEvents(credential, channelID);
+                    this.twitchClient.getEventManager().onEvent(FollowingEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW FOLLOW" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUsername() + ChatColor.GREEN + " just followed you!!!"));
+                    this.twitchClient.getEventManager().onEvent(SubscriptionEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW SUB" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " just subscribed to you!!!"));
+                    this.twitchClient.getEventManager().onEvent(ChannelBitsEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits."));
+                    this.twitchClient.getEventManager().onEvent(RewardRedeemedEvent.class, e -> displayChannelPointRedemptionMessage(e, minecraftName));
+                    this.twitchClient.getEventManager().onEvent(DonationEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "DONATION" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " donated " +ChatColor.GOLD + e.getAmount() + ChatColor.GREEN + " dollars. Message:" + e.getMessage()));
                 }
+
                 Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage(ChatColor.GREEN + "Your TwitchBot is now enabled");
                 if (Boolean.TRUE.equals(Thread.currentThread().isInterrupted())){
                     bot.stop();
@@ -72,6 +86,93 @@ public class LatchTwitchBotRunnable implements Runnable {
 
     public void setBot(LatchTwitchBot bot) {
         this.bot = bot;
+    }
+    public void displayChannelPointRedemptionMessage(RewardRedeemedEvent e, String minecraftName){
+        Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "CHANNEL POINTS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getRedemption().getUser().getDisplayName() + ChatColor.GREEN + " redeemed " +
+                ChatColor.GOLD + e.getRedemption().getReward().getTitle() + ChatColor.GREEN + " for " + ChatColor.GOLD + e.getRedemption().getReward().getCost() + ChatColor.GREEN + " channel points");
+        if (this.minecraftName.equalsIgnoreCase("latch93")) {
+            String rewardTitle = e.getRedemption().getReward().getTitle();
+            if (rewardTitle.equalsIgnoreCase("Mining Fatigue")){
+                giveMiningFatigue(Bukkit.getPlayer(minecraftName));
+            }
+//            if (rewardTitle.equalsIgnoreCase("Rename an item in Latch's Inventory")){
+//                playRenameItemMessage(e, Bukkit.getPlayer(minecraftName));
+//            }
+            if (rewardTitle.equalsIgnoreCase("$10,000 on LMP")){
+                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> giveViewerMoney(e));
+            }
+            if (rewardTitle.equalsIgnoreCase("Random Teleport Latch")){
+                teleportLatch(Bukkit.getPlayer(minecraftName));
+            }
+            if (rewardTitle.equalsIgnoreCase("Delete Latch's Item in Main Hand")){
+                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> deleteItemInMainHand(Bukkit.getPlayer(UUID.fromString(Api.getMinecraftIDFromTwitchName(twitchName)))));
+            }
+        }
+    }
+    public void giveMiningFatigue(Player player){
+            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, 3000, 1)));
+    }
+//    public void playRenameItemMessage(RewardRedeemedEvent e, Player player){
+//        Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> player.sendMessage(ChatColor.GOLD + e.getRedemption().getUser().getDisplayName() + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + " " +
+//                e.getRedemption().getReward().toString()));
+//    }
+    public void giveViewerMoney(RewardRedeemedEvent e){
+        String minecraftID = Api.getMinecraftIDFromTwitchName(e.getRedemption().getUser().getDisplayName());
+        if (minecraftID != null){
+            Api.givePlayerMoney(minecraftID, 10000);
+            twitchClient.getChat().sendMessage(twitchName, e.getRedemption().getUser().getDisplayName() + ": You have been rewarded $10,000 on LMP!!!");
+        } else {
+            twitchClient.getChat().sendMessage(twitchName, "Error: You may not be linked on LMP. Please link your accounts with this format -> !lmp link [discordUserID]");
+        }
+    }
+    public void teleportLatch(Player player){
+        Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> RandomTeleport.teleportPlayerRandomly(player));
+    }
+    public void deleteItemInMainHand(Player player){
+        player.getInventory().setItemInMainHand(null);
+        player.updateInventory();
+    }
+
+    public void twitchChatResponseMessage(ChannelMessageEvent e) throws IOException {
+        Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + e.getUser().getName() + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getMessage());
+        if (minecraftName.equalsIgnoreCase("latch93")){
+            linkTwitchAccount(e);
+            isPlayerLinked(e);
+        }
+    }
+
+    public void isPlayerLinked(ChannelMessageEvent e){
+        if (e.getMessage().equalsIgnoreCase("!check")) {
+            String minecraftID = Api.getMinecraftIDFromTwitchName(e.getUser().getName());
+            if (minecraftID != null) {
+                twitchClient.getChat().sendMessage(twitchName, e.getUser().getName() + ": Your accounts are linked and you can safely claim Crowd Control Rewards.");
+            } else {
+                twitchClient.getChat().sendMessage(twitchName, "Error: You may not be linked on LMP. Please link your accounts with this format -> !lmp link [discordUserID]");
+            }
+        }
+
+    }
+    public void linkTwitchAccount(ChannelMessageEvent e){
+        if (e.getMessage().toLowerCase().contains("!lmp link")){
+            FileConfiguration whitelistFile = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+            try {
+                String discordID = e.getMessage().split(" ")[2];
+                String minecraftID = Api.getMinecraftIdFromDCid(discordID);
+                if (!minecraftID.isEmpty()) {
+                    whitelistFile.set("players." +  minecraftID + ".twitchName", e.getUser().getName());
+                    whitelistFile.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                    twitchClient.getChat().sendMessage(twitchName, e.getUser().getName() + "-> You successfully linked your Twitch username!!!");
+                } else {
+                    twitchClient.getChat().sendMessage(twitchName, "Error: You may not be linked on LMP. Please try again with this format -> !lmp link [discordUserID]");
+                }
+            } catch (ArrayIndexOutOfBoundsException err){
+                twitchClient.getChat().sendMessage(twitchName, "Error: Incorrect link format. Please try again with this format -> !lmp link [discordUserID]");
+            } catch (NullPointerException err){
+                twitchClient.getChat().sendMessage(twitchName, "Error: You may not be linked on LMP. Please try again with this format -> !lmp link [discordUserID]");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     public String getChannelID(){

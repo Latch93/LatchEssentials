@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -104,6 +105,34 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "builder");
         } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.HARDCORE_ROLE_ID)){
             Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "hardcore");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_ROLE_ID)){
+            Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_PLUS_ROLE_ID)){
+            Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor+");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_PLUS_PLUS_ROLE_ID)){
+            Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor++");
+        }
+    }
+    @Override
+    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent e) {
+        if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.ADMIN_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "admin");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.MOD_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "mod");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.JR_MOD_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "jr-mod");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.HELPER_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "helper");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.BUILDER_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "builder");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.HARDCORE_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "hardcore");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_PLUS_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor+");
+        } else if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.DONOR_PLUS_PLUS_ROLE_ID)){
+            Api.removePlayerFromPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor++");
         }
     }
 
@@ -175,7 +204,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         eb.setDescription(onlinePlayerMessage.toString());
                     } else {
                         eb.setColor(new Color(0xC6D5042E, true));
-                        eb.setTitle("Online Players: 0/20 players");
+                        eb.setTitle("Online Players: 0/35 players");
                     }
                     minecraftChannel.sendMessageEmbeds(eb.build()).queue();
                 }
@@ -608,6 +637,17 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         TextChannel modChat = jda.getTextChannelById(setTestingChannel(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID));
         assert modChat != null;
         modChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").queue();
+        String discordUserId = event.getMember().getUser().getId();
+        String minecraftId = Api.getMinecraftIdFromDCid(discordUserId);
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        if (!minecraftId.isEmpty() && whitelistCfg.isSet(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord")){
+            whitelistCfg.set(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", false);
+            try {
+                whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override

@@ -24,6 +24,8 @@ public class FarmMoney {
         deniedWorlds.add("season4");
         deniedWorlds.add("season5");
         deniedWorlds.add("hardcore");
+        deniedWorlds.add("hardcore_nether");
+        deniedWorlds.add("hardcore_the_end");
 
         if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())){
             FileConfiguration mainConfig = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME);

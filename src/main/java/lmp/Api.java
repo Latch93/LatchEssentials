@@ -659,6 +659,51 @@ public class Api {
         whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
     }
 
+    public static ArrayList<String> getEssentialsIDs(){
+        ArrayList<String> essentialsPlayerDataIDS = new ArrayList<>();
+        for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
+            essentialsPlayerDataIDS.add(file.getName().split(".yml")[0]);
+        }
+        return essentialsPlayerDataIDS;
+    }
+
+    public static ArrayList<String> getMinecraftIDOfLinkedPlayersNotInDiscord(){
+        ArrayList<String> whitelistedPlayerIDSNotInDiscord = new ArrayList<>();
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        for(String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
+            if (Boolean.FALSE.equals(whitelistCfg.getBoolean(Constants.YML_PLAYERS + user + ".isPlayerInDiscord") )){
+                whitelistedPlayerIDSNotInDiscord.add(user);
+            }
+        }
+        return whitelistedPlayerIDSNotInDiscord;
+    }
+
+    public static ArrayList<String> getListOfMinecraftIDPlayersNotInDiscordOrLinked(){
+        ArrayList<String> whitelistedPlayerIDSNotInDiscord = getMinecraftIDOfLinkedPlayersNotInDiscord();
+        ArrayList<String> essentialsPlayerDataIDS = getEssentialsIDs();
+        ArrayList<String> minecraftIDListOfLinkedPlayers = getAllMinecraftIDOfLinkedPlayers();
+        ArrayList<String> listOfPlayersNotHereAnymore = new ArrayList<>();
+//        for (String idNotInDiscord : )
+        return listOfPlayersNotHereAnymore;
+    }
+
+    public static void removePlayerFromDonationList(ArrayList<String> minecraftIDListToRemove) throws IOException {
+        FileConfiguration donationClaimCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+        for (String playerID : minecraftIDListToRemove){
+            if (!playerID.contains(".")){
+                if (Bukkit.getOfflinePlayer(UUID.fromString(playerID)).getName() != null){
+                    donationClaimCfg.set(Constants.YML_PLAYERS + playerID, null);
+                }
+            }
+        }
+        donationClaimCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+    }
+
+    public static ArrayList<String> getAllMinecraftIDOfLinkedPlayers(){
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        return new ArrayList<>(Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false));
+    }
+
     public static void updateDiscordRolesFile(){
         FileConfiguration discordRoleCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DISCORD_ROLES_FILE_NAME));
         for (Role role : LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getRoles()) {
@@ -687,11 +732,21 @@ public class Api {
         ArrayList<String> allowedCommandList = new ArrayList<>();
         allowedCommandList.add("/mv spawn");
         allowedCommandList.add("/spawn");
-        allowedCommandList.add("/msg");
+        allowedCommandList.add("/msg ");
         allowedCommandList.add("/r");
-        if (allowedCommandList.contains(e.getMessage().toLowerCase())){
-            denyCommand = false;
-        } else {
+        allowedCommandList.add("/v");
+        allowedCommandList.add("/op ");
+
+        String command = e.getMessage().toLowerCase();
+        for (String commandToCheck : allowedCommandList){
+            System.out.println("commandToCheck: " + commandToCheck);
+            System.out.println("command: " + command);
+            if (command.contains(commandToCheck)){
+                denyCommand = false;
+                break;
+            }
+        }
+        if (Boolean.TRUE.equals(denyCommand)){
             e.getPlayer().sendMessage(ChatColor.RED + "You can't use that command in this world.");
         }
         return denyCommand;
@@ -709,7 +764,7 @@ public class Api {
 
     public static void addPlayerToHardcoreList(PlayerCommandPreprocessEvent e) throws IOException {
         FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
-        if (hardcoreCfg.getString(e.getPlayer().getUniqueId().toString()) == null || Boolean.FALSE.equals(hardcoreCfg.getBoolean(e.getPlayer().getUniqueId().toString() + "." + "isAlive") )) {
+        if (hardcoreCfg.getString(e.getPlayer().getUniqueId().toString()) == null) {
             Player player = e.getPlayer();
             String uuid = player.getUniqueId().toString();
             hardcoreCfg.set(uuid + ".isAlive", true);
@@ -719,4 +774,33 @@ public class Api {
         }
     }
 
+    public static void setHardcorePlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+        String uuid = e.getPlayer().getUniqueId().toString();
+        hardcoreCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        hardcoreCfg.save(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+    }
+
+    public static void teleportHardcorePlayerToLastLocation(Player player) {
+        FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+        String uuid = player.getUniqueId().toString();
+        if (hardcoreCfg.getString(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(hardcoreCfg.getLocation(uuid + ".lastLocation")));
+        }
+    }
+
+    public static void givePlayerMoney(String minecraftId, double amount){
+        Api.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)), amount);
+    }
+
+    public static String getMinecraftIDFromTwitchName(String twitchName){
+        String minecraftID = null;
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+        for(String mcID : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
+            if (twitchName.equalsIgnoreCase(whitelistCfg.getString(Constants.YML_PLAYERS + mcID + ".twitchName"))){
+                minecraftID = mcID;
+            }
+        }
+        return minecraftID;
+    }
 }
