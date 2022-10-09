@@ -24,6 +24,7 @@ import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.luckperms.api.LuckPerms;
@@ -76,6 +77,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static lmp.LatchDiscord.jda;
+import static org.bukkit.Bukkit.getOnlinePlayers;
 
 
 public class Main extends JavaPlugin implements Listener {
@@ -177,66 +179,89 @@ public class Main extends JavaPlugin implements Listener {
         CompletableFuture<Donation[]> future = dbClient.getNewDonations(statuses);
 // Non-blocking Example
         CompletableFuture.runAsync(() -> {
+            FileConfiguration donationsCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
+            // Array of Donation objects
+            List<Donation> list = null;
             try {
-                FileConfiguration donationsCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
-                // Array of Donation objects
-                List<Donation> list = Arrays.asList(future.get());
+                list = Arrays.asList(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
-                List<Donation> sorted = list.stream()
-                        .sorted(Comparator.comparing(Donation::getDate))
-                        .collect(Collectors.toList());
-                try {
-                    if (donationsCfg.getInt("numberOfDonations") < sorted.size()) {
-                        int previousDonationCount = donationsCfg.getInt("numberOfDonations");
-                        int currentDonationCount = sorted.size();
-                        for (int i = previousDonationCount; i <= currentDonationCount - 1; i++) {
+            List<Donation> sorted = list.stream()
+                    .sorted(Comparator.comparing(Donation::getDate))
+                    .collect(Collectors.toList());
+            if (donationsCfg.getInt("numberOfDonations") < sorted.size()) {
+                int previousDonationCount = donationsCfg.getInt("numberOfDonations");
+                int currentDonationCount = sorted.size();
+                //for (Donation donation : sorted) {
 //                            String discordID = "123";
 //                            if (sorted.get(i).getSellerCustoms().get("What is your Discord User ID?") != null && !sorted.get(i).getSellerCustoms().get("What is your Discord User ID?").isEmpty()){
 //                                discordID = sorted.get(i).getSellerCustoms().get("What is your Discord User ID?");
 //                            }
-                            String transactionId = sorted.get(i).getTransactionID();
-                            String buyerID = sorted.get(i).getBuyerID();
-                            String buyerEmail = sorted.get(i).getBuyerEmail();
-                            String productID = sorted.get(i).getProductID();
-                            String price = sorted.get(i).getPrice();
-                            Boolean isRecurring = sorted.get(i).getRecurring();
-                            Date purchaseDate = sorted.get(i).getDate();
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".transactionID", transactionId);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerID", buyerID);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerEmail", buyerEmail);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".roleID", sorted.get(i).getRoleID());
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".productID", productID);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".price", price);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".isRecurring", isRecurring);
-                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".date", purchaseDate);
-                            if (productID.equals(Constants.SPAWN_MOB_PRODUCT_ID) && Double.parseDouble(price) > 4.99){
-                                EntityType mobToSpawn = EntityType.CREEPER;
-                                if (sorted.get(i).getSellerCustoms().get("Enter the Mob Name") != null){
-                                    mobToSpawn = EntityType.valueOf(sorted.get(i).getSellerCustoms().get("Enter the Mob Name").toUpperCase());
-                                }
-                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
-                                assert latch != null;
-                                Location latchLocation = latch.getLocation();
-                                Objects.requireNonNull(latchLocation.getWorld()).spawnEntity(latchLocation, mobToSpawn);
+                int donationCountDifference = currentDonationCount - previousDonationCount;
+                for (int i = 0; i < donationCountDifference; i++) {
+                    Donation donation = sorted.get(previousDonationCount);
+                    String transactionId = donation.getTransactionID();
+                    String buyerID = donation.getBuyerID();
+                    String buyerEmail = donation.getBuyerEmail();
+                    String productID = donation.getProductID();
+                    String price = donation.getPrice();
+                    Boolean isRecurring = donation.getRecurring();
+                    Date purchaseDate = donation.getDate();
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".transactionID", transactionId);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerID", buyerID);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerEmail", buyerEmail);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".roleID", donation.getRoleID());
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".productID", productID);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".price", price);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".isRecurring", isRecurring);
+                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".date", purchaseDate);
+                    Player latch = null;
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (player.getUniqueId().toString().equalsIgnoreCase(Constants.LATCH_MINECRAFT_ID)) {
+                            latch = player;
+                        }
+                    }
+                    assert latch != null;
+                    if (Bukkit.getServer().getPlayer(Constants.LATCH_MINECRAFT_ID) != null) {
+                        if (productID.equals(Constants.SPAWN_MOB_PRODUCT_ID) && Double.parseDouble(price) > 4.99) {
+                            EntityType mobToSpawn = EntityType.CREEPER;
+                            Player finalLatch = latch;
+                            if (donation.getSellerCustoms().get("Enter the Mob Name") != null) {
+                                mobToSpawn = EntityType.valueOf(donation.getSellerCustoms().get("Enter the Mob Name").toUpperCase());
                             }
-                            if (productID.equals(Constants.KILL_LATCH_PRODUCT_ID) && Double.parseDouble(price) > 9.99){
-                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
-                                assert latch != null;
-                                latch.setHealth(0);
-                            }
-                            if (productID.equals(Constants.PLAY_CREEPER_SOUND_PRODUCT_ID) && Double.parseDouble(price) > 1.49){
-                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
-                                assert latch != null;
-                                latch.playSound(latch.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0);
-                            }
-                            if (productID.equals(Constants.BLINDNESS_EFFECT_PRODUCT_ID) && Double.parseDouble(price) > 1.49){
-                                Player latch = Bukkit.getPlayer(Constants.LATCH_MINECRAFT_ID);
-                                assert latch != null;
-                                latch.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 6000, 1));
-                            }
-
-
-//                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".discordID", discordID);
+                            Location latchLocation = finalLatch.getLocation();
+                            EntityType finalMobToSpawn = mobToSpawn;
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Objects.requireNonNull(latchLocation.getWorld()).spawnEntity(latchLocation, finalMobToSpawn));
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.sendMessage("creepy bois"));
+                        }
+                        if (productID.equals(Constants.KILL_LATCH_PRODUCT_ID) && Double.parseDouble(price) > 9.99) {
+                            Player finalLatch = latch;
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.setHealth(0));
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.sendMessage("You ded"));
+                        }
+                        if (productID.equals(Constants.PLAY_CREEPER_SOUND_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
+                            Player finalLatch = latch;
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.playSound(finalLatch.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0));
+                        }
+                        if (productID.equals(Constants.BLINDNESS_EFFECT_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
+                            Player finalLatch = latch;
+                            Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 6000, 1)));
+                        }
+                    }
+                    previousDonationCount++;
+                }
+                donationsCfg.set("numberOfDonations", sorted.size());
+                try {
+                    donationsCfg.save(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+                            //                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".discordID", discordID);
 //                            if (productID.equalsIgnoreCase(Constants.DONOR_PRODUCT_ID) && !discordID.equalsIgnoreCase("123")){
 //                                String donorRoleName = "";
 //                                String minecraftID = Api.getMinecraftIdFromDCid(discordID);
@@ -264,24 +289,11 @@ public class Main extends JavaPlugin implements Listener {
 //                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorEndDate", dateTime.plusDays(30).getMillis());
 //                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".purchases.donations." + transactionId, transactionId);
 //                            }
-                        }
-                        donationsCfg.set("numberOfDonations", sorted.size());
-                        donationsCfg.save(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
-                    }
-                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e ) {
-                    System.out.println("ARRAYDONATIONERROR: " + e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+
+
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e){
         BossBattle.bossHurtEvent(e);
-
     }
 
     @EventHandler
@@ -390,7 +402,7 @@ public class Main extends JavaPlugin implements Listener {
                 Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(e.getEntity()), amountToRemove);
                 e.getEntity().sendMessage(ChatColor.YELLOW + "You lost " + ChatColor.RED + "$" + df.format(amountToRemove) + ChatColor.YELLOW + " because you died.");
             }
-            if (e.getEntity().getWorld().getName().equalsIgnoreCase("hardcore")){
+            if (e.getEntity().getWorld().getName().contains("hardcore")){
                 FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
                 Player player = e.getEntity();
                 String uuid = player.getUniqueId().toString();
@@ -426,7 +438,7 @@ public class Main extends JavaPlugin implements Listener {
             }
             if(Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))){
                 Objects.requireNonNull(jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
-                for (Player player : Bukkit.getOnlinePlayers()){
+                for (Player player : getOnlinePlayers()){
                     if (player.hasPermission("group.jr-mod")){
                         player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "DTSC" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
                     }
@@ -453,7 +465,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onCommandEvent(PlayerCommandPreprocessEvent event) throws IOException {
+    public void onCommandEvent(PlayerCommandPreprocessEvent event) throws IOException, ExecutionException, InterruptedException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onCommandEvent"))) {
             LatchDiscord.logPlayerBan(event, null);
             if (event.getMessage().equalsIgnoreCase("/back")){
@@ -465,8 +477,16 @@ public class Main extends JavaPlugin implements Listener {
             }
             Api.denyCommandUseInXPFarm(event);
         }
-        if (event.getMessage().equalsIgnoreCase("/mv tp hardcore")){
-            Api.addPlayerToHardcoreList(event);
+        if (!event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/mv tp hardcore")){
+            if(Boolean.TRUE.equals(event.getPlayer().isOp()) && Boolean.TRUE.equals(Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "hardcore"))){
+                Api.addPlayerToHardcoreList(event);
+                Api.teleportHardcorePlayerToLastLocation(event.getPlayer());
+            } else {
+                event.getPlayer().sendMessage(ChatColor.RED + "You must purchase a hardcore season pass for " + ChatColor.GOLD + "$3 USD.");
+            }
+        }
+        if (event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/spawn")){
+            Api.setHardcorePlayerLocation(event);
         }
     }
 
@@ -502,8 +522,24 @@ public class Main extends JavaPlugin implements Listener {
             MobileSpawner.disableSpawnerMobChange(event);
             SlimeChunkFinder.isSlimeChunk(event);
             setMasterAndSortChests(event);
-            if (event.getAction().toString().equals("RIGHT_CLICK_BLOCK") && event.getClickedBlock().getType().equals(Material.CRIMSON_BUTTON)){
+            if (event.getAction().toString().equals("RIGHT_CLICK_BLOCK") && Objects.requireNonNull(event.getClickedBlock()).getType().equals(Material.CRIMSON_BUTTON)){
                 BossBattle.startBossBattle(event);
+            }
+            if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.BEDROCK)){
+                if (Boolean.TRUE.equals(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta()) && Boolean.TRUE.equals(Objects.requireNonNull(event.getPlayer().getInventory().getItemInMainHand().getItemMeta()).hasLore())){
+                    if (Objects.requireNonNull(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()).get(0).equalsIgnoreCase("Bedrock Breaker")){
+                        Block bedrockToBreak = event.getClickedBlock();
+                        double playerBalance = Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId()));
+                        if (playerBalance >= Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost")){
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            bedrockToBreak.setType(Material.AIR);
+                            Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId()), Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost"));
+                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId())))));
+                        } else {
+                            event.getPlayer().sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$" + Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost") + ChatColor.RED + " to break a block of bedrock.");
+                        }
+                    }
+                }
             }
             Api.denyOpenChestDuringBossBattle(event);
             CustomPortals.setBlockToNetherPortal(event);
@@ -551,7 +587,7 @@ public class Main extends JavaPlugin implements Listener {
 //    }
 
     @EventHandler
-    public void onPlayerInventoryClick(InventoryClickEvent e){
+    public void onPlayerInventoryClick(InventoryClickEvent e) throws ExecutionException, InterruptedException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerInventoryClick"))) {
             Api.cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
             Player player = (Player) e.getWhoClicked();

@@ -122,7 +122,7 @@
     <orderEntry type="module-library">
       <library name="Maven: coreprotect-21.2:net.coreprotect.coreprotect:21.2">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/coreprotect-21.2.jar!/" />
+          <root url="jar://$USER_HOME$/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

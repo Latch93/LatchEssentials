@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class BossBattle {
@@ -30,13 +31,13 @@ public class BossBattle {
             boolean canSpawn = true;
             String bossType = "";
 
-            for(String boss : bossCfg.getConfigurationSection("bosses").getKeys(false)) {
+            for(String boss : Objects.requireNonNull(bossCfg.getConfigurationSection("bosses")).getKeys(false)) {
                 double bossButtonXFromFile = bossCfg.getDouble("bosses." + boss + ".buttonX");
                 double bossButtonYFromFile = bossCfg.getDouble("bosses." + boss + ".buttonY");
                 double bossButtonZFromFile = bossCfg.getDouble("bosses." + boss + ".buttonZ");
 
                 Location buttonLocationFromFile = new Location(Bukkit.getWorld("world"), bossButtonXFromFile, bossButtonYFromFile, bossButtonZFromFile);
-                if (event.getClickedBlock().getLocation().equals(buttonLocationFromFile)){
+                if (Objects.requireNonNull(event.getClickedBlock()).getLocation().equals(buttonLocationFromFile)){
                     bossType = boss;
                 }
             }
@@ -44,7 +45,6 @@ public class BossBattle {
                 if (bossCfg.getDouble("bosses." + bossType + ".cost") > Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(challenger))){
                     challenger.sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$" + bossCfg.getDouble("bosses." + bossType + ".cost") + ChatColor.RED + " to fight this boss.");
                 } else {
-                    ArrayList<String> illegalItems = new ArrayList<>();
                     if (bossCfg.isSet("bosses." + bossType + ".illegalItems")){
                         for (ItemStack is : challenger.getInventory()){
                             if (is != null && (Objects.requireNonNull(bossCfg.getList("bosses." + bossType + ".illegalItems")).contains(is.getType().toString()))){
@@ -106,7 +106,7 @@ public class BossBattle {
                             BigDecimal a = BigDecimal.valueOf(monster.getHealth());
                             BigDecimal b = new BigDecimal(100);
                             Bukkit.broadcastMessage(ChatColor.GOLD + challenger.getName() + ChatColor.GREEN + " started a fight with " + bossName + " " +
-                                    "Started \nHealth: " + ChatColor.AQUA + (a.multiply(b)).setScale(0,BigDecimal.ROUND_UP));
+                                    "Started \nHealth: " + ChatColor.AQUA + (a.multiply(b)).setScale(0, RoundingMode.UP));
                             try {
                                 bossCfg.save(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
                             } catch (IOException e) {
@@ -139,7 +139,7 @@ public class BossBattle {
             }
 
         } else {
-            challenger.sendMessage(ChatColor.YELLOW + "A boss is currently in the arena. Please wait until it is defeated or the challenger is vanguished.");
+            challenger.sendMessage(ChatColor.YELLOW + "A boss is currently in the arena. Please wait until it is defeated or the challenger is vanquished.");
         }
     }
 
@@ -148,8 +148,8 @@ public class BossBattle {
         String boss = bossCfg.getString("bossKey");
         if (bossCfg.isSet("bossUUID") && Objects.requireNonNull(bossCfg.getString("bossUUID")).equalsIgnoreCase(String.valueOf(e.getEntity().getUniqueId()))) {
             Bukkit.broadcastMessage(bossCfg.getString("playerName") + " defeated " + ChatColor.GOLD + bossCfg.getString("bosses." + boss + ".bossName"));
-            Api.getEconomy().depositPlayer(Api.getOfflinePlayerFromPlayer(Bukkit.getPlayer(bossCfg.getString("playerName"))), bossCfg.getDouble("bosses." + boss + ".reward"));
-            Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName"))).sendMessage(ChatColor.GREEN + "Congratulations!!! You have been awarded " + ChatColor.GOLD + "$" +  bossCfg.getDouble("bosses." + boss + ".reward"));
+            Api.getEconomy().depositPlayer(Api.getOfflinePlayerFromPlayer(Objects.requireNonNull(Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName"))))), bossCfg.getDouble("bosses." + boss + ".reward"));
+            Objects.requireNonNull(Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName")))).sendMessage(ChatColor.GREEN + "Congratulations!!! You have been awarded " + ChatColor.GOLD + "$" +  bossCfg.getDouble("bosses." + boss + ".reward"));
             bossCfg.set("bossEnabled", false);
             e.getDrops().clear();
             double warpX = bossCfg.getDouble("warpX");
@@ -160,14 +160,12 @@ public class BossBattle {
             double chestZ = bossCfg.getDouble("chestRightZ");
             Location challengerChestLocation = new Location(Bukkit.getWorld("world"), chestX, chestY, chestZ);
             Chest challengerChest = (Chest) challengerChestLocation.getBlock().getState();
-            int count = 0;
             for (ItemStack is : challengerChest.getInventory()){
                 challengerChest.getInventory().remove(is);
-                count++;
             }
             Location warpLocation = new Location(Bukkit.getWorld("world"), warpX, warpY, warpZ);
             try {
-                Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName"))).teleport(warpLocation);
+                Objects.requireNonNull(Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName")))).teleport(warpLocation);
 
             } catch (NullPointerException ignored) {
 
@@ -180,7 +178,7 @@ public class BossBattle {
                 double warpY = bossCfg.getDouble("warpY");
                 double warpZ = bossCfg.getDouble("warpZ");
                 Location warpLocation = new Location(Bukkit.getWorld("world"), warpX, warpY, warpZ);
-                Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName"))).teleport(warpLocation);
+                Objects.requireNonNull(Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName")))).teleport(warpLocation);
 
                 double chestX = bossCfg.getDouble("chestRightX");
                 double chestY = bossCfg.getDouble("chestRightY");
@@ -209,7 +207,7 @@ public class BossBattle {
             BigDecimal a = BigDecimal.valueOf(boss.getHealth());
             BigDecimal b = new BigDecimal(10);
             Objects.requireNonNull(Bukkit.getPlayer(Objects.requireNonNull(bossCfg.getString("playerName")))).spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GOLD + bossCfg.getString("bosses." + bossKey + ".bossName") +
-                    ChatColor.GRAY + " - " + ChatColor.GREEN + "Health: " + ChatColor.GOLD + (a.multiply(b)).setScale(0,BigDecimal.ROUND_UP)));
+                    ChatColor.GRAY + " - " + ChatColor.GREEN + "Health: " + ChatColor.GOLD + (a.multiply(b)).setScale(0, RoundingMode.UP)));
         }
     }
 }

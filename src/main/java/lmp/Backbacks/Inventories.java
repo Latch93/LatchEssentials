@@ -167,7 +167,7 @@ public class Inventories {
                     if (totalAmount > 9) {
                         loreList.add(ChatColor.GREEN + "Right click to purchase " + ChatColor.GOLD + "10" + ChatColor.GREEN + " items. Total cost: " + ChatColor.GOLD + "$" + Math.multiplyExact(10,itemWorth));
                     }
-                    loreList.add(ChatColor.GREEN + "Middle click to purchase all items. Total cost: " + ChatColor.GOLD + "$" + totalWorth);
+                    //loreList.add(ChatColor.GREEN + "Middle click to purchase all items. Total cost: " + ChatColor.GOLD + "$" + totalWorth);
                 } else {
                     loreList.add(ChatColor.GREEN + "Cost per item: " + ChatColor.GOLD + "$" + itemWorth );
                 }
