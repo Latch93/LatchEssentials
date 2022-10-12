@@ -63,6 +63,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.service.IssueService;
 
 import javax.security.auth.login.LoginException;
 import java.awt.Color;
@@ -110,7 +112,7 @@ public class Main extends JavaPlugin implements Listener {
 
     public static Plugin coreProtect;
     public static CoreProtectAPI coreProtectAPI;
-
+    public static GitHubClient githubClient;
     @Override
     public void onEnable() {
         getLogger().info("discord_text is enabled");
@@ -171,7 +173,9 @@ public class Main extends JavaPlugin implements Listener {
         ipApi = new IPGeolocationAPI("07eecf88b7f2468e90fe0326af707d66");
         dbClient = new DBClient("625983914049142786", "PlXK5QShFmmlb4q9qILoRc1lXqLsZVG72aOEnAiaaQi2oXfAI5X5EuIRLGBp1qa");
         Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
+        assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
+        githubClient = new GitHubClient().setOAuth2Token("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");
     }
     public static void getDonations(){
         String[] statuses = {"Completed", "Reversed", "Refunded"};

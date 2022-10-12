@@ -28,6 +28,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.eclipse.egit.github.core.Issue;
+import org.eclipse.egit.github.core.Label;
+import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.service.IssueService;
+import org.eclipse.egit.github.core.service.RepositoryService;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
@@ -328,45 +334,29 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                                 "1.) How old are you?");
                     }).queue();
                 }
-                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("qwert")){
-                    FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                    for (Member member : Objects.requireNonNull(jda.getGuildById(Constants.GUILD_ID)).getMembers()){
-                        for (String minecraftId : whitelistCfg.getConfigurationSection("players").getKeys(false)) {
-                            if (member.getUser().getId().equalsIgnoreCase(whitelistCfg.getString(Constants.YML_PLAYERS + minecraftId + ".discordId"))) {
-                                whitelistCfg.set(Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", false);
-                            }
-                        }
+                ArrayList<String> issueCommandList = new ArrayList<>();
+                issueCommandList.add("!submitissue");
+                issueCommandList.add("!submitrequest");
+                issueCommandList.add("!submitbug");
+                issueCommandList.add("!submitsuggestion");
+                if (channel.getId().equals(Constants.ISSUE_CHANNEL_ID) && issueCommandList.contains(message.toLowerCase())) {
+                    String issueType = "Issue";
+                    if (message.equalsIgnoreCase("!submitRequest")){
+                        issueType = "Request";
+                    } else if (message.equalsIgnoreCase("!submitBug")){
+                        issueType = "Bug";
+                    } else if (message.equalsIgnoreCase("!submitSuggestion")){
+                        issueType = "Suggestion";
                     }
-                    whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                }
-                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.contains("Yeet")) {
-                    TextChannel testChannel = jda.getTextChannelById(Constants.TEST_CHANNEL_ID);
-                    FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                    GeolocationParams geoParams = new GeolocationParams();
-                    geoParams.setFields("geo,time_zone,currency");
-                    geoParams.setIncludeSecurity(true);
-                    for (String mcID : whitelistCfg.getConfigurationSection(Constants.YML_PLAYERS).getKeys(false)) {
-                        File playerDataFile = new File("plugins/Essentials/userdata", UUID.fromString(mcID) + ".yml");
-                        FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-                        geoParams.setIPAddress(playerDataCfg.getString("ip-address"));
-                        Api.messageInConsole(ChatColor.GREEN + "mcID: " + mcID);
-                        Api.messageInConsole(ChatColor.GREEN + "ip: " + playerDataCfg.getString("ip-address"));
-                        Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
-                        String ipInfo = ".ip-info.";
-                        try {
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "countryName", geolocation.getCountryName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "cityName", geolocation.getCity());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencyName", geolocation.getCurrency().getName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "timezoneName", geolocation.getTimezone().getName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + mcID + ipInfo + "ipAddress", geolocation.getIPAddress());
-                        } catch (NullPointerException ignore){
-
-                        }
-                    }
-
-                    whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
+                    channel.deleteMessageById(messageId).queue();
+                    channel.sendMessage(event.getAuthor().getName() + " --- Check your Discord DMs to complete your " + issueType + " submission").queue();
+                    String finalIssueType = issueType;
+                    event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
+                        TextChannel issueCompleteChannel = jda.getTextChannelById(Constants.SUBMITTED_ISSUES_CHANNEL_ID);
+                        event.getJDA().addEventListener(new IssueTracker(privateChannel, event.getAuthor(), issueCompleteChannel, finalIssueType));
+                        return privateChannel.sendMessage("\nPLEASE READ\nThere will be 2 questions. Please put as much information in one message as you can.\n" +
+                                "1.) Please answer why are here today in detail.");
+                    }).queue();
                 }
                 if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!compare")){
                     List<String> keep = Files.readAllLines(Paths.get("C:/Users/Latch/Downloads/keep.txt"));

@@ -50,6 +50,7 @@ public class LMPCommand implements CommandExecutor {
                             ItemStack paper = new ItemStack(Material.PAPER, 1);
                             ItemMeta im = paper.getItemMeta();
                             assert im != null;
+                            im.setDisplayName("MoneyOrder - " + player.getName() + " - " + amount);
                             im.setLore(Collections.singletonList("MoneyOrder - " + player.getName() + " - " + amount));
                             paper.setItemMeta(im);
                             World world = player.getWorld();

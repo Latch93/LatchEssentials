@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.github.twitch4j</groupId>
             <artifactId>twitch4j</artifactId>
-            <version>1.10.0</version>
+            <version>1.12.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -126,6 +126,12 @@
             <artifactId>streamlabs4j</artifactId>
             <version>0.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.mylyn.github</groupId>
+            <artifactId>org.eclipse.egit.github.core</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

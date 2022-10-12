@@ -31,8 +31,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joda.time.DateTime;
+import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -317,14 +317,14 @@ public class Api {
 
     public static void addPlayerToPermissionGroup(String minecraftId, String groupName){
         InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
-        @NonNull CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
         userFuture.thenAcceptAsync(user -> {
             user.data().add(node);
             Main.luckPerms.getUserManager().saveUser(user);
         });
     }
     public static Boolean doesPlayerHavePermission(String minecraftId, String groupName) throws ExecutionException, InterruptedException {
-        @NonNull CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
         return userFuture.thenApplyAsync(user -> {
             Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
             return inheritedGroups.stream().anyMatch(g ->  g.getName().equals(groupName));
@@ -336,7 +336,7 @@ public class Api {
 
     public static void removePlayerFromPermissionGroup(String minecraftId, String groupName){
         InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
-        @NonNull CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
         userFuture.thenAcceptAsync(user -> {
             user.data().remove(node);
             Main.luckPerms.getUserManager().saveUser(user);

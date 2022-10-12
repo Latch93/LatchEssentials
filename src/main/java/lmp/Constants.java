@@ -68,6 +68,9 @@ public class Constants {
 
     public static final String LOTTERY_WINNER_CHANNEL_ID = "1023974250975076352";
 
+    public static final String ISSUE_CHANNEL_ID = "626125423297953816";
+    public static final String SUBMITTED_ISSUES_CHANNEL_ID = "1029547100695957544";
+
     public static final String HE_HIM_ROLE_ID = "1007042989421502555";
     public static final String SHE_HER_ROLE_ID = "1007043876407742595";
     public static final String THEY_THEM_ROLE_ID = "1007043913422491658";

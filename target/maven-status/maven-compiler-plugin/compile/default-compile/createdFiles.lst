@@ -52,4 +52,5 @@ lmp\Lottery.class
 lmp\RandomTeleport.class
 lmp\PlayerShops\PlayerShops.class
 lmp\Configurations\WhitelistConfig.class
+lmp\IssueTracker.class
 lmp\LatchDiscord.class
