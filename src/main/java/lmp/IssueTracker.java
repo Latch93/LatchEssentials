@@ -56,8 +56,7 @@ public class IssueTracker extends ListenerAdapter {
             }
             issue.append("\n-------------------");
             issueTrackerChannel.sendMessage(issue).queue();
-            GitHubClient githubClient = new GitHubClient().setOAuth2Token("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");
-            IssueService issueService = new IssueService(githubClient);
+            IssueService issueService = new IssueService(Main.githubClient);
             Issue githubIssue = new Issue();
             githubIssue.setTitle(issueType.toUpperCase() + ": DC[" + author.getName() + "]");
             StringBuilder issueBody = new StringBuilder();

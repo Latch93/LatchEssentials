@@ -24,7 +24,6 @@ import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.luckperms.api.LuckPerms;
@@ -64,7 +63,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.IssueService;
 
 import javax.security.auth.login.LoginException;
 import java.awt.Color;
@@ -175,7 +173,7 @@ public class Main extends JavaPlugin implements Listener {
         Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
-        githubClient = new GitHubClient().setOAuth2Token("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");
+        githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("githubOauthToken"));
     }
     public static void getDonations(){
         String[] statuses = {"Completed", "Reversed", "Refunded"};
@@ -481,8 +479,8 @@ public class Main extends JavaPlugin implements Listener {
             }
             Api.denyCommandUseInXPFarm(event);
         }
-        if (!event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/mv tp hardcore")){
-            if(Boolean.TRUE.equals(event.getPlayer().isOp()) && Boolean.TRUE.equals(Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "hardcore"))){
+        if (!event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/lmp hardcore")){
+            if(Boolean.TRUE.equals(Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "hardcore"))){
                 Api.addPlayerToHardcoreList(event);
                 Api.teleportHardcorePlayerToLastLocation(event.getPlayer());
             } else {

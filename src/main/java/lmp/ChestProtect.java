@@ -1,18 +1,17 @@
 package lmp;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +27,7 @@ public class ChestProtect extends ListenerAdapter {
     public final Block block;
     public List<String> chestProtectQuestions = new LinkedList<>();
 
-    public ChestProtect(MessageChannel channel, User chestOwner, String itemTaken, String thiefMinecraftName, Location chestLocation, Block block) {
+    public ChestProtect(PrivateChannel channel, User chestOwner, String itemTaken, String thiefMinecraftName, Location chestLocation, Block block) {
         this.channelId = channel.getIdLong();
         this.authorId = chestOwner.getIdLong();
         this.thiefMinecraftName = thiefMinecraftName;

@@ -382,9 +382,17 @@ public class LMPCommand implements CommandExecutor {
         int n = rand.nextInt(Bukkit.getOnlinePlayers().size());
         ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (!onlinePlayers.get(n).getName().equalsIgnoreCase("latch93") && Boolean.FALSE.equals(Api.isPlayerInvisible(onlinePlayers.get(n).getUniqueId().toString()))){
+            player.teleport(onlinePlayers.get(n).getLocation());
+            player.setGameMode(GameMode.SPECTATOR);
             player.setSpectatorTarget(onlinePlayers.get(n));
         } else {
-            spectateInsideRandomPlayer(player);
+            FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+            double spawnX = xpFarmCfg.getDouble("spawnX");
+            double spawnY = xpFarmCfg.getDouble("spawnY");
+            double spawnZ = xpFarmCfg.getDouble("spawnZ");
+            Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
+            player.teleport(spawnLocation);
+            player.setGameMode(GameMode.SPECTATOR);
         }
     }
 

@@ -784,7 +784,7 @@ public class Api {
     public static void teleportHardcorePlayerToLastLocation(Player player) {
         FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
         String uuid = player.getUniqueId().toString();
-        if (hardcoreCfg.getString(uuid + ".lastLocation") != null) {
+        if (hardcoreCfg.getLocation(uuid + ".lastLocation") != null) {
             player.teleport(Objects.requireNonNull(hardcoreCfg.getLocation(uuid + ".lastLocation")));
         }
     }
