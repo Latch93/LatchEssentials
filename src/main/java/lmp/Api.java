@@ -1,18 +1,16 @@
 package lmp;
 
-import io.netty.util.Constant;
 import lmp.LatchTwitchBot.LatchTwitchBot;
 import lmp.LatchTwitchBot.LatchTwitchBotRunnable;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.util.Tristate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,7 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.joda.time.DateTime;
-import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.IOException;
