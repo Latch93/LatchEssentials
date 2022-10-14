@@ -2,7 +2,6 @@ package lmp;
 
 import io.donatebot.api.DBClient;
 import io.donatebot.api.Donation;
-import io.ipgeolocation.api.IPGeolocationAPI;
 import lmp.Backbacks.BackPackCommand;
 import lmp.Backbacks.BackPackInventoryConfig;
 import lmp.Backbacks.BackpackTabComplete;
@@ -23,7 +22,7 @@ import lmp.PlayerShops.PlayerShopsTabComplete;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.luckperms.api.LuckPerms;
@@ -104,10 +103,7 @@ public class Main extends JavaPlugin implements Listener {
     private static AutoSorterConfig autoSorterCfgm;
     // Boss Config
     private static BossConfig bossCfgm;
-
-    public static IPGeolocationAPI ipApi;
     public static DBClient dbClient;
-
     public static Plugin coreProtect;
     public static CoreProtectAPI coreProtectAPI;
     public static GitHubClient githubClient;
@@ -149,7 +145,7 @@ public class Main extends JavaPlugin implements Listener {
         Objects.requireNonNull(this.getCommand("lmp")).setTabCompleter(new LMPCommandTabComplete());
         // Discord Staff Chat Command
         Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
-
+        Objects.requireNonNull(this.getCommand("adsc")).setExecutor(new DiscordAdminChatCommand());
         // Twitch Bot Command
         Objects.requireNonNull(this.getCommand("twitch")).setExecutor(new LatchTwitchBotCommand());
         Objects.requireNonNull(this.getCommand("twitch")).setTabCompleter(new LatchTwitchBotTabComplete());
@@ -168,7 +164,6 @@ public class Main extends JavaPlugin implements Listener {
         if (provider != null) {
             luckPerms = provider.getProvider();
         }
-        ipApi = new IPGeolocationAPI("07eecf88b7f2468e90fe0326af707d66");
         dbClient = new DBClient("625983914049142786", "PlXK5QShFmmlb4q9qILoRc1lXqLsZVG72aOEnAiaaQi2oXfAI5X5EuIRLGBp1qa");
         Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
         assert coreProtect != null;

@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>LatchLMP</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <repositories>
         <!-- This adds the Spigot Maven repository to the build -->
         <repository>
@@ -43,23 +43,23 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-alpha.13</version>
+            <version>5.0.0-alpha.21</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.2</version>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.2</version>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.10.0</version>
         </dependency>
         <dependency>
             <groupId>com.cavariux</groupId>
@@ -101,12 +101,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.10.14</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ipgeolocation</groupId>
-            <artifactId>ipgeolocation</artifactId>
-            <version>1.0.12</version>
+            <version>2.11.2</version>
         </dependency>
         <dependency>
             <groupId>net.luckperms</groupId>

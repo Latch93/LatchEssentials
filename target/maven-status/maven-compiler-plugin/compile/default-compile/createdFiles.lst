@@ -4,6 +4,7 @@ lmp\LatchTwitchBot\LatchTwitchBotCommand.class
 lmp\PlayerShops\PlayerShopsInventoryConfig.class
 lmp\StaffApplication.class
 lmp\Bank\BankConfig.class
+lmp\DiscordAdminChatCommand.class
 lmp\LTSNomination.class
 lmp\LMPTimer.class
 lmp\XPFarm.class

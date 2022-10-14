@@ -1,12 +1,9 @@
 package lmp.DiscordText;
 
-import io.ipgeolocation.api.Geolocation;
 import lmp.*;
-
-import io.ipgeolocation.api.GeolocationParams;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.InheritanceNode;
 import org.bukkit.*;
@@ -17,7 +14,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -239,14 +239,10 @@ public class LMPCommand implements CommandExecutor {
                             user.data().add(member);
                             user.data().remove(defaultNode);
                             Main.luckPerms.getUserManager().saveUser(user);
-                            GeolocationParams geoParams = new GeolocationParams();
-                            geoParams.setFields("geo,time_zone,currency");
-                            geoParams.setIncludeSecurity(true);
 //                            File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
 //                            FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
 //                            System.out.println("ASDASD: " + Objects.requireNonNull(player.getAddress()).getAddress().toString());
-                            geoParams.setIPAddress(Objects.requireNonNull(player.getAddress()).getAddress().toString());
-                            Geolocation geolocation = Main.ipApi.getGeolocation(geoParams);
+
                             String ipInfo = ".ip-info.";
                             FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", discordMember.getUser().getName());
@@ -256,6 +252,7 @@ public class LMPCommand implements CommandExecutor {
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftId", player.getUniqueId().toString());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".joinTime", discordMember.getTimeJoined().toLocalDateTime().toString());
                             whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
+                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "ipAddress", Objects.requireNonNull(player.getAddress()).getAddress().toString());
                             whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                             try {
                                 TextChannel modChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
@@ -267,13 +264,6 @@ public class LMPCommand implements CommandExecutor {
                             }
                             DonationClaimRewards.createDonationUserFile(player.getUniqueId().toString());
                             whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "countryName", geolocation.getCountryName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "cityName", geolocation.getCity());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencyName", geolocation.getCurrency().getName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "currencySymbol", geolocation.getCurrency().getSymbol());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "offsetTime", geolocation.getTimezone().getOffset());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "timezoneName", geolocation.getTimezone().getName());
-                            whitelistCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ipInfo + "ipAddress", geolocation.getIPAddress());
                             player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
                             whitelistCfg.save(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
                         } else {

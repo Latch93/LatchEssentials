@@ -1,23 +1,30 @@
 package lmp;
 
-import io.ipgeolocation.api.Geolocation;
-import io.ipgeolocation.api.GeolocationParams;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,25 +35,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.eclipse.egit.github.core.Issue;
-import org.eclipse.egit.github.core.Label;
-import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.IssueService;
-import org.eclipse.egit.github.core.service.RepositoryService;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.*;
+import org.joda.time.DateTime;
+import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import javax.security.auth.login.LoginException;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import javax.security.auth.login.LoginException;
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class LatchDiscord extends ListenerAdapter implements Listener {
 
@@ -58,15 +62,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     private long authorId = 0;
     public static final JDABuilder jdaBuilder = JDABuilder.createDefault(Constants.DISCORD_BOT_TOKEN).setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
             .setMemberCachePolicy(MemberCachePolicy.ALL) // ignored if chunking enabled
-            .enableIntents(GatewayIntent.GUILD_MEMBERS);
+            .enableIntents(GatewayIntent.GUILD_MEMBERS)
+            .enableIntents(GatewayIntent.MESSAGE_CONTENT);
     public static JDA jda = null;
 
     static {
-        try {
-            jda = jdaBuilder.build();
-        } catch (LoginException e) {
-            e.printStackTrace();
-        }
+        jda = jdaBuilder.build();
     }
 
     public LatchDiscord() throws LoginException {
@@ -76,12 +77,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
 
     private void startBot() {
-        try {
-            jda = jdaBuilder.build();
-        }
-        catch (LoginException e) {
-            e.printStackTrace();
-        }
+        jda = jdaBuilder.build();
     }
 
     public static void stopBot() {
@@ -119,6 +115,29 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             Api.addPlayerToPermissionGroup(Api.getMinecraftIdFromDCid(e.getUser().getId()), "donor++");
         }
     }
+
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        event.getUser().openPrivateChannel().flatMap(dm -> dm.sendMessage("Welcome to LMP (Latch Multiplayer)\n" +
+                "Users on PS4|XBox|Switch|Mobile are able to join\n" +
+                "Please read the rules in the Rules channel and react to the rules message (thumbUp)\n" +
+                "Doing this assigns you the member role and access to all of the channels.\n" +
+                "You can get the IP in the server-ip channel.\n" +
+                "For Bedrock|Console users, you need to download the mobile app Bedrock Together:\n" +
+                "Android: https://play.google.com/store/apps/details?id=pl.extollite.bedrocktogetherapp&hl=en_US&gl=US\n" +
+                "iOS: https://apps.apple.com/us/app/bedrocktogether/id1534593376\n" +
+                "When you first join the server, you won't be able to move because you need to link your Discord account with your Minecraft Account.\n" +
+                "In order to link accounts and move around the server freely, go to the General channel in the Discord Server and type the following command -> !link\n" +
+                "My bot will generate a command for you run on your minecraft client chat.\n" +
+                "Copy and paste this command or type it out, its formatted like this -> /lmp link [discordID]\n" +
+                "I link accounts so you can use the features I coded into the game.\n" +
+                "View our wiki with commands and other information here -> https://github.com/Latch93/DiscordText/wiki/Server-Commands\n" +
+                "If you have any questions, feel free to post them in the Discord and Happy Mining!!!")).queue();
+        TextChannel generalChannel = jda.getTextChannelById(setTestingChannel(Constants.GENERAL_CHANNEL_ID));
+        assert generalChannel != null;
+        generalChannel.sendMessage("Welcome <@" + event.getUser().getId() + "> Glad to have you <:LatchKirbo:1030610999096660098>").queue();
+    }
+
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent e) {
         if (e.getRoles().get(0).getId().equalsIgnoreCase(Constants.ADMIN_ROLE_ID)){
@@ -169,7 +188,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 // If a user says the n word, then ban them
                 if (message.toLowerCase().replace(" ", "").contains("nigger") || message.toLowerCase().replace(" ", "").contains("nigga")){
                     event.getMessage().delete().queue();
-                    event.getMember().ban(0, "Used the n-word in discord").queue();
+                    event.getMember().ban(30, TimeUnit.DAYS).queue();
                 }
                 // Question mark
 //                if (userId.equals(Constants.SERVER_OWNER_ID) && message.equalsIgnoreCase(Constants.CLEAR_COMMAND)) {
@@ -291,6 +310,24 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         }
                     }
                 }
+
+                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.contains("cong")) {
+                    event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("Welcome to LMP (Latch Multiplayer)\n" +
+                            "Users on PS4|XBox|Switch|Mobile are able to join\n" +
+                            "Please read the rules in the Rules channel and react to the rules message (thumbUp)\n" +
+                            "Doing this assigns you the member role and access to all of the channels.\n" +
+                            "You can get the IP in the server-ip channel.\n" +
+                            "For Bedrock|Console users, you need to download the mobile app Bedrock Together:\n" +
+                            "Android: https://play.google.com/store/apps/details?id=pl.extollite.bedrocktogetherapp&hl=en_US&gl=US\n" +
+                            "iOS: https://apps.apple.com/us/app/bedrocktogether/id1534593376\n" +
+                            "When you first join the server, you won't be able to move because you need to link your Discord account with your Minecraft Account.\n" +
+                            "In order to link accounts and move around the server freely, go to the General channel in the Discord Server and type the following command -> !link\n" +
+                            "My bot will generate a command for you run on your minecraft client chat.\n" +
+                            "Copy and paste this command or type it out, its formatted like this -> /lmp link [discordID]\n" +
+                            "I link accounts so you can use the features I coded into the game.\n" +
+                            "View our wiki with commands and other information here -> https://github.com/Latch93/DiscordText/wiki/Server-Commands\n" +
+                            "If you have any questions, feel free to post them in the Discord and Happy Mining!!!")).queue();
+                }
                 if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.contains("pog")) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -394,10 +431,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
                 if (message.equalsIgnoreCase("!link")){
                     if (!messageSender.getRoles().toString().contains("Member")){
-                        channel.sendMessage(username + " --- React to the <#625996424554872842> channel to get the Member role and access to the server IP").queue();
+                        channel.sendMessage(username + " --- React to message containing the rules in the <#625996424554872842> channel to get the Member role and access to the server IP. Rerun the !link command once you've gotten the Member role.").queue();
+                    } else {
+                        event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("Run the following command in your minecraft client chat:\n" +
+                                "/lmp link " + event.getAuthor().getId())).queue();
+                        channel.sendMessage(username + " --- Check your Discord for a private message from my bot containing your link command. <a:LatchKirbo:991823635234955284>").queue();
                     }
-                    channel.sendMessage(username + " --- Log onto the server and paste the following command into your chat to get perms. Get the server IP here <#972213724570079242>").queue();
-                    channel.sendMessage("/lmp link " + userId).queue();
                 }
                 if (Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())) {
                     File configFile = new File(Main.getPlugin(Main.class).getDataFolder(), "playerShops.yml");
@@ -539,7 +578,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 e.printStackTrace();
             }
         }
-        if (message.toLowerCase().contains("<@latch93>")){
+        if (message.toLowerCase().contains("<@latch>")){
             FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
             if (Boolean.TRUE.equals(configCfg.getBoolean("isLatchAFK"))){
                 org.joda.time.LocalDateTime currentLocalDateTime = new org.joda.time.LocalDateTime();

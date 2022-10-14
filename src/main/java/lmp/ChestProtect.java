@@ -1,9 +1,8 @@
 package lmp;
 
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.PrivateChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -78,6 +77,7 @@ public class ChestProtect extends ListenerAdapter {
             event.getChannel().sendMessage("\n-------------------\nYou will no longer be notified if someone takes from this chest! :smile:").queue();
         } else if (event.getMessage().getContentRaw().equalsIgnoreCase("!deny")){
             event.getChannel().sendMessage("\n-------------------\nLatch and his staff will review this and get back to you! :smile:").queue();
+            assert adminChannel != null;
             adminChannel.sendMessage("Discord User: " + event.getAuthor().getName() + " --- Minecraft User: " + Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getAuthor().getId()))).getName()  + " had their stuff stolen by\nMinecraft User Name: " + thiefMinecraftName + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName)) + "" +
                     "\nLocation: " + chestLocation).queue();
         } else {
