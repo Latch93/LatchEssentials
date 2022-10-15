@@ -525,6 +525,17 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
             }
         }
+        if (channel.getId().equalsIgnoreCase(Constants.ADMIN_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(Constants.LATCH93BOT_USER_ID)){
+            for (Player player : Bukkit.getOnlinePlayers()){
+                if (player.hasPermission("group.admin")){
+                    if (event.getMessage().getReferencedMessage() != null){
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(event, message, senderName, true, event.getMessage().getReferencedMessage()));
+                    } else {
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(event, message, senderName, false, null));
+                    }
+                }
+            }
+        }
 
         if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase("!joinTime")){
             channel.sendMessage(senderName + " joined on " + messageSender.getTimeJoined().toString().split("T")[0]).queue();

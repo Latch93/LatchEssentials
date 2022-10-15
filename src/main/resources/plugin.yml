@@ -16,3 +16,5 @@ commands:
     description: "Discord Staff Chat"
   twitch:
     description: "Twitch Bot"
+  adsc:
+    description: "Admin Staff Chat"

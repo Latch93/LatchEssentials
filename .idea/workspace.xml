@@ -5,52 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0affd6cf-3b41-47aa-8bc4-d9a699a88543" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordAdminChatCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_ipgeolocation_ipgeolocation_1_0_12.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_10_14.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_11_2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_dv8tion_JDA_5_0_0_alpha_13.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_dv8tion_JDA_5_0_0_alpha_21.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_9.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_10_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_17_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_19_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_17_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_19_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_spigotmc_spigot_api_1_18_2_R0_1_SNAPSHOT.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_spigotmc_spigot_api_1_19_R0_1_SNAPSHOT.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LatchLMP.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LatchLMP.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Api.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/ChestProtect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/ChestProtect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordAdminChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordAdminChatCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordStaffChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordStaffChatCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/IssueTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/IssueTracker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LTSNomination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LTSNomination.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Lottery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Lottery.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/StaffApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/StaffApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/UnbanRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/UnbanRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Api.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Api.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/ChestProtect.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/ChestProtect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordStaffChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DiscordStaffChatCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/IssueTracker.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/IssueTracker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LMPTimer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LMPTimer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LTSNomination.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LTSNomination.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2-shaded.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchLMP-1.2-shaded.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchLMP-1.2.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordAdminChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DiscordAdminChatCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShops.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShops.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/StaffApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/StaffApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/UnbanRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/UnbanRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/original-LatchLMP-1.2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-LatchLMP-1.2.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
