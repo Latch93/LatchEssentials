@@ -92,6 +92,13 @@
       <scope>system</scope>
       <systemPath>C:/Users/Latch/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>11.2.0.jre18</version>
+      <scope>system</scope>
+      <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.target>8</maven.compiler.target>

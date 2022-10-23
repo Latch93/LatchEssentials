@@ -42,6 +42,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -67,6 +68,9 @@ import javax.security.auth.login.LoginException;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
@@ -146,6 +150,8 @@ public class Main extends JavaPlugin implements Listener {
         // Discord Staff Chat Command
         Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
         Objects.requireNonNull(this.getCommand("adsc")).setExecutor(new DiscordAdminChatCommand());
+        Objects.requireNonNull(this.getCommand("dcmsg")).setExecutor(new MessageDiscordUserFromServerCommand());
+
         // Twitch Bot Command
         Objects.requireNonNull(this.getCommand("twitch")).setExecutor(new LatchTwitchBotCommand());
         Objects.requireNonNull(this.getCommand("twitch")).setTabCompleter(new LatchTwitchBotTabComplete());
@@ -157,6 +163,7 @@ public class Main extends JavaPlugin implements Listener {
         addSculkSensorRecipe();
         addBundleRecipe();
         addLatchAppleRecipe();
+        addExperienceStorageBottleRecipe();
         if (Boolean.FALSE.equals(getIsParameterInTesting("runTimer"))) {
             LMPTimer.runTimer();
         }
@@ -169,6 +176,23 @@ public class Main extends JavaPlugin implements Listener {
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
         githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("githubOauthToken"));
+        String connectionUrl =
+                "jdbc:sqlserver://localhost:1433;"
+                        + "database=master;"
+                        + "user=sa;"
+                        + "password=admin;"
+                        + "encrypt=true;"
+                        + "trustServerCertificate=false;"
+                        + "loginTimeout=30;";
+
+        try (Connection connection = DriverManager.getConnection(connectionUrl);) {
+            // Code here.
+        }
+        // Handle any errors that may have occurred.
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
     public static void getDonations(){
         String[] statuses = {"Completed", "Reversed", "Refunded"};
@@ -371,6 +395,7 @@ public class Main extends JavaPlugin implements Listener {
         if (Boolean.FALSE.equals(getIsParameterInTesting("advancementDoneEvent"))) {
             Advancements.setPlayerAdvancementOnCompletion(e);
             Advancements.showAdvancementInDiscord(e);
+            Advancements.broadcastAdvancement(e);
         }
     }
 
@@ -542,6 +567,10 @@ public class Main extends JavaPlugin implements Listener {
             CustomPortals.setBlockToNetherPortal(event);
             XPFarm.teleportPlayerToXPFarm(event);
             XPFarm.teleportPlayerToSpawn(event);
+            if (Boolean.TRUE.equals(LMPCommand.isPlayerHoldingXPStorageBottle(event.getPlayer()) && (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))){
+                event.getPlayer().sendMessage(ChatColor.RED + "You should be more careful. Don't throw away your Experience Storage Bottle. Switch to another item to be safe");
+                event.setCancelled(true);
+            }
         }
         if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
             FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
@@ -875,6 +904,28 @@ public class Main extends JavaPlugin implements Listener {
         latchAppleRecipe.setIngredient('G', Material.GOLD_BLOCK);
         latchAppleRecipe.setIngredient('A', Material.APPLE);
         Bukkit.addRecipe(latchAppleRecipe);
+    }
+
+    public static void addExperienceStorageBottleRecipe(){
+        ItemStack xpStorageBottle = new ItemStack(Material.EXPERIENCE_BOTTLE);
+        ItemMeta im = xpStorageBottle.getItemMeta();
+        assert im != null;
+        im.setDisplayName(ChatColor.GOLD + "Experience Storage Bottle");
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add("Experience Storage Bottle");
+        lore.add("XP: 0");
+        lore.add("To add experience, hold in hand and run /lmp xpDeposit [amount]");
+        lore.add("To withdraw experience, hold in hand and run /lmp xpWithdraw [amount]");
+        im.setLore(lore);
+        xpStorageBottle.setItemMeta(im);
+        NamespacedKey xpStorageBottleKey = new NamespacedKey(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), "EXPERIENCE_BOTTLE");
+        ShapedRecipe xpStorageBottleRecipe = new ShapedRecipe(xpStorageBottleKey, xpStorageBottle);
+        xpStorageBottleRecipe.shape("DBD", "BAB", "EBE");
+        xpStorageBottleRecipe.setIngredient('E', Material.EMERALD);
+        xpStorageBottleRecipe.setIngredient('B', Material.EXPERIENCE_BOTTLE);
+        xpStorageBottleRecipe.setIngredient('D', Material.DIAMOND);
+        xpStorageBottleRecipe.setIngredient('A', Material.ANCIENT_DEBRIS);
+        Bukkit.addRecipe(xpStorageBottleRecipe);
     }
 
     @EventHandler

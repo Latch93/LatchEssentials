@@ -83,12 +83,14 @@ public class Constants {
     public static final String HE_THEM_MESSAGE_ID = "1007042418954223717";
     public static final String SHE_THEM_MESSAGE_ID = "1007042476504272986";
     public static final String ZE_HIR_MESSAGE_ID = "1007042859049959475";
+    public static final String MEMBER_PLUS_MESSAGE_ID = "1030756999941599282";
 
     public static final String HARDCORE_ROLE_ID = "1024677957068935199";
     public static final String DONOR_ROLE_ID = "994064735194599494";
     public static final String DONOR_PLUS_ROLE_ID = "994064561399398480";
     public static final String DONOR_PLUS_PLUS_ROLE_ID = "994064302866714765";
 
+    public static final String MEMBER_PLUS_ROLE_ID ="1030754230899855460";
     // Backpack commands
     public static final String BACKPACK_BUY_COMMAND = "buy";
     public static final String BACKPACK_UPGRADE_COMMAND = "upgrade";

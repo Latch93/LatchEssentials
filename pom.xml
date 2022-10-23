@@ -126,7 +126,13 @@
             <artifactId>org.eclipse.egit.github.core</artifactId>
             <version>2.1.5</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>11.2.0.jre18</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

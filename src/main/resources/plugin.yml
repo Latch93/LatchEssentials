@@ -18,3 +18,5 @@ commands:
     description: "Twitch Bot"
   adsc:
     description: "Admin Staff Chat"
+  dcmsg:
+    description: "Message Discord User from the Server"

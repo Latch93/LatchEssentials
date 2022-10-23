@@ -1,6 +1,7 @@
 lmp\DiscordText\LMPCommand.class
 lmp\Bank\Bank.class
 lmp\LatchTwitchBot\LatchTwitchBotCommand.class
+lmp\MessageDiscordUserFromServerCommand.class
 lmp\PlayerShops\PlayerShopsInventoryConfig.class
 lmp\StaffApplication.class
 lmp\Bank\BankConfig.class

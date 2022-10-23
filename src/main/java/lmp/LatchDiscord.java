@@ -135,7 +135,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 "If you have any questions, feel free to post them in the Discord and Happy Mining!!!")).queue();
         TextChannel generalChannel = jda.getTextChannelById(setTestingChannel(Constants.GENERAL_CHANNEL_ID));
         assert generalChannel != null;
-        generalChannel.sendMessage("Welcome <@" + event.getUser().getId() + "> Glad to have you <:LatchKirbo:1030610999096660098>").queue();
+        generalChannel.sendMessage("Welcome <@" + event.getUser().getId() + "> Glad to have you <:LatchPOG:957363669388386404>").queue();
     }
 
     @Override
@@ -283,7 +283,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 //                    clearAllUserMessages(channel, messageId, userID);
 //                }
                 // get the
-                if (channel.getId().equalsIgnoreCase(Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(Constants.LATCH93BOT_USER_ID)){
+                if ((channel.getId().equalsIgnoreCase(Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(Constants.LATCH93BOT_USER_ID))){
                     if (message.toLowerCase().contains("!searchdiscord")){
                         String[] messageArr = message.split(" ");
                         try{
@@ -435,7 +435,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     } else {
                         event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("Run the following command in your minecraft client chat:\n" +
                                 "/lmp link " + event.getAuthor().getId())).queue();
-                        channel.sendMessage(username + " --- Check your Discord for a private message from my bot containing your link command. <a:LatchKirbo:991823635234955284>").queue();
+                        channel.sendMessage(username + " --- Check your Discord for a private message from my bot containing your link command. <:LatchPOG:957363669388386404>").queue();
                     }
                 }
                 if (Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())) {
@@ -738,6 +738,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             if (event.getMessageId().equalsIgnoreCase(Constants.ZE_HIR_MESSAGE_ID)){
                 event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.ZE_HIR_ROLE_ID))).queue();
             }
+            if (event.getMessageId().equalsIgnoreCase(Constants.MEMBER_PLUS_MESSAGE_ID)){
+                event.getGuild().addRoleToMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.MEMBER_PLUS_ROLE_ID))).queue();
+            }
 
         }
     }
@@ -789,6 +792,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             // If He/Him
             if (event.getMessageId().equalsIgnoreCase(Constants.ZE_HIR_MESSAGE_ID)){
                 event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.ZE_HIR_ROLE_ID))).queue();
+            }
+            if (event.getMessageId().equalsIgnoreCase(Constants.MEMBER_PLUS_MESSAGE_ID)){
+                event.getGuild().removeRoleFromMember(UserSnowflake.fromId(userID), Objects.requireNonNull(jda.getRoleById(Constants.MEMBER_PLUS_ROLE_ID))).queue();
             }
 
         }

@@ -2,7 +2,11 @@ package lmp;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -198,6 +202,31 @@ public class Advancements {
                 assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
             }
+        }
+    }
+
+    public static void broadcastAdvancement(PlayerAdvancementDoneEvent e){
+        if (Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
+            String advancement = e.getAdvancement().getKey().toString();
+            net.md_5.bungee.api.chat.TextComponent advancementName = null;
+            HoverEvent he = null;
+            String worldPrefix = "[LMP] - ";
+            if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
+                worldPrefix = "[Hardcore] - ";
+            }
+            net.md_5.bungee.api.chat.TextComponent playerName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + e.getPlayer().getName() + ChatColor.WHITE + " has made the advancement ");
+            for (Advancement advance : getAdvancements()) {
+                if (advancement.equalsIgnoreCase(advance.getID()) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
+                    advancementName = new TextComponent(ChatColor.GREEN + "[" + advance.getName() + "]");
+                    he = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + advance.getCriteria()));
+                    advancementName.setHoverEvent(he);
+                    advancementName.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        player.spigot().sendMessage(playerName, advancementName);
+                    }
+                }
+            }
+
         }
     }
 }

@@ -284,9 +284,83 @@ public class LMPCommand implements CommandExecutor {
                     RandomTeleport.teleportPlayerRandomly(player);
                 } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("resetAllBalances")){
                     resetPlayerBalances(Api.getAllMinecraftIDOfLinkedPlayers());
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("resetNPBalances")){
-                    resetAllNonLinkedPlayerBalances(Api.getMinecraftIDOfLinkedPlayersNotInDiscord());
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("bmstart")){
+                    LMPTimer.startBloodmoon();
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("easybm")){
+                    LMPTimer.setEasyBloodMoon();
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("mediumbm")){
+                    LMPTimer.setMediumBloodMoon();
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("hardbm")){
+                    LMPTimer.setHardBloodMoon();
+                } else if (args[0].equalsIgnoreCase("xpDeposit")){
+                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))){
+                        if (args[1] != null){
+                            if (Api.getPlayerExp(player) >= Integer.parseInt(args[1])){
+                                String xpAmountString = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+                                int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+",""));
+                                int finalAmount = storageAmount + Integer.parseInt(args[1]);
+                                ItemMeta storageBottleMeta = player.getInventory().getItemInMainHand().getItemMeta();
+                                List<String> loreArr = new ArrayList<>();
+                                int count = 0;
+                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())){
+                                    if (count != 1){
+                                        loreArr.add(loreLine);
+                                    } else {
+                                        loreArr.add("XP: " + finalAmount);
+                                    }
+                                    count++;
+                                }
+                                storageBottleMeta.setLore(loreArr);
+                                player.getInventory().getItemInMainHand().setItemMeta(storageBottleMeta);
+                                Api.changePlayerExp(player, (-1 * Integer.parseInt(args[1])));
+                                player.sendMessage(ChatColor.GREEN + "You now have " + ChatColor.GOLD + Api.getPlayerExp(player) + ChatColor.GREEN + " experience points.");
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You don't have enough experience to deposit.");
+                            }
+
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You must give an amount of experience to deposit.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You must be holding an experience storage bottle.");
+                    }
+                } else if (args[0].equalsIgnoreCase("xpWithdraw")){
+                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))){
+                        String xpAmountString = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+                        int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+",""));
+                        if (args[1] != null){
+                            if (storageAmount >= Integer.parseInt(args[1])){
+                                int finalAmount = storageAmount - Integer.parseInt(args[1]);
+                                ItemMeta storageBottleMeta = player.getInventory().getItemInMainHand().getItemMeta();
+                                List<String> loreArr = new ArrayList<>();
+                                int count = 0;
+                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())){
+                                    if (count != 1){
+                                        loreArr.add(loreLine);
+                                    } else {
+                                        loreArr.add("XP: " + finalAmount);
+                                    }
+                                    count++;
+                                }
+                                storageBottleMeta.setLore(loreArr);
+                                player.getInventory().getItemInMainHand().setItemMeta(storageBottleMeta);
+                                Api.changePlayerExp(player, Integer.parseInt(args[1]));
+                                player.sendMessage(ChatColor.GREEN + "You now have " + ChatColor.GOLD + Api.getPlayerExp(player) + ChatColor.GREEN + " experience points.");
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You don't have enough experience in your storage bottle to withdraw that amount.");
+                            }
+
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You must give an amount of experience to withdraw.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You must be holding an experience storage bottle.");
+                    }
+                } else if (args[0].equalsIgnoreCase("xp")){
+                    player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.GOLD + Api.getPlayerExp(player) + ChatColor.GREEN + " experience points");
                 }
+
+
                 if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_NAME) && args[0].equalsIgnoreCase("uncraft")){
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
@@ -365,6 +439,14 @@ public class LMPCommand implements CommandExecutor {
                     playerDataCfg.save(playerDataFile);
             }
         }
+    }
+
+    public static boolean isPlayerHoldingXPStorageBottle(Player player){
+        boolean isPlayerHoldingXPStorageBottle = false;
+        if (player.getInventory().getItemInMainHand().getType() == Material.EXPERIENCE_BOTTLE && player.getInventory().getItemInMainHand().getItemMeta() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Experience Storage Bottle")){
+            isPlayerHoldingXPStorageBottle = true;
+        }
+        return isPlayerHoldingXPStorageBottle;
     }
 
     public static void spectateInsideRandomPlayer(Player player) {
