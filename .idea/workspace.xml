@@ -5,34 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0affd6cf-3b41-47aa-8bc4-d9a699a88543" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/MessageDiscordUserFromServerCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LatchLMP.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LatchLMP.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Api.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommandTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommandTabComplete.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2-shaded.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchLMP-1.2-shaded.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchLMP-1.2.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Api.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Api.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommandTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommandTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LMPTimer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LMPTimer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/original-LatchLMP-1.2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-LatchLMP-1.2.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

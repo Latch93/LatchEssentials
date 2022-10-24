@@ -120,9 +120,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         event.getUser().openPrivateChannel().flatMap(dm -> dm.sendMessage("Welcome to LMP (Latch Multiplayer)\n" +
                 "Users on PS4|XBox|Switch|Mobile are able to join\n" +
-                "Please read the rules in the Rules channel and react to the rules message (thumbUp)\n" +
+                "Type in the General Channel to get the member role - Just say Hi or introduce yourself :)\n" +
                 "Doing this assigns you the member role and access to all of the channels.\n" +
-                "You can get the IP in the server-ip channel.\n" +
                 "For Bedrock|Console users, you need to download the mobile app Bedrock Together:\n" +
                 "Android: https://play.google.com/store/apps/details?id=pl.extollite.bedrocktogetherapp&hl=en_US&gl=US\n" +
                 "iOS: https://apps.apple.com/us/app/bedrocktogether/id1534593376\n" +
@@ -430,13 +429,16 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }).queue();
                 }
                 if (message.equalsIgnoreCase("!link")){
-                    if (!messageSender.getRoles().toString().contains("Member")){
-                        channel.sendMessage(username + " --- React to message containing the rules in the <#625996424554872842> channel to get the Member role and access to the server IP. Rerun the !link command once you've gotten the Member role.").queue();
-                    } else {
-                        event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("Run the following command in your minecraft client chat:\n" +
-                                "/lmp link " + event.getAuthor().getId())).queue();
-                        channel.sendMessage(username + " --- Check your Discord for a private message from my bot containing your link command. <:LatchPOG:957363669388386404>").queue();
-                    }
+//                    if (!messageSender.getRoles().toString().contains("Member")){
+//                        channel.sendMessage(username + " --- React to message containing the rules in the <#625996424554872842> channel to get the Member role and access to the server IP. Rerun the !link command once you've gotten the Member role.").queue();
+//                    } else {
+                    event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("IP = latch.ddns.net\n" +
+                            "Java Port Number = 60\n" +
+                            "Bedrock Port Number = 19132\n" +
+                            "Run the following command in your minecraft client chat after you join:\n" +
+                            "/lmp link " + event.getAuthor().getId())).queue();
+                    channel.sendMessage(username + " --- Check your Discord for a private message from my bot containing your link command. <:LatchPOG:957363669388386404>").queue();
+//                    }
                 }
                 if (Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())) {
                     File configFile = new File(Main.getPlugin(Main.class).getDataFolder(), "playerShops.yml");
@@ -536,7 +538,10 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
             }
         }
-
+        if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && !messageSender.getRoles().toString().contains("Member")){
+            channel.sendMessage("Type !link in this channel to get your link command and the Server IP dm'd to you by my bot.").queue();
+            Objects.requireNonNull(jda.getGuildById(Constants.GUILD_ID)).addRoleToMember(UserSnowflake.fromId(messageSender.getUser().getId()), Objects.requireNonNull(jda.getRoleById(Constants.MEMBER_ROLE_ID))).queue();
+        }
         if (channel.getId().equalsIgnoreCase(Constants.GENERAL_CHANNEL_ID) && message.equalsIgnoreCase("!joinTime")){
             channel.sendMessage(senderName + " joined on " + messageSender.getTimeJoined().toString().split("T")[0]).queue();
         }
