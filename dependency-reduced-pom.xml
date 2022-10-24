@@ -32,6 +32,13 @@
           </descriptorRefs>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -84,20 +91,6 @@
       <artifactId>api</artifactId>
       <version>5.4</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>coreprotect-21.2</groupId>
-      <artifactId>net.coreprotect.coreprotect</artifactId>
-      <version>21.2</version>
-      <scope>system</scope>
-      <systemPath>C:/Users/Latch/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-      <version>11.2.0.jre18</version>
-      <scope>system</scope>
-      <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>
     </dependency>
   </dependencies>
   <properties>

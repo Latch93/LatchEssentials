@@ -118,15 +118,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.github.ben-manes.caffeine:caffeine:2.9.3" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.11.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.luckperms:api:5.4" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: coreprotect-21.2:net.coreprotect.coreprotect:21.2">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: coreprotect-21.2:net.coreprotect.coreprotect:21.2" level="project" />
     <orderEntry type="library" name="Maven: io.github.twitch4j.streamlabs4j:streamlabs4j:0.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.philippheuer.events4j:events4j-core:0.9.6" level="project" />
     <orderEntry type="library" name="Maven: com.github.philippheuer.events4j:events4j-api:0.9.6" level="project" />
@@ -155,14 +147,5 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: com.microsoft.sqlserver:mssql-jdbc:11.2.0.jre18">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/mssql-jdbc-11.2.0.jre18.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>

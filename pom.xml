@@ -109,12 +109,17 @@
             <version>5.4</version>
             <scope>provided</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>coreprotect-21.2</groupId>-->
+<!--            <artifactId>net.coreprotect.coreprotect</artifactId>-->
+<!--            <version>21.2</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>C:/Users/Latch/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar</systemPath>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>coreprotect-21.2</groupId>
             <artifactId>net.coreprotect.coreprotect</artifactId>
             <version>21.2</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Latch/OneDrive - The Integration Group of Americas/Desktop/DiscordText/lib/coreprotect-21.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>io.github.twitch4j.streamlabs4j</groupId>
@@ -126,44 +131,45 @@
             <artifactId>org.eclipse.egit.github.core</artifactId>
             <version>2.1.5</version>
         </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>11.2.0.jre18</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.microsoft.sqlserver</groupId>-->
+<!--            <artifactId>mssql-jdbc</artifactId>-->
+<!--            <version>11.2.0.jre18</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>lmp.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin>
+</project>
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.2.4</version>-->
+<!--                <configuration>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>lmp.Main</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->
 <!--                <artifactId>maven-compiler-plugin</artifactId>-->
@@ -172,6 +178,6 @@
 <!--                    <release>11</release>  &lt;!&ndash;or <release>10</release>&ndash;&gt;-->
 <!--                </configuration>-->
 <!--            </plugin>-->
-        </plugins>
-    </build>
-</project>
+<!--        </plugins>-->
+<!--    </build>-->
+<!--</project>-->
