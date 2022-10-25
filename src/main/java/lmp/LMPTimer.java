@@ -53,27 +53,29 @@ public class LMPTimer extends BukkitRunnable {
             if (hourOfDay == 0) {
                 if (minuteOfHour == 0) {
                     broadcastStaffApply();
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-                            try {
-                                setHardBloodMoon();
-                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-                                startBloodmoon();
-                            } catch (NullPointerException | IOException ignored) {
-
-                            }
-                        }
-                    }
                     broadcastLTS();
-                } else if (minuteOfHour == 13){
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            stopBloodmoon();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
                 }
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
+//                            try {
+//                                setHardBloodMoon();
+//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
+//                                startBloodmoon();
+//                            } catch (NullPointerException | IOException ignored) {
+//
+//                            }
+//                        }
+//                    }
+
+//                else if (minuteOfHour == 13){
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            stopBloodmoon();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 1) {
                 if (minuteOfHour == 0){
                     broadcastLotto();
@@ -82,40 +84,42 @@ public class LMPTimer extends BukkitRunnable {
                 if (minuteOfHour == 0){
 //                    broadcastTwitch();
                     broadcastLTS();
-                } else if (minuteOfHour == 30) {
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            broadcastMediumBloodmoon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
+//                else if (minuteOfHour == 30) {
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            broadcastMediumBloodmoon();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 3) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                     broadcastLTS();
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-                            try {
-                                setMediumBloodMoon();
-                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-                                startBloodmoon();
-                            } catch (NullPointerException | IOException ignored) {
+                }
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
+//                            try {
+//                                setMediumBloodMoon();
+//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
+//                                startBloodmoon();
+//                            } catch (NullPointerException | IOException ignored) {
+//
+//                            }
+//                        }
+//                    }
 
-                            }
-                        }
-                    }
-                }
-                if (minuteOfHour == 13){
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            stopBloodmoon();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+//                if (minuteOfHour == 13){
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            stopBloodmoon();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 4) {
                 if (minuteOfHour == 0) {
                     broadcastLotto();
@@ -123,40 +127,41 @@ public class LMPTimer extends BukkitRunnable {
             } else if (hourOfDay == 5) {
                 if (minuteOfHour == 0) {
                     broadcastStaffApply();
-                } else if (minuteOfHour == 30) {
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            broadcastEasyBloodmoon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
+//                else if (minuteOfHour == 30) {
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            broadcastEasyBloodmoon();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 6) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                     broadcastLTS();
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-                            try {
-                                setEasyBloodMoon();
-                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-                                startBloodmoon();
-                            } catch (NullPointerException | IOException ignored) {
-
-                            }
-                        }
-                    }
                 }
-                if (minuteOfHour == 13){
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            stopBloodmoon();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
+//                            try {
+//                                setEasyBloodMoon();
+//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
+//                                startBloodmoon();
+//                            } catch (NullPointerException | IOException ignored) {
+//
+//                            }
+//                        }
+//                    }
+//                if (minuteOfHour == 13){
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            stopBloodmoon();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 7) {
                 if (minuteOfHour == 0) {
                     broadcastLTS();
@@ -180,40 +185,41 @@ public class LMPTimer extends BukkitRunnable {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                     broadcastLTS();
-                } else if (minuteOfHour == 30) {
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            broadcastMediumBloodmoon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
+//                else if (minuteOfHour == 30) {
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            broadcastMediumBloodmoon();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 12) {
                 if (minuteOfHour == 0) {
                     broadcastLotto();
                     broadcastStaffApply();
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-                            try {
-                                setMediumBloodMoon();
-                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-                                startBloodmoon();
-                            } catch (NullPointerException | IOException ignored) {
-
-                            }
-                        }
-                    }
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
+//                            try {
+//                                setMediumBloodMoon();
+//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
+//                                startBloodmoon();
+//                            } catch (NullPointerException | IOException ignored) {
+//
+//                            }
+//                        }
+//                    }
                 }
-                if (minuteOfHour == 13){
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            stopBloodmoon();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+//                if (minuteOfHour == 13){
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            stopBloodmoon();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 13) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
@@ -222,50 +228,52 @@ public class LMPTimer extends BukkitRunnable {
                 if (minuteOfHour == 0) {
 //                    broadcastTwitch();
                     broadcastLTS();
-                } else if (minuteOfHour == 30) {
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            broadcastHardBloodmoon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
+//                else if (minuteOfHour == 30) {
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            broadcastHardBloodmoon();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 15) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                     broadcastStaffApply();
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-                            try {
-                                setHardBloodMoon();
-                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-                                startBloodmoon();
-                            } catch (NullPointerException | IOException ignored) {
-
-                            }
-                        }
-                    }
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
+//                            try {
+//                                setHardBloodMoon();
+//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
+//                                startBloodmoon();
+//                            } catch (NullPointerException | IOException ignored) {
+//
+//                            }
+//                        }
                 }
-                if (minuteOfHour == 13){
-                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-                        try {
-                            stopBloodmoon();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
+//                if (minuteOfHour == 13){
+//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
+//                        try {
+//                            stopBloodmoon();
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
             } else if (hourOfDay == 16) {
                 if (minuteOfHour == 0) {
                     broadcastLotto();
                     broadcastLTS();
                 }
             } else if (hourOfDay == 17) {
+                System.out.println("Test 17: " + secondOfMinute);
                 if (minuteOfHour == 0) {
                     broadcastStaffApply();
                 }
             } else if (hourOfDay == 18) {
+                System.out.println("Test 18: " + secondOfMinute);
                 if (minuteOfHour == 0) {
                     broadcastLotto();
                     broadcastLTS();
@@ -296,15 +304,17 @@ public class LMPTimer extends BukkitRunnable {
             } else if (hourOfDay == 23) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
-                } else if (minuteOfHour == 30) {
-                    if (dayOfWeek == 0 || dayOfWeek == 3 || dayOfWeek == 5) {
-                        try {
-                            broadcastHardBloodmoon();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 }
+    //                else if (minuteOfHour == 30) {
+    //                    if (dayOfWeek == 0 || dayOfWeek == 3 || dayOfWeek == 5) {
+    //                        try {
+    //                            broadcastHardBloodmoon();
+    //                        } catch (IOException e) {
+    //                            e.printStackTrace();
+    //                        }
+    //                    }
+    //                }
+    //            }
             }
         }
     }

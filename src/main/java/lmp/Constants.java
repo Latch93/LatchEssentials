@@ -70,6 +70,7 @@ public class Constants {
 
     public static final String ISSUE_CHANNEL_ID = "626125423297953816";
     public static final String SUBMITTED_ISSUES_CHANNEL_ID = "1029547100695957544";
+    public static final String BYE_BYE_DISCORD_CHANNEL_ID = "1034136379359232020";
 
     public static final String HE_HIM_ROLE_ID = "1007042989421502555";
     public static final String SHE_HER_ROLE_ID = "1007043876407742595";
@@ -167,6 +168,7 @@ public class Constants {
     public static final String YML_USER_DONATION_REWARD_FILE_NAME = "donationClaim";
 
     public static final String YML_HARDCORE_FILE_NAME = "hardcore";
+    public static final String YML_GIF_LIST_FILE = "gifs";
 
     public static final String INVALID_PARAMETERS = "Incorrect parameters. Please try again";
 

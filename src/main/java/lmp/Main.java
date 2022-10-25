@@ -68,9 +68,6 @@ import javax.security.auth.login.LoginException;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
@@ -176,22 +173,8 @@ public class Main extends JavaPlugin implements Listener {
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
         githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("githubOauthToken"));
-        String connectionUrl =
-                "jdbc:sqlserver://localhost:1433;"
-                        + "database=master;"
-                        + "user=sa;"
-                        + "password=admin;"
-                        + "encrypt=true;"
-                        + "trustServerCertificate=false;"
-                        + "loginTimeout=30;";
 
-        try (Connection connection = DriverManager.getConnection(connectionUrl);) {
-            // Code here.
-        }
-        // Handle any errors that may have occurred.
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
+
 
     }
     public static void getDonations(){
@@ -333,6 +316,10 @@ public class Main extends JavaPlugin implements Listener {
             villagerHurtLog.set(id + "." + date + ".location.y", e.getEntity().getLocation().getBlockY());
             villagerHurtLog.set(id + "." + date + ".location.z", e.getEntity().getLocation().getBlockZ());
             villagerHurtLog.save(Api.getConfigFile(Constants.YML_VILLAGER_HURT_LOG_FILE_NAME));
+        }
+        if (e.getEntity().getLastDamageCause() != null && e.getEntity().getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.CRAMMING)){
+            e.setDroppedExp(0);
+            e.getDrops().clear();
         }
     }
 

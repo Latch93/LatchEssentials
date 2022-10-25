@@ -129,9 +129,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>11.2.0.jre18</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Latch/Desktop/DiscordText/lib/mssql-jdbc-11.2.0.jre18.jar</systemPath>
+            <version>11.2.1.jre11</version>
         </dependency>
     </dependencies>
     <build>
@@ -141,6 +139,16 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
                 <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -162,6 +170,17 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+
                 </configuration>
             </plugin>
 <!--            <plugin>-->
@@ -173,5 +192,7 @@
 <!--                </configuration>-->
 <!--            </plugin>-->
         </plugins>
+
     </build>
+
 </project>

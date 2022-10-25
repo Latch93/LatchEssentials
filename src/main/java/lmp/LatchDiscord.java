@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +37,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
@@ -43,13 +44,18 @@ import org.joda.time.format.DateTimeFormatter;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class LatchDiscord extends ListenerAdapter implements Listener {
@@ -394,6 +400,61 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                                 "1.) Please answer why are here today in detail.");
                     }).queue();
                 }
+                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!mark")){
+                    TextChannel byebyeDiscordChat = jda.getTextChannelById(setTestingChannel(Constants.TEST_CHANNEL_ID));
+                    assert byebyeDiscordChat != null;
+                    String filePath = Api.getMainPlugin().getDataFolder().getPath();
+                    String folderName = "/gifs";
+
+
+                    int gifCount = Objects.requireNonNull(new File(filePath + folderName).list()).length;
+                    Random rand = new Random();
+                    int n = rand.nextInt(gifCount);
+                    byebyeDiscordChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").addFiles(FileUpload.fromData(new File(filePath+folderName + "/bye_bye" + n + ".gif" ))).queue();
+                }
+                if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!gifs")){
+                    ThreadChannel gifThread = jda.getThreadChannelById("1034135259060650075");
+                    FileConfiguration gifCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_GIF_LIST_FILE));
+                    List<String> giflinkList = new ArrayList<>();
+                    List<Message> messageList;
+                    assert gifThread != null;
+                    messageList = gifThread.getIterableHistory().takeAsync(50) // Collect 1000 messages
+                            .thenApply(ArrayList::new)
+                            .get();
+                    Collections.reverse(messageList);
+
+                    for (Message gifMessage : messageList) {
+                        if (gifMessage.getAttachments().isEmpty()){
+                            giflinkList.add(gifMessage.getContentRaw());
+                        } else {
+                            System.out.println("attach: " + gifMessage.getAttachments().get(0).getUrl());
+                            giflinkList.add(gifMessage.getAttachments().get(0).getUrl());
+                        }
+                    }
+                    gifCfg.set("gifList", giflinkList);
+                    gifCfg.save(Api.getConfigFile(Constants.YML_GIF_LIST_FILE));
+                    int count = 0;
+                    for (String gifURL : giflinkList) {
+                        byte[] b = new byte[1];
+                        URL url = new URL(gifURL);
+                        URLConnection urlConnection = url.openConnection();
+                        urlConnection.connect();
+                        DataInputStream di = new DataInputStream(urlConnection.getInputStream());
+
+                        String filePath = Api.getMainPlugin().getDataFolder().getPath();
+                        String fileName = "/gifs/bye_bye" + count + ".gif";
+                        FileOutputStream fo = new FileOutputStream(filePath + fileName);
+                        while (-1 != di.read(b, 0, 1)) {
+                            fo.write(b, 0, 1);
+                        }
+                        di.close();
+                        fo.close();
+                        count++;
+                    }
+
+
+
+                }
                 if (channel.getId().equals(Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!compare")){
                     List<String> keep = Files.readAllLines(Paths.get("C:/Users/Latch/Downloads/keep.txt"));
                     List<String> tableIDS = Files.readAllLines(Paths.get("C:/Users/Latch/Desktop/sqlt_data_1_2015_01.txt"));
@@ -514,6 +575,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
             } catch (NullPointerException | IOException e){
                 e.printStackTrace();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
         if (channel.getId().equalsIgnoreCase(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(Constants.LATCH93BOT_USER_ID)){
@@ -677,11 +740,16 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
 
     @Override
-    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        Api.messageInConsole(ChatColor.GOLD + event.getMember().getUser().getName() + ChatColor.RED + " left the discord.");
-        TextChannel modChat = jda.getTextChannelById(setTestingChannel(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID));
-        assert modChat != null;
-        modChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").queue();
+    public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
+        Api.messageInConsole(ChatColor.GOLD + Objects.requireNonNull(event.getMember()).getUser().getName() + ChatColor.RED + " left the discord.");
+        TextChannel byebyeDiscordChat = jda.getTextChannelById(setTestingChannel(Constants.BYE_BYE_DISCORD_CHANNEL_ID));
+        assert byebyeDiscordChat != null;
+        String filePath = Api.getMainPlugin().getDataFolder().getPath();
+        String folderName = "/gifs";
+        int gifCount = Objects.requireNonNull(new File(filePath + folderName).list()).length;
+        Random rand = new Random();
+        int n = rand.nextInt(gifCount);
+        byebyeDiscordChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").addFiles(FileUpload.fromData(new File(filePath+folderName + "/bye_bye" + n + ".gif" ))).queue();
         String discordUserId = event.getMember().getUser().getId();
         String minecraftId = Api.getMinecraftIdFromDCid(discordUserId);
         FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_WHITELIST_FILE_NAME));
