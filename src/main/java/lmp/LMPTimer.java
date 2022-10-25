@@ -268,12 +268,10 @@ public class LMPTimer extends BukkitRunnable {
                     broadcastLTS();
                 }
             } else if (hourOfDay == 17) {
-                System.out.println("Test 17: " + secondOfMinute);
                 if (minuteOfHour == 0) {
                     broadcastStaffApply();
                 }
             } else if (hourOfDay == 18) {
-                System.out.println("Test 18: " + secondOfMinute);
                 if (minuteOfHour == 0) {
                     broadcastLotto();
                     broadcastLTS();
