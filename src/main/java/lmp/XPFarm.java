@@ -1,5 +1,7 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.Bukkit;
@@ -14,13 +16,12 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Timer;
 import java.util.UUID;
 
 public class XPFarm {
 
     public static void teleportPlayerToXPFarm(PlayerInteractEvent e) throws IOException {
-        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
         double xpFarmWarpButtonX = xpFarmCfg.getDouble("xpFarmWarpButtonX");
         double xpFarmWarpButtonY = xpFarmCfg.getDouble("xpFarmWarpButtonY");
         double xpFarmWarpButtonZ = xpFarmCfg.getDouble("xpFarmWarpButtonZ");
@@ -65,7 +66,7 @@ public class XPFarm {
                     xpFarmCfg.set("isFarmInUse", true);
                     DateTime dateOne = new DateTime();
                     xpFarmCfg.set("timeStarted", dateOne.getMillis());
-                    xpFarmCfg.save(Api.getConfigFile("xpFarm"));
+                    xpFarmCfg.save(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
                 }
             }
         }
@@ -73,7 +74,7 @@ public class XPFarm {
     }
 
     public static void teleportPlayerToSpawn(PlayerInteractEvent e) throws IOException {
-        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile("xpFarm"));
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
         double spawnButtonX = xpFarmCfg.getDouble("spawnButtonX");
         double spawnButtonY = xpFarmCfg.getDouble("spawnButtonY");
         double spawnButtonZ = xpFarmCfg.getDouble("spawnButtonZ");
@@ -85,7 +86,7 @@ public class XPFarm {
             Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
             e.getPlayer().teleport(spawnLocation);
             xpFarmCfg.set("isFarmInUse", false);
-            xpFarmCfg.save(Api.getConfigFile("xpFarm"));
+            xpFarmCfg.save(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
         }
     }
 

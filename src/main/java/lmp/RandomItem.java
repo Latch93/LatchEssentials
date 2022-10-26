@@ -1,5 +1,7 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.milkbowl.vault.economy.Economy;
@@ -12,15 +14,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 public class RandomItem{
-    public static void getRandomItem1(PlayerInteractEvent event) throws IOException {
-        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_RANDOM_ITEM_GEN_FILE_NAME));
+    public static void getRandomItem1(PlayerInteractEvent event) {
+        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_RANDOM_ITEM_GEN_FILE_NAME));
         int randomItemCost = randomItemGenCfg.getInt("randomItemGen1.cost");
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         Economy econ;
@@ -69,16 +70,15 @@ public class RandomItem{
 
     }
 
-    public static void getRandomItem2(PlayerInteractEvent event) throws IOException {
-        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_RANDOM_ITEM_GEN_FILE_NAME));
+    public static void getRandomItem2(PlayerInteractEvent event) {
+        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_RANDOM_ITEM_GEN_FILE_NAME));
         int randomItemCost = randomItemGenCfg.getInt("randomItemGen2.cost");
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         Economy econ;
         assert rsp != null;
         econ = rsp.getProvider();
         Player player = event.getPlayer();
-        FileConfiguration rigCfg = Api.getFileConfiguration(Api.getConfigFile("randomItemGenItems"));
-        List<String> items = rigCfg.getStringList("items2");
+        List<String> items = randomItemGenCfg.getStringList("items2");
         OfflinePlayer op = Bukkit.getOfflinePlayer(player.getUniqueId());
         Location leverLocation = new Location(event.getPlayer().getWorld(), randomItemGenCfg.getInt("randomItemGen2.buttonLocation.x"), randomItemGenCfg.getInt("randomItemGen2.buttonLocation.y"), randomItemGenCfg.getInt("randomItemGen2.buttonLocation.z") );
         if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(leverLocation)){
@@ -120,16 +120,15 @@ public class RandomItem{
 
     }
 
-    public static void getRandomItem3(PlayerInteractEvent event) throws IOException {
-        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_RANDOM_ITEM_GEN_FILE_NAME));
+    public static void getRandomItem3(PlayerInteractEvent event) {
+        FileConfiguration randomItemGenCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_RANDOM_ITEM_GEN_FILE_NAME));
         int randomItemCost = randomItemGenCfg.getInt("randomItemGen3.cost");
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         Economy econ;
         assert rsp != null;
         econ = rsp.getProvider();
         Player player = event.getPlayer();
-        FileConfiguration rigCfg = Api.getFileConfiguration(Api.getConfigFile("randomItemGenItems"));
-        List<String> items = rigCfg.getStringList("items3");
+        List<String> items = randomItemGenCfg.getStringList("items3");
         OfflinePlayer op = Bukkit.getOfflinePlayer(player.getUniqueId());
         Location leverLocation = new Location(event.getPlayer().getWorld(), randomItemGenCfg.getInt("randomItemGen3.buttonLocation.x"), randomItemGenCfg.getInt("randomItemGen3.buttonLocation.y"), randomItemGenCfg.getInt("randomItemGen3.buttonLocation.z") );
         if(event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(leverLocation)){

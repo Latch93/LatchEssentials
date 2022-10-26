@@ -1,5 +1,7 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -21,11 +23,12 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 public class BossBattle {
     public static void startBossBattle(PlayerInteractEvent event){
-        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
         Player challenger = event.getPlayer();
         if (Boolean.FALSE.equals(bossCfg.getBoolean("bossEnabled"))){
             boolean canSpawn = true;
@@ -108,7 +111,7 @@ public class BossBattle {
                             Bukkit.broadcastMessage(ChatColor.GOLD + challenger.getName() + ChatColor.GREEN + " started a fight with " + bossName + " " +
                                     "Started \nHealth: " + ChatColor.AQUA + (a.multiply(b)).setScale(0, RoundingMode.UP));
                             try {
-                                bossCfg.save(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+                                bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -144,7 +147,7 @@ public class BossBattle {
     }
 
     public static void bossBattleEnded(EntityDeathEvent e) throws IOException {
-        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
         String boss = bossCfg.getString("bossKey");
         if (bossCfg.isSet("bossUUID") && Objects.requireNonNull(bossCfg.getString("bossUUID")).equalsIgnoreCase(String.valueOf(e.getEntity().getUniqueId()))) {
             Bukkit.broadcastMessage(bossCfg.getString("playerName") + " defeated " + ChatColor.GOLD + bossCfg.getString("bosses." + boss + ".bossName"));
@@ -196,11 +199,11 @@ public class BossBattle {
             bossCfg.set("bossEnabled", false);
         }
 
-        bossCfg.save(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+        bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
     }
 
     public static void bossHurtEvent(EntityDamageEvent e){
-        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
         String bossKey = bossCfg.getString("bossKey");
         if (bossCfg.isSet("bossUUID") && Objects.requireNonNull(bossCfg.getString("bossUUID")).equalsIgnoreCase(String.valueOf(e.getEntity().getUniqueId()))) {
             Monster boss = (Monster) e.getEntity();

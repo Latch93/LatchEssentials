@@ -1,5 +1,7 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +18,7 @@ import java.util.Objects;
 
 public class DonationClaimRewards {
     public static void createDonationUserFile(String uuid) throws IOException {
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
         File playerDataFile = new File("plugins/Essentials/userdata", uuid + ".yml");
         FileConfiguration conf = Api.getFileConfiguration(playerDataFile);
 
@@ -26,13 +28,13 @@ public class DonationClaimRewards {
             userDonationCfg.set(players + uuid + ".itemsToGive", itemsToGive);
             userDonationCfg.set(players + uuid + ".uuid", uuid);
             userDonationCfg.set(players + uuid + ".playerName", conf.getString("last-account-name"));
-            userDonationCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
-            System.out.println(uuid);
+            userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
+            Main.log.info("New player added to the donationClaim file. UUID: " + uuid);
         }
     }
 
     public static void addItemToClaim(String itemToGive) throws IOException {
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
         for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
             FileConfiguration conf = Api.getFileConfiguration(file);
             String[] temp = file.getName().split(".yml");
@@ -44,12 +46,12 @@ public class DonationClaimRewards {
             }
             itemsToGive.add(itemToGive);
             userDonationCfg.set(players + userUUID + ".itemsToGive", itemsToGive);
-            userDonationCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+            userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
         }
     }
 
     public static void claimItems(Player player) throws IOException {
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+        FileConfiguration userDonationCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
         String userUUID = player.getUniqueId().toString();
         String players = "players.";
         List<String> itemsToGive = new ArrayList<>();
@@ -68,7 +70,7 @@ public class DonationClaimRewards {
             }
         }
         userDonationCfg.set(players + userUUID + ".itemsToGive", null);
-        userDonationCfg.save(Api.getConfigFile(Constants.YML_USER_DONATION_REWARD_FILE_NAME));
+        userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
     }
 }
 

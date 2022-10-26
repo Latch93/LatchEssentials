@@ -2,23 +2,20 @@ package lmp;
 
 import io.donatebot.api.DBClient;
 import io.donatebot.api.Donation;
-import lmp.Backbacks.BackPackCommand;
-import lmp.Backbacks.BackPackInventoryConfig;
-import lmp.Backbacks.BackpackTabComplete;
-import lmp.Backbacks.Inventories;
-import lmp.Bank.Bank;
-import lmp.Bank.BankConfig;
-import lmp.Configurations.*;
-import lmp.DiscordText.LMPCommand;
-import lmp.DiscordText.LMPCommandTabComplete;
-import lmp.DiscordText.LMPConfig;
-import lmp.LatchTwitchBot.LatchTwitchBotCommand;
-import lmp.LatchTwitchBot.LatchTwitchBotConfig;
-import lmp.LatchTwitchBot.LatchTwitchBotTabComplete;
-import lmp.PlayerShops.PlayerShops;
-import lmp.PlayerShops.PlayerShopsCommand;
-import lmp.PlayerShops.PlayerShopsInventoryConfig;
-import lmp.PlayerShops.PlayerShopsTabComplete;
+import lmp.api.Api;
+import lmp.commands.*;
+import lmp.configurations.*;
+import lmp.constants.Constants;
+import lmp.constants.ServerCommands;
+import lmp.constants.YmlFileNames;
+import lmp.customItems.*;
+import lmp.listenerAdapters.ChestProtect;
+import lmp.runnable.LMPTimer;
+import lmp.runnable.PingTabListRunnable;
+import lmp.tabComplete.BackpackTabComplete;
+import lmp.tabComplete.LMPCommandTabComplete;
+import lmp.tabComplete.LatchTwitchBotTabComplete;
+import lmp.tabComplete.PlayerShopsTabComplete;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -74,6 +71,7 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static lmp.LatchDiscord.jda;
@@ -82,35 +80,17 @@ import static org.bukkit.Bukkit.getOnlinePlayers;
 
 public class Main extends JavaPlugin implements Listener {
     public static final boolean GLOBAL_TESTING = false;
+    public static Logger log;
+
     public static LuckPerms luckPerms;
     //public static final AutoMinerConfig autoMinerCfgm = new AutoMinerConfig();
-    // Whitelist Config
-    private static WhitelistConfig whitelistCfgm;
-    // Player Shop Config
-    private static PlayerShopsInventoryConfig playerShopsInventoryCfgm;
-    // Bank Config
-    private static BankConfig bankCfgm;
-    // Back Pack Config
-    private static BackPackInventoryConfig backPackInventoryCfgm;
-    // Discord Text Config
-    private static LMPConfig discordTextConfigCfgm;
-    // Advancement Config
-    private static AdvancementConfig advancementConfigCfgm;
-    // Lottery Config
-    private static LotteryConfig lotteryConfigCfgm;
-    // Twitch Config
-    private static LatchTwitchBotConfig twitchBotCfgm;
-    // AutoSorter Config
-    private static AutoSorterConfig autoSorterCfgm;
-    // Boss Config
-    private static BossConfig bossCfgm;
     public static DBClient dbClient;
-    public static Plugin coreProtect;
     public static CoreProtectAPI coreProtectAPI;
     public static GitHubClient githubClient;
     @Override
     public void onEnable() {
-        getLogger().info("discord_text is enabled");
+        log = getLogger();
+        log.info(Constants.PLUGIN_NAME + " is enabled");
         getServer().getPluginManager().registerEvents(this, this);
         if (Boolean.FALSE.equals(getIsParameterInTesting("startDiscord"))) {
             try {
@@ -119,48 +99,15 @@ public class Main extends JavaPlugin implements Listener {
                 e.printStackTrace();
             }
         }
-        whitelistCfgm = new WhitelistConfig();
-        playerShopsInventoryCfgm = new PlayerShopsInventoryConfig();
-        bankCfgm = new BankConfig();
-        backPackInventoryCfgm = new BackPackInventoryConfig();
-        discordTextConfigCfgm = new LMPConfig();
-        advancementConfigCfgm = new AdvancementConfig();
-        lotteryConfigCfgm = new LotteryConfig();
-        twitchBotCfgm = new LatchTwitchBotConfig();
-        autoSorterCfgm = new AutoSorterConfig();
-        bossCfgm = new BossConfig();
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
-
         Advancements.setAdvancements();
-        // Backpack Command
-        Objects.requireNonNull(this.getCommand("bp")).setExecutor(new BackPackCommand());
-        Objects.requireNonNull(this.getCommand("bp")).setTabCompleter(new BackpackTabComplete());
-
-        // Player Shop Command
-        Objects.requireNonNull(this.getCommand("ps")).setExecutor(new PlayerShopsCommand());
-        Objects.requireNonNull(this.getCommand("ps")).setTabCompleter(new PlayerShopsTabComplete());
-
-        // Server Command
-        Objects.requireNonNull(this.getCommand("lmp")).setExecutor(new LMPCommand());
-        Objects.requireNonNull(this.getCommand("lmp")).setTabCompleter(new LMPCommandTabComplete());
-        // Discord Staff Chat Command
-        Objects.requireNonNull(this.getCommand("dtsc")).setExecutor(new DiscordStaffChatCommand());
-        Objects.requireNonNull(this.getCommand("adsc")).setExecutor(new DiscordAdminChatCommand());
-        Objects.requireNonNull(this.getCommand("dcmsg")).setExecutor(new MessageDiscordUserFromServerCommand());
-
-        // Twitch Bot Command
-        Objects.requireNonNull(this.getCommand("twitch")).setExecutor(new LatchTwitchBotCommand());
-        Objects.requireNonNull(this.getCommand("twitch")).setTabCompleter(new LatchTwitchBotTabComplete());
+        registerCommands();
         this.registerTasks();
         // Auto Miner Commands
 //        Objects.requireNonNull(this.getCommand("am")).setExecutor(new AutoMinerCommand());
 //        Objects.requireNonNull(this.getCommand("am")).setTabCompleter(new AutoMinerTabComplete());
-        addRottenFleshToLeatherSmelt();
-        addSculkSensorRecipe();
-        addBundleRecipe();
-        addLatchAppleRecipe();
-        addExperienceStorageBottleRecipe();
+        addCustomRecipes();
         if (Boolean.FALSE.equals(getIsParameterInTesting("runTimer"))) {
             LMPTimer.runTimer();
         }
@@ -172,10 +119,24 @@ public class Main extends JavaPlugin implements Listener {
         Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
-        githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getString("githubOauthToken"));
+        githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getString("githubOauthToken"));
+    }
+    @Override
+    public void onDisable() {
+        if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
+            Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
+            getLogger().info(Constants.PLUGIN_NAME + " is disabled");
+            LatchDiscord.stopBot();
+            LatchDiscord.sendServerStoppedMessage();
+        }
+    }
 
-
-
+    public void addCustomRecipes(){
+        addRottenFleshToLeatherSmelt();
+        addSculkSensorRecipe();
+        addBundleRecipe();
+        addLatchAppleRecipe();
+        addExperienceStorageBottleRecipe();
     }
     public static void getDonations(){
         String[] statuses = {"Completed", "Reversed", "Refunded"};
@@ -183,7 +144,7 @@ public class Main extends JavaPlugin implements Listener {
         CompletableFuture<Donation[]> future = dbClient.getNewDonations(statuses);
 // Non-blocking Example
         CompletableFuture.runAsync(() -> {
-            FileConfiguration donationsCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
+            FileConfiguration donationsCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_DONATION_FILE_NAME));
             // Array of Donation objects
             List<Donation> list = null;
             try {
@@ -213,23 +174,23 @@ public class Main extends JavaPlugin implements Listener {
                     String price = donation.getPrice();
                     Boolean isRecurring = donation.getRecurring();
                     Date purchaseDate = donation.getDate();
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".transactionID", transactionId);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerID", buyerID);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".buyerEmail", buyerEmail);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".roleID", donation.getRoleID());
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".productID", productID);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".price", price);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".isRecurring", isRecurring);
-                    donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".date", purchaseDate);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".transactionID", transactionId);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".buyerID", buyerID);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".buyerEmail", buyerEmail);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".roleID", donation.getRoleID());
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".productID", productID);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".price", price);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".isRecurring", isRecurring);
+                    donationsCfg.set(lmp.Constants.YML_DONATIONS + transactionId + ".date", purchaseDate);
                     Player latch = null;
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (player.getUniqueId().toString().equalsIgnoreCase(Constants.LATCH_MINECRAFT_ID)) {
+                        if (player.getUniqueId().toString().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_ID)) {
                             latch = player;
                         }
                     }
                     assert latch != null;
-                    if (Bukkit.getServer().getPlayer(Constants.LATCH_MINECRAFT_ID) != null) {
-                        if (productID.equals(Constants.SPAWN_MOB_PRODUCT_ID) && Double.parseDouble(price) > 4.99) {
+                    if (Bukkit.getServer().getPlayer(Constants.SERVER_OWNER_MINECRAFT_ID) != null) {
+                        if (productID.equals(lmp.Constants.SPAWN_MOB_PRODUCT_ID) && Double.parseDouble(price) > 4.99) {
                             EntityType mobToSpawn = EntityType.CREEPER;
                             Player finalLatch = latch;
                             if (donation.getSellerCustoms().get("Enter the Mob Name") != null) {
@@ -240,16 +201,16 @@ public class Main extends JavaPlugin implements Listener {
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Objects.requireNonNull(latchLocation.getWorld()).spawnEntity(latchLocation, finalMobToSpawn));
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.sendMessage("creepy bois"));
                         }
-                        if (productID.equals(Constants.KILL_LATCH_PRODUCT_ID) && Double.parseDouble(price) > 9.99) {
+                        if (productID.equals(lmp.Constants.KILL_LATCH_PRODUCT_ID) && Double.parseDouble(price) > 9.99) {
                             Player finalLatch = latch;
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.setHealth(0));
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.sendMessage("You ded"));
                         }
-                        if (productID.equals(Constants.PLAY_CREEPER_SOUND_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
+                        if (productID.equals(lmp.Constants.PLAY_CREEPER_SOUND_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
                             Player finalLatch = latch;
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.playSound(finalLatch.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0));
                         }
-                        if (productID.equals(Constants.BLINDNESS_EFFECT_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
+                        if (productID.equals(lmp.Constants.BLINDNESS_EFFECT_PRODUCT_ID) && Double.parseDouble(price) > 1.49) {
                             Player finalLatch = latch;
                             Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> finalLatch.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 6000, 1)));
                         }
@@ -258,7 +219,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 donationsCfg.set("numberOfDonations", sorted.size());
                 try {
-                    donationsCfg.save(Api.getConfigFile(Constants.YML_DONATION_FILE_NAME));
+                    donationsCfg.save(Api.getConfigFile(YmlFileNames.YML_DONATION_FILE_NAME));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -303,7 +264,7 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void EntityDeathEvent(EntityDeathEvent e) throws IOException {
         if (e.getEntity().getType().equals(EntityType.VILLAGER)){
-            FileConfiguration villagerHurtLog = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_VILLAGER_HURT_LOG_FILE_NAME));
+            FileConfiguration villagerHurtLog = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_VILLAGER_HURT_LOG_FILE_NAME));
             Date date = new Date();
             Villager villager = (Villager) e.getEntity();
             String id = "other";
@@ -315,7 +276,7 @@ public class Main extends JavaPlugin implements Listener {
             villagerHurtLog.set(id + "." + date + ".location.x", e.getEntity().getLocation().getBlockX());
             villagerHurtLog.set(id + "." + date + ".location.y", e.getEntity().getLocation().getBlockY());
             villagerHurtLog.set(id + "." + date + ".location.z", e.getEntity().getLocation().getBlockZ());
-            villagerHurtLog.save(Api.getConfigFile(Constants.YML_VILLAGER_HURT_LOG_FILE_NAME));
+            villagerHurtLog.save(Api.getConfigFile(YmlFileNames.YML_VILLAGER_HURT_LOG_FILE_NAME));
         }
         if (e.getEntity().getLastDamageCause() != null && e.getEntity().getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.CRAMMING)){
             e.setDroppedExp(0);
@@ -334,20 +295,30 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void registerTasks() {
-        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
         Long delay = configCfg.getLong("tablist-delay");
-        new PingTabList(this).runTaskTimerAsynchronously(this, delay * 20, delay * 20);
+        new PingTabListRunnable(this).runTaskTimerAsynchronously(this, delay * 20, delay * 20);
     }
 
-    @Override
-    public void onDisable() {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
-            Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
-            getLogger().info("discord_text is disabled");
-            LatchDiscord.stopBot();
-            LatchDiscord.sendServerStoppedMessage();
-        }
+    private void registerCommands(){
+        // Server Command
+        Objects.requireNonNull(this.getCommand(ServerCommands.LMP_COMMAND)).setExecutor(new LMPCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.LMP_COMMAND)).setTabCompleter(new LMPCommandTabComplete());
+        // Backpack Command
+        Objects.requireNonNull(this.getCommand(ServerCommands.BACKPACK_COMMAND)).setExecutor(new BackPackCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.BACKPACK_COMMAND)).setTabCompleter(new BackpackTabComplete());
+        // Player Shop Command
+        Objects.requireNonNull(this.getCommand(ServerCommands.PLAYER_SHOP_COMMAND)).setExecutor(new PlayerShopsCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.PLAYER_SHOP_COMMAND)).setTabCompleter(new PlayerShopsTabComplete());
+        // Discord Staff Chat Command
+        Objects.requireNonNull(this.getCommand(ServerCommands.DISCORD_STAFF_CHAT_COMMAND)).setExecutor(new DiscordStaffChatCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.DISCORD_ADMIN_CHAT_COMMAND)).setExecutor(new DiscordAdminChatCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.SERVER_TO_DISCORD_COMMAND)).setExecutor(new MessageDiscordUserFromServerCommand());
+        // Twitch Bot Command
+        Objects.requireNonNull(this.getCommand(ServerCommands.TWITCH_COMMAND)).setExecutor(new LatchTwitchBotCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.TWITCH_COMMAND)).setTabCompleter(new LatchTwitchBotTabComplete());
     }
+
 
     @EventHandler
     public void onLogin(PlayerJoinEvent e) throws IOException {
@@ -397,27 +368,27 @@ public class Main extends JavaPlugin implements Listener {
             eb.setTitle(worldPrefix + e.getDeathMessage());
             eb.setColor(new Color(0xE1922E00, true));
             eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
-            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
             assert minecraftChatChannel != null;
             minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
             if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
-                LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + Api.getDiscordIdFromMCid(e.getEntity().getUniqueId().toString()) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
+                LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + Api.getDiscordIdFromMCid(e.getEntity().getUniqueId().toString()) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
             }
-            if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
+            if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getBoolean("doesPlayerLoseMoneyOnDeath"))){
                 DecimalFormat df = new DecimalFormat("0.00");
                 double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(e.getEntity()));
-                double percentToRemove = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("deathBalancePercentage");
+                double percentToRemove = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getDouble("deathBalancePercentage");
                 double amountToRemove = (playerBalance / 100.00) * percentToRemove;
                 Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(e.getEntity()), amountToRemove);
                 e.getEntity().sendMessage(ChatColor.YELLOW + "You lost " + ChatColor.RED + "$" + df.format(amountToRemove) + ChatColor.YELLOW + " because you died.");
             }
             if (e.getEntity().getWorld().getName().contains("hardcore")){
-                FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+                FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_HARDCORE_FILE_NAME));
                 Player player = e.getEntity();
                 String uuid = player.getUniqueId().toString();
                 if (Boolean.TRUE.equals(hardcoreCfg.getBoolean(uuid + ".isAlive"))){
                     hardcoreCfg.set(uuid + ".isAlive", false);
-                    hardcoreCfg.save(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+                    hardcoreCfg.save(Api.getConfigFile(YmlFileNames.YML_HARDCORE_FILE_NAME));
                 }
             }
         }
@@ -426,7 +397,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
-        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_BOSS_FILE_NAME));
+        FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
         if (e.getRightClicked().getType()==EntityType.GIANT) {
             Monster monster = (Monster) e.getRightClicked();
             String boss = "bosses.zombieBoss";
@@ -446,7 +417,7 @@ public class Main extends JavaPlugin implements Listener {
                 worldPrefix = "[Hardcore] - ";
             }
             if(Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))){
-                Objects.requireNonNull(jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
+                Objects.requireNonNull(jda.getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
                 for (Player player : getOnlinePlayers()){
                     if (player.hasPermission("group.jr-mod")){
                         player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
@@ -454,7 +425,7 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 e.setCancelled(true);
             } else {
-                TextChannel minecraftChatChannel = jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+                TextChannel minecraftChatChannel = jda.getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
                 assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
             }
@@ -539,13 +510,13 @@ public class Main extends JavaPlugin implements Listener {
                     if (Objects.requireNonNull(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()).get(0).equalsIgnoreCase("Bedrock Breaker")){
                         Block bedrockToBreak = event.getClickedBlock();
                         double playerBalance = Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId()));
-                        if (playerBalance >= Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost")){
+                        if (playerBalance >= Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost")){
                             DecimalFormat df = new DecimalFormat("0.00");
                             bedrockToBreak.setType(Material.AIR);
-                            Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId()), Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost"));
-                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId())))));
+                            Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId()), Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost"));
+                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + lmp.Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId())))));
                         } else {
-                            event.getPlayer().sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$" + Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost") + ChatColor.RED + " to break a block of bedrock.");
+                            event.getPlayer().sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$" + Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getDouble("bedrockBreakerCost") + ChatColor.RED + " to break a block of bedrock.");
                         }
                     }
                 }
@@ -560,7 +531,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
-            FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_HARDCORE_FILE_NAME));
+            FileConfiguration hardcoreCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_HARDCORE_FILE_NAME));
             if (hardcoreCfg.getString(event.getPlayer().getUniqueId().toString()) == null || Boolean.FALSE.equals(hardcoreCfg.getBoolean(event.getPlayer().getUniqueId().toString() + "." + "isAlive") )) {
                     event.getPlayer().setGameMode(GameMode.SURVIVAL);
             }
@@ -569,7 +540,7 @@ public class Main extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e){
-        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME));
+        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
         if (Boolean.FALSE.equals(configCfg.getBoolean("areSpawnersActive"))) {
             if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equalsIgnoreCase("world") && e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER)) {
                 e.setCancelled(true);
@@ -580,12 +551,12 @@ public class Main extends JavaPlugin implements Listener {
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onInventoryClose"))) {
             Player player = (Player) e.getPlayer();
-            if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_BACKPACK)) {
-                Inventories.saveCustomInventory(e, Api.getConfigFile(Constants.YML_BACK_PACK_FILE_NAME));
-            } else if (e.getView().getTitle().equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP)) {
-                Inventories.saveCustomInventory(e, Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
+            if (e.getView().getTitle().equals(player.getName() + lmp.Constants.YML_POSSESSIVE_BACKPACK)) {
+                Inventories.saveCustomInventory(e, Api.getConfigFile(YmlFileNames.YML_BACK_PACK_FILE_NAME));
+            } else if (e.getView().getTitle().equals(player.getName() + lmp.Constants.YML_POSSESSIVE_PLAYER_SHOP)) {
+                Inventories.saveCustomInventory(e, Api.getConfigFile(YmlFileNames.YML_PLAYER_SHOP_FILE_NAME));
             }
-            PlayerShops.removeLoreFromSellerInventory(e, Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME));
+            PlayerShops.removeLoreFromSellerInventory(e, Api.getConfigFile(YmlFileNames.YML_PLAYER_SHOP_FILE_NAME));
             sendItemsInAutoSorter(e);
         }
     }
@@ -605,9 +576,9 @@ public class Main extends JavaPlugin implements Listener {
             Api.cancelEventsInPreviousSeason(e.getWhoClicked().getWorld().getName(), e.getWhoClicked().getName(), null, null, e, null);
             Player player = (Player) e.getWhoClicked();
             String invTitle = e.getView().getTitle();
-            if (invTitle.equals(player.getName() + Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
-                PlayerShops.itemWorthNotSet(e, player, Api.getFileConfiguration(Api.getConfigFile(Constants.YML_PLAYER_SHOP_FILE_NAME)));
-            } else if (invTitle.contains(Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
+            if (invTitle.equals(player.getName() + lmp.Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
+                PlayerShops.itemWorthNotSet(e, player, Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_PLAYER_SHOP_FILE_NAME)));
+            } else if (invTitle.contains(lmp.Constants.YML_POSSESSIVE_PLAYER_SHOP) && e.getCurrentItem() != null) {
                 PlayerShops.purchaseItemFromPlayer(e, Api.getEconomy(), player);
             }
         }
@@ -662,7 +633,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
         if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
-            FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+            FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME));
             String creeperHeadLocation = event.getBlock().getLocation().toString();
             List<String> creeperLocationList = new ArrayList<>();
             if (!creeperCfg.getStringList("locations").isEmpty()){
@@ -678,7 +649,7 @@ public class Main extends JavaPlugin implements Listener {
                  creeperLocationList.remove(indexToDelete);
             }
             creeperCfg.set("locations", creeperLocationList);
-            creeperCfg.save(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+            creeperCfg.save(Api.getConfigFile(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME));
 
         }
 
@@ -699,7 +670,7 @@ public class Main extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent e){
-        List<String> doNotSpawnList = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getStringList("lightLevelMobs");
+        List<String> doNotSpawnList = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getStringList("lightLevelMobs");
         if (doNotSpawnList.contains(e.getEntity().getType().toString())){
             if (e.getLocation().getBlock().getLightLevel() > 7){
                 File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
@@ -723,14 +694,14 @@ public class Main extends JavaPlugin implements Listener {
         if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
             if (event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getLore() != null){
                 if (event.getItemInHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Creepers BGone")){
-                    FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+                    FileConfiguration creeperCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME));
                     List<String> creeperLocationList = new ArrayList<>();
                     if (!creeperCfg.getStringList("locations").isEmpty()){
                         creeperLocationList = creeperCfg.getStringList("locations");
                     }
                     creeperLocationList.add(event.getBlock().getLocation().toString());
                     creeperCfg.set("locations", creeperLocationList);
-                    creeperCfg.save(Api.getConfigFile(Constants.YML_CREEPERS_B_GONE_FILE_NAME));
+                    creeperCfg.save(Api.getConfigFile(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME));
                 }
             }
         }
@@ -756,7 +727,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() != null && event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world") && (event.getClickedInventory().getHolder() instanceof DoubleChest || event.getClickedInventory().getHolder() instanceof Chest || event.getClickedInventory().getHolder() instanceof ShulkerBox || event.getClickedInventory().getHolder() instanceof Barrel)) {
                         OfflinePlayer olp = null;
                         if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                            FileConfiguration chestProtectCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CHEST_PROTECT_FILE_NAME));
+                            FileConfiguration chestProtectCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
                             List<String> ignoreChestArr = chestProtectCfg.getStringList("ignoredChests");
                             Player clicker = (Player) event.getWhoClicked();
                             Block block = Bukkit.getWorld(event.getClickedInventory().getLocation().getWorld().getUID()).getBlockAt(event.getClickedInventory().getLocation());
@@ -773,25 +744,25 @@ public class Main extends JavaPlugin implements Listener {
                                 try {
                                     assert olp != null;
                                     if (clicker.getUniqueId().equals(olp.getUniqueId())) {
-                                        ChestProtect.setApprovedAllPlayer(Api.getDiscordIdFromMCid(olp.getUniqueId().toString()), clicker.getName(), Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CHEST_PROTECT_FILE_NAME)));
+                                        ChestProtect.setApprovedAllPlayer(Api.getDiscordIdFromMCid(olp.getUniqueId().toString()), clicker.getName(), Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME)));
                                     } else {
                                         if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(olp.getUniqueId().toString(), "chests"))) {
                                             boolean isApprovedPlayer = false;
-                                            if (chestProtectCfg.contains(Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers")) {
-                                                List<String> approvedPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers");
+                                            if (chestProtectCfg.contains(lmp.Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers")) {
+                                                List<String> approvedPlayers = chestProtectCfg.getStringList(lmp.Constants.YML_PLAYERS + olp.getUniqueId().toString() + ".approvedPlayers");
                                                 if (approvedPlayers.contains(clicker.getUniqueId().toString())) {
                                                     isApprovedPlayer = true;
                                                 }
                                             }
-                                            if (chestProtectCfg.contains(Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString())) {
-                                                List<String> approvedChestPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString());
+                                            if (chestProtectCfg.contains(lmp.Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString())) {
+                                                List<String> approvedChestPlayers = chestProtectCfg.getStringList(lmp.Constants.YML_PLAYERS + olp.getUniqueId().toString() + "." + event.getClickedInventory().getLocation().toString());
                                                 if (approvedChestPlayers.contains(clicker.getUniqueId().toString())) {
                                                     isApprovedPlayer = true;
                                                 }
                                             }
                                             if (Boolean.FALSE.equals(isApprovedPlayer)) {
                                                 try {
-                                                    net.dv8tion.jda.api.entities.User chestOwner = LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(Api.getDiscordIdFromMCid(olp.getUniqueId().toString())).getUser();
+                                                    net.dv8tion.jda.api.entities.User chestOwner = LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getMemberById(Api.getDiscordIdFromMCid(olp.getUniqueId().toString())).getUser();
                                                     chestOwner.openPrivateChannel().flatMap(privateChannel -> {
                                                         LatchDiscord.getJDA().addEventListener(new ChestProtect(privateChannel, chestOwner, event.getCurrentItem().getType().toString(), clicker.getName(), block.getLocation(), block));
                                                         return privateChannel.sendMessage("Minecraft User Name: " + clicker.getName() + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(clicker.getName())) + "\n" +
@@ -823,21 +794,20 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static boolean getIsParameterInTesting(String parameter){
-        return Api.getFileConfiguration(Api.getConfigFile(Constants.YML_CONFIG_FILE_NAME)).getBoolean("testingParameters." + parameter);
+        return Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getBoolean("testingParameters." + parameter);
     }
 
     public static void loadAllConfigManagers(){
-        backPackInventoryCfgm.setup();
-        playerShopsInventoryCfgm.setup();
-        bankCfgm.setup();
-        //autoMinerCfgm.setup();
-        whitelistCfgm.setup();
-        discordTextConfigCfgm.setup();
-        advancementConfigCfgm.setup();
-        lotteryConfigCfgm.setup();
-        twitchBotCfgm.setup();
-        autoSorterCfgm.setup();
-        bossCfgm.setup();
+        new WhitelistConfig().setup();
+        new PlayerShopsInventoryConfig().setup();
+        new BankConfig().setup();
+        new BackPackInventoryConfig().setup();
+        new LMPConfig().setup();
+        new AdvancementConfig().setup();
+        new LotteryConfig().setup();
+        new LatchTwitchBotConfig().setup();
+        new AutoSorterConfig().setup();
+        new BossConfig().setup();
     }
 
     public static void addRottenFleshToLeatherSmelt(){
@@ -921,7 +891,7 @@ public class Main extends JavaPlugin implements Listener {
             Location destinationLocation = e.getDestination().getLocation();
             String playerName = "";
             boolean isSameChest = false;
-            FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_AUTO_SORTER_FILE_NAME));
+            FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_AUTO_SORTER_FILE_NAME));
             for (String player : autoSorterCfg.getKeys(false)){
                 Location masterChestLocation = new Location(Bukkit.getWorld("world"), autoSorterCfg.getDouble(player + ".masterChest.x"), autoSorterCfg.getDouble(player + ".masterChest.y"), autoSorterCfg.getDouble(player + ".masterChest.z"));
                 if (destinationLocation.equals(masterChestLocation)){
@@ -963,7 +933,7 @@ public class Main extends JavaPlugin implements Listener {
         if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.CHEST)){
             if (event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null &&
                     event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null){
-                FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_AUTO_SORTER_FILE_NAME));
+                FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_AUTO_SORTER_FILE_NAME));
                 String playerName = event.getPlayer().getName().toLowerCase();
                 Location chestLocation = event.getClickedBlock().getLocation();
                 double chestX = chestLocation.getX();
@@ -989,7 +959,7 @@ public class Main extends JavaPlugin implements Listener {
                         }
                     }
                 }
-                autoSorterCfg.save(Api.getConfigFile(Constants.YML_AUTO_SORTER_FILE_NAME));
+                autoSorterCfg.save(Api.getConfigFile(YmlFileNames.YML_AUTO_SORTER_FILE_NAME));
             }
             Chest chest = (Chest) event.getClickedBlock().getState();
 //            if (chest.getCustomName() != null){
@@ -1006,7 +976,7 @@ public class Main extends JavaPlugin implements Listener {
         Player player = (Player) e.getPlayer();
         String playerName = player.getName().toLowerCase();
         Location chestLocation = e.getInventory().getLocation();
-        FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(Constants.YML_AUTO_SORTER_FILE_NAME));
+        FileConfiguration autoSorterCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_AUTO_SORTER_FILE_NAME));
         Location masterChestLocation = new Location(Bukkit.getWorld("world"), autoSorterCfg.getDouble(playerName + ".masterChest.x"), autoSorterCfg.getDouble(playerName + ".masterChest.y"), autoSorterCfg.getDouble(playerName + ".masterChest.z"));
         if (chestLocation != null && chestLocation.equals(masterChestLocation)){
             Inventory masterChestInventory = e.getInventory();
