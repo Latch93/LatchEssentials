@@ -9,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import java.io.IOException;
 
 public class AutoMinerCommand implements CommandExecutor {
     private static final File autoMinerFile = Api.getConfigFile(YmlFileNames.YML_AUTO_MINER_FILE_NAME);
-    private static final FileConfiguration autoMinerCfg = Api.getFileConfiguration(autoMinerFile);
+    private static final FileConfiguration autoMinerCfg = YamlConfiguration.loadConfiguration(autoMinerFile);
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Economy econ = Api.getEconomy();

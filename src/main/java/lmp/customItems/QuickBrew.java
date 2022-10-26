@@ -13,14 +13,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Objects;
 
 public class QuickBrew {
-    public static void quickBrew(Player player, Economy econ, PlayerInteractEvent event){
-        if (event.getPlayer().getInventory().getItemInMainHand().getEnchantments().toString().contains("aqua") && event.getAction().toString().equals("LEFT_CLICK_BLOCK") && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK) && event.getClickedBlock().getType().equals(Material.BREWING_STAND)){
+    public static void quickBrew(Player player, Economy econ, PlayerInteractEvent event) {
+        if (event.getPlayer().getInventory().getItemInMainHand().getEnchantments().toString().contains("aqua") && event.getAction().toString().equals("LEFT_CLICK_BLOCK") && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK) && event.getClickedBlock().getType().equals(Material.BREWING_STAND)) {
             double totalExp = ExperienceManager.getTotalXP(player.getLevel());
             double totalXPToNextLevel = ExperienceManager.getTotalXpRequiredForNextLevel(player.getLevel());
             double totalPlayerXPCalculated = Math.round((totalXPToNextLevel * player.getExp()) + totalExp);
-            if (totalPlayerXPCalculated >= 5){
+            if (totalPlayerXPCalculated >= 5) {
                 BrewingStand brewingStand = (BrewingStand) Objects.requireNonNull(event.getClickedBlock()).getState();
-                if (brewingStand.getInventory().getIngredient() == null){
+                if (brewingStand.getInventory().getIngredient() == null) {
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "No items available to brew"));
                 } else if (brewingStand.getBrewingTime() == 0) {
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Unable to brew ingredients"));

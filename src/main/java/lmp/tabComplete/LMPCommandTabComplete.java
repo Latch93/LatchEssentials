@@ -19,10 +19,10 @@ public class LMPCommandTabComplete implements TabCompleter {
         playerShopCommandList.add("claim");
         playerShopCommandList.add("deposit");
 
-        if (sender instanceof Player){
+        if (sender instanceof Player) {
             Player commandSender = (Player) sender;
             try {
-                if (Api.doesPlayerHavePermission(commandSender.getUniqueId().toString(), "hardcore")){
+                if (Api.doesPlayerHavePermission(commandSender.getUniqueId().toString(), "hardcore")) {
                     playerShopCommandList.add("hardcore");
                 }
             } catch (ExecutionException | InterruptedException e) {
@@ -39,7 +39,7 @@ public class LMPCommandTabComplete implements TabCompleter {
         playerShopCommandList.add("xpWithdraw");
         List<String> tabList = new ArrayList<>();
         String commandText = "";
-        if (!args[0].equalsIgnoreCase("lotto") && !args[0].equalsIgnoreCase("withdraw")){
+        if (!args[0].equalsIgnoreCase("lotto") && !args[0].equalsIgnoreCase("withdraw")) {
             tabList = playerShopCommandList;
             commandText = args[0];
         } else if (args[0].equalsIgnoreCase("lotto")) {
@@ -48,20 +48,18 @@ public class LMPCommandTabComplete implements TabCompleter {
             tabList.add("total");
             try {
                 return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
-            } catch (IndexOutOfBoundsException e){
+            } catch (IndexOutOfBoundsException e) {
                 Api.messageInConsole(ChatColor.RED + "Incorrect LMP Lotto command.");
             }
-        }
-        else if (args[0].equalsIgnoreCase("withdraw")) {
+        } else if (args[0].equalsIgnoreCase("withdraw")) {
             tabList.add("[amount]");
             try {
                 return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
             } catch (IndexOutOfBoundsException e) {
                 Api.messageInConsole(ChatColor.RED + "Incorrect LMP Withdraw command.");
             }
-        }
-        else if (args[0].equalsIgnoreCase("claim")) {
-            for (Material material : Material.values()){
+        } else if (args[0].equalsIgnoreCase("claim")) {
+            for (Material material : Material.values()) {
                 tabList.add(material.toString());
             }
             try {

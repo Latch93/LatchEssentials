@@ -31,15 +31,67 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class LMPCommand implements CommandExecutor {
+    public static void resetAllNonLinkedPlayerBalances(ArrayList<String> whitelistArr) throws IOException {
+        for (String essPlayerID : whitelistArr) {
+            if (!essPlayerID.contains(".")) {
+                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
+                FileConfiguration playerDataCfg = YamlConfiguration.loadConfiguration(playerDataFile);
+                if (Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName() != null) {
+                    playerDataCfg.set("money", 5000.00);
+                    playerDataCfg.save(playerDataFile);
+                }
+            }
+        }
+    }
+
+    public static void resetPlayerBalances(ArrayList<String> arrIDToReset) throws IOException {
+        for (String essPlayerID : arrIDToReset) {
+            if (!essPlayerID.contains(".")) {
+                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
+                FileConfiguration playerDataCfg = YamlConfiguration.loadConfiguration(playerDataFile);
+                Main.log.info("Name to reset: " + Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName());
+//                    playerDataCfg.set("money", 5000.00);
+                playerDataCfg.save(playerDataFile);
+            }
+        }
+    }
+
+    public static boolean isPlayerHoldingXPStorageBottle(Player player) {
+        boolean isPlayerHoldingXPStorageBottle = false;
+        if (player.getInventory().getItemInMainHand().getType() == Material.EXPERIENCE_BOTTLE && player.getInventory().getItemInMainHand().getItemMeta() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Experience Storage Bottle")) {
+            isPlayerHoldingXPStorageBottle = true;
+        }
+        return isPlayerHoldingXPStorageBottle;
+    }
+
+    public static void spectateInsideRandomPlayer(Player player) {
+        Random rand = new Random();
+        int n = rand.nextInt(Bukkit.getOnlinePlayers().size());
+        ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        if (!onlinePlayers.get(n).getName().equalsIgnoreCase("latch93") && Boolean.FALSE.equals(Api.isPlayerInvisible(onlinePlayers.get(n).getUniqueId().toString()))) {
+            player.teleport(onlinePlayers.get(n).getLocation());
+            player.setGameMode(GameMode.SPECTATOR);
+            player.setSpectatorTarget(onlinePlayers.get(n));
+        } else {
+            FileConfiguration xpFarmCfg = Api.getFileConfiguration(YmlFileNames.YML_XP_FARM_FILE_NAME);
+            double spawnX = xpFarmCfg.getDouble("spawnX");
+            double spawnY = xpFarmCfg.getDouble("spawnY");
+            double spawnZ = xpFarmCfg.getDouble("spawnZ");
+            Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
+            player.teleport(spawnLocation);
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+    }
+
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
         try {
-            if (args[0] != null){
+            if (args[0] != null) {
                 if (args[0].equalsIgnoreCase("stat")) {
                     sender.sendMessage(ChatColor.GREEN + "Total deaths: " + ChatColor.GOLD + player.getStatistic(Statistic.DEATHS));
                     sender.sendMessage(ChatColor.GREEN + "Total mobs killed: " + ChatColor.GOLD + player.getStatistic(Statistic.MOB_KILLS));
                     sender.sendMessage(ChatColor.GREEN + "Number of times jumped: " + ChatColor.GOLD + player.getStatistic(Statistic.JUMP));
-                } else if (args[0].equalsIgnoreCase("rtp")){
+                } else if (args[0].equalsIgnoreCase("rtp")) {
                     RandomTeleport.randomTp(player);
                 } else if (args[0].equalsIgnoreCase("lotto")) {
                     try {
@@ -47,7 +99,7 @@ public class LMPCommand implements CommandExecutor {
                     } catch (ArrayIndexOutOfBoundsException e) {
                         player.sendMessage(ChatColor.RED + "Invalid command. Please use this command as follows -> " + ChatColor.AQUA + "[/dt lotto check] [/dt lotto buyin] [/dt lotto total]");
                     }
-                } else if (args[0].equalsIgnoreCase("withdraw")){
+                } else if (args[0].equalsIgnoreCase("withdraw")) {
                     double amount = Double.parseDouble(args[1]);
                     if (amount > 499) {
                         if (amount <= Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player))) {
@@ -62,7 +114,7 @@ public class LMPCommand implements CommandExecutor {
                             Location dropLocation = player.getLocation();
                             world.dropItem(dropLocation, paper);
                             player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
-                            FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
+                            FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
                             Date date = new Date();
                             moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
                             moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
@@ -74,26 +126,26 @@ public class LMPCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.RED + "Can't withdraw less than $500.");
                     }
-                } else if (args[0].equalsIgnoreCase("deposit")){
+                } else if (args[0].equalsIgnoreCase("deposit")) {
                     Inventory playerInv = player.getInventory();
                     int count = 0;
                     File essentialsFile = new File("plugins/Essentials", "config.yml");
-                    for (ItemStack is : playerInv){
-                        if (is != null){
+                    for (ItemStack is : playerInv) {
+                        if (is != null) {
                             ItemMeta im = is.getItemMeta();
-                            if (im != null && im.getLore() != null && im.getLore().get(0).contains("MoneyOrder")){
+                            if (im != null && im.getLore() != null && im.getLore().get(0).contains("MoneyOrder")) {
                                 String[] lore = im.getLore().get(0).split(" - ");
                                 String playerName = lore[1];
                                 double amount = Double.parseDouble(lore[2]) * is.getAmount();
                                 double maxAmount = YamlConfiguration.loadConfiguration(essentialsFile).getDouble("max-money");
                                 double playerBalance = Api.getEconomy().getBalance(player);
                                 double sumOfBalanceAndAmount = Double.sum(playerBalance, amount);
-                                if (Double.compare(sumOfBalanceAndAmount, maxAmount) <= 0){
+                                if (Double.compare(sumOfBalanceAndAmount, maxAmount) <= 0) {
                                     Api.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
                                     player.sendMessage(ChatColor.GREEN + "Deposited " + ChatColor.GOLD + "$" + amount + ChatColor.GREEN + " from " + ChatColor.GOLD + playerName);
                                     is.setAmount(0);
                                     player.getInventory().setItem(count, is);
-                                    FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
+                                    FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
                                     Date date = new Date();
                                     moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
                                     moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".from", playerName);
@@ -107,8 +159,8 @@ public class LMPCommand implements CommandExecutor {
                         }
                         count++;
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("switch") && args[1] != null){
-                    FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("switch") && args[1] != null) {
+                    FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
                     Inventory playerInventory = player.getInventory();
                     Location creativeChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("creativeChest.x"), configCfg.getDouble("creativeChest.y"), configCfg.getDouble("creativeChest.z"));
                     Block creativeChestBlock = creativeChestLocation.getBlock();
@@ -116,18 +168,18 @@ public class LMPCommand implements CommandExecutor {
                     Location survivalChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("survivalChest.x"), configCfg.getDouble("survivalChest.y"), configCfg.getDouble("survivalChest.z"));
                     Block survivalChestBlock = survivalChestLocation.getBlock();
                     Chest survivalChest = (Chest) survivalChestBlock.getState();
-                    if (args[1].equalsIgnoreCase("creative") && player.getGameMode().equals(GameMode.SURVIVAL)){
+                    if (args[1].equalsIgnoreCase("creative") && player.getGameMode().equals(GameMode.SURVIVAL)) {
                         int count = 0;
-                        for(ItemStack is : playerInventory){
+                        for (ItemStack is : playerInventory) {
                             survivalChest.getInventory().setItem(count, is);
                             playerInventory.setItem(count, creativeChest.getInventory().getItem(count));
                             creativeChest.getInventory().setItem(count, new ItemStack(Material.AIR, 0));
                             count++;
                         }
                         player.setGameMode(GameMode.CREATIVE);
-                    } else if (args[1].equalsIgnoreCase("survival") && player.getGameMode().equals(GameMode.CREATIVE)){
+                    } else if (args[1].equalsIgnoreCase("survival") && player.getGameMode().equals(GameMode.CREATIVE)) {
                         int count = 0;
-                        for(ItemStack is : playerInventory){
+                        for (ItemStack is : playerInventory) {
                             creativeChest.getInventory().setItem(count, is);
                             playerInventory.setItem(count, survivalChest.getInventory().getItem(count));
                             survivalChest.getInventory().setItem(count, new ItemStack(Material.AIR, 0));
@@ -135,7 +187,7 @@ public class LMPCommand implements CommandExecutor {
                         }
                         player.setGameMode(GameMode.SURVIVAL);
                     }
-                } else if (args[0].equalsIgnoreCase("transferPet")){
+                } else if (args[0].equalsIgnoreCase("transferPet")) {
                     if (args[1] == null && args[2] == null) {
                         return false;
                     }
@@ -152,7 +204,7 @@ public class LMPCommand implements CommandExecutor {
                     Collection<Entity> nearbyEntities = Objects.requireNonNull(player.getLocation().getWorld()).getNearbyEntities(player.getLocation(), 8, 8, 8);
                     List<Tameable> tamedPets = new ArrayList<>();
                     for (Entity entity : nearbyEntities) {
-                        if (tameableEntities.contains(entity.getType())){
+                        if (tameableEntities.contains(entity.getType())) {
                             tamedPets.add((Tameable) entity);
                         }
                     }
@@ -168,8 +220,8 @@ public class LMPCommand implements CommandExecutor {
                             }
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("clearBoss") && args[1] != null){
-                    FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
+                } else if (args[0].equalsIgnoreCase("clearBoss") && args[1] != null) {
+                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
                     bossCfg.set("bossEnabled", false);
                     player.sendMessage(ChatColor.GREEN + "Boss has been terminated.");
                     try {
@@ -177,8 +229,8 @@ public class LMPCommand implements CommandExecutor {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("killBoss")){
-                    FileConfiguration bossCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("killBoss")) {
+                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
                     try {
                         Objects.requireNonNull(Bukkit.getEntity(UUID.fromString(Objects.requireNonNull(bossCfg.getString("bossUUID"))))).remove();
                         bossCfg.set("bossEnabled", false);
@@ -188,16 +240,16 @@ public class LMPCommand implements CommandExecutor {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } catch (NullPointerException ignored){
+                    } catch (NullPointerException ignored) {
 
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("removeHomes")){
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("removeHomes")) {
                     for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
-                        FileConfiguration conf = Api.getFileConfiguration(file);
-                        if (conf.isSet("homes")){
+                        FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
+                        if (conf.isSet("homes")) {
                             conf.set("homes", null);
                         }
-                        if (conf.isSet("logoutlocation")){
+                        if (conf.isSet("logoutlocation")) {
                             conf.set("logoutlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
                             conf.set("logoutlocation.x", -189.5);
                             conf.set("logoutlocation.y", 159.0);
@@ -206,7 +258,7 @@ public class LMPCommand implements CommandExecutor {
                             conf.set("logoutlocation.pitch", 23.699981689453125);
                             conf.set("logoutlocation.world-name", "world");
                         }
-                        if (conf.isSet("lastlocation")){
+                        if (conf.isSet("lastlocation")) {
                             conf.set("lastlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
                             conf.set("lastlocation.x", -189.5);
                             conf.set("lastlocation.y", 159.0);
@@ -246,7 +298,7 @@ public class LMPCommand implements CommandExecutor {
 //                            Main.log.info(ASDASD: " + Objects.requireNonNull(player.getAddress()).getAddress().toString());
 
                             String ipInfo = ".ip-info.";
-                            FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+                            FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
                             whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", discordMember.getUser().getName());
                             whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordId", discordMember.getId());
                             whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordNickname", discordMember.getNickname());
@@ -265,7 +317,7 @@ public class LMPCommand implements CommandExecutor {
                                 e.printStackTrace();
                             }
                             DonationClaimRewards.createDonationUserFile(player.getUniqueId().toString());
-                            whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+                            whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
                             player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
                             whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
                         } else {
@@ -278,32 +330,32 @@ public class LMPCommand implements CommandExecutor {
                         assert discordMember != null;
                         modChatChannel.sendMessage(discordMember.getEffectiveName() + " maybe didn't link their accounts correctly. They should still be linked up well enough to play with all of the features. This is for Latch to debug. Minecraft Name: " + player.getName()).queue();
                     }
-                } else if (args[0].equalsIgnoreCase("help")){
+                } else if (args[0].equalsIgnoreCase("help")) {
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("spectate")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("spectate")) {
                     spectateInsideRandomPlayer(player);
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("resetAllBalances")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("resetAllBalances")) {
                     resetPlayerBalances(Api.getAllMinecraftIDOfLinkedPlayers());
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("bmstart")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("bmstart")) {
                     LMPTimer.startBloodmoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("easybm")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("easybm")) {
                     LMPTimer.setEasyBloodMoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("mediumbm")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("mediumbm")) {
                     LMPTimer.setMediumBloodMoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("hardbm")){
+                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("hardbm")) {
                     LMPTimer.setHardBloodMoon();
-                } else if (args[0].equalsIgnoreCase("xpDeposit")){
-                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))){
-                        if (args[1] != null){
-                            if (Api.getPlayerExp(player) >= Integer.parseInt(args[1])){
+                } else if (args[0].equalsIgnoreCase("xpDeposit")) {
+                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))) {
+                        if (args[1] != null) {
+                            if (Api.getPlayerExp(player) >= Integer.parseInt(args[1])) {
                                 String xpAmountString = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
-                                int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+",""));
+                                int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+", ""));
                                 int finalAmount = storageAmount + Integer.parseInt(args[1]);
                                 ItemMeta storageBottleMeta = player.getInventory().getItemInMainHand().getItemMeta();
                                 List<String> loreArr = new ArrayList<>();
                                 int count = 0;
-                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())){
-                                    if (count != 1){
+                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())) {
+                                    if (count != 1) {
                                         loreArr.add(loreLine);
                                     } else {
                                         loreArr.add("XP: " + finalAmount);
@@ -324,18 +376,18 @@ public class LMPCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.RED + "You must be holding an experience storage bottle.");
                     }
-                } else if (args[0].equalsIgnoreCase("xpWithdraw")){
-                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))){
+                } else if (args[0].equalsIgnoreCase("xpWithdraw")) {
+                    if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))) {
                         String xpAmountString = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
-                        int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+",""));
-                        if (args[1] != null){
-                            if (storageAmount >= Integer.parseInt(args[1])){
+                        int storageAmount = Integer.parseInt(xpAmountString.split(":")[1].replaceAll("\\s+", ""));
+                        if (args[1] != null) {
+                            if (storageAmount >= Integer.parseInt(args[1])) {
                                 int finalAmount = storageAmount - Integer.parseInt(args[1]);
                                 ItemMeta storageBottleMeta = player.getInventory().getItemInMainHand().getItemMeta();
                                 List<String> loreArr = new ArrayList<>();
                                 int count = 0;
-                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())){
-                                    if (count != 1){
+                                for (String loreLine : Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore())) {
+                                    if (count != 1) {
                                         loreArr.add(loreLine);
                                     } else {
                                         loreArr.add("XP: " + finalAmount);
@@ -356,12 +408,12 @@ public class LMPCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.RED + "You must be holding an experience storage bottle.");
                     }
-                } else if (args[0].equalsIgnoreCase("xp")){
+                } else if (args[0].equalsIgnoreCase("xp")) {
                     player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.GOLD + Api.getPlayerExp(player) + ChatColor.GREEN + " experience points");
                 }
 
 
-                if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("uncraft")){
+                if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("uncraft")) {
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
                     for (Recipe recipe : Bukkit.getServer().getRecipesFor(item)) {
@@ -369,7 +421,7 @@ public class LMPCommand implements CommandExecutor {
                         if (recipe instanceof ShapedRecipe) {
                             ShapedRecipe shaped = (ShapedRecipe) recipe;
                             for (ItemStack ingredient : shaped.getIngredientMap().values()) {
-                                if (ingredient != null){
+                                if (ingredient != null) {
                                     ItemStack fixed = new ItemStack(ingredient.getType(), 1);
                                     ingredients.add(fixed);
                                 }
@@ -377,7 +429,7 @@ public class LMPCommand implements CommandExecutor {
                         } else if (recipe instanceof ShapelessRecipe) {
                             ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
                             for (ItemStack ingredient : shapeless.getIngredientList()) {
-                                if (ingredient != null){
+                                if (ingredient != null) {
                                     ItemStack fixed = new ItemStack(ingredient.getType(), 1);
                                     ingredients.add(fixed);
                                 }
@@ -390,84 +442,30 @@ public class LMPCommand implements CommandExecutor {
                         recipes.add(ingredients);
                     }
                     int count = 0;
-                    for (ArrayList<ItemStack> recipeIngredients : recipes){
+                    for (ArrayList<ItemStack> recipeIngredients : recipes) {
                         ArrayList<Material> ingredientsInRecipe = new ArrayList<>();
-                        for (ItemStack ingredient : recipeIngredients){
-                            Main.log.info("Recipe #" + count + " | " + ingredient.getType() + " | " + Collections.frequency(recipeIngredients,ingredient));
+                        for (ItemStack ingredient : recipeIngredients) {
+                            Main.log.info("Recipe #" + count + " | " + ingredient.getType() + " | " + Collections.frequency(recipeIngredients, ingredient));
                         }
                         count++;
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationItem")){
+                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationItem")) {
                     DonationClaimRewards.addItemToClaim(args[1]);
-                } else if (args[0].equalsIgnoreCase("claim")){
+                } else if (args[0].equalsIgnoreCase("claim")) {
                     DonationClaimRewards.claimItems(player);
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
             player.sendMessage(ChatColor.RED + "An error has occurred. Please review your command and try again.");
-        }
-        catch (NullPointerException | NumberFormatException e){
+        } catch (NullPointerException | NumberFormatException e) {
             player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
         return false;
-    }
-
-    public static void resetAllNonLinkedPlayerBalances(ArrayList<String> whitelistArr) throws IOException {
-        for (String essPlayerID : whitelistArr){
-            if (!essPlayerID.contains(".")){
-                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
-                FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-                if (Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName() != null){
-                    playerDataCfg.set("money", 5000.00);
-                    playerDataCfg.save(playerDataFile);
-                }
-            }
-        }
-    }
-
-    public static void resetPlayerBalances(ArrayList<String> arrIDToReset) throws IOException {
-        for (String essPlayerID : arrIDToReset){
-            if (!essPlayerID.contains(".")){
-                File playerDataFile = new File("plugins/Essentials/userdata", essPlayerID + ".yml");
-                FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-                Main.log.info("Name to reset: " + Bukkit.getOfflinePlayer(UUID.fromString(essPlayerID)).getName());
-//                    playerDataCfg.set("money", 5000.00);
-                    playerDataCfg.save(playerDataFile);
-            }
-        }
-    }
-
-    public static boolean isPlayerHoldingXPStorageBottle(Player player){
-        boolean isPlayerHoldingXPStorageBottle = false;
-        if (player.getInventory().getItemInMainHand().getType() == Material.EXPERIENCE_BOTTLE && player.getInventory().getItemInMainHand().getItemMeta() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore() != null && player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Experience Storage Bottle")){
-            isPlayerHoldingXPStorageBottle = true;
-        }
-        return isPlayerHoldingXPStorageBottle;
-    }
-
-    public static void spectateInsideRandomPlayer(Player player) {
-        Random rand = new Random();
-        int n = rand.nextInt(Bukkit.getOnlinePlayers().size());
-        ArrayList<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
-        if (!onlinePlayers.get(n).getName().equalsIgnoreCase("latch93") && Boolean.FALSE.equals(Api.isPlayerInvisible(onlinePlayers.get(n).getUniqueId().toString()))){
-            player.teleport(onlinePlayers.get(n).getLocation());
-            player.setGameMode(GameMode.SPECTATOR);
-            player.setSpectatorTarget(onlinePlayers.get(n));
-        } else {
-            FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
-            double spawnX = xpFarmCfg.getDouble("spawnX");
-            double spawnY = xpFarmCfg.getDouble("spawnY");
-            double spawnZ = xpFarmCfg.getDouble("spawnZ");
-            Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
-            player.teleport(spawnLocation);
-            player.setGameMode(GameMode.SPECTATOR);
-        }
     }
 
 }

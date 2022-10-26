@@ -13,10 +13,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class CustomPortals {
-    public static void setBlockToNetherPortal(PlayerInteractEvent e){
+    public static void setBlockToNetherPortal(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         if (e.getClickedBlock() != null && Boolean.TRUE.equals(isItemInHandPortalStick(player.getInventory().getItemInMainHand()))) {
-            FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
+            FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
 
             Material blockToChange = Material.valueOf(configCfg.getString("netherPortalBlockToChange"));
             if (e.getClickedBlock().getType().equals(blockToChange)) {
@@ -30,17 +30,17 @@ public class CustomPortals {
                 }
 
 
-            } else if (e.getClickedBlock().getType().equals(Material.NETHER_PORTAL)){
-                if (Boolean.TRUE.equals(e.getPlayer().isSneaking())){
+            } else if (e.getClickedBlock().getType().equals(Material.NETHER_PORTAL)) {
+                if (Boolean.TRUE.equals(e.getPlayer().isSneaking())) {
                     BlockData blockData = e.getClickedBlock().getBlockData();
-                    if(blockData instanceof Orientable) {
+                    if (blockData instanceof Orientable) {
                         Orientable orientation = (Orientable) blockData;
                         orientation.setAxis(Axis.Z);
                     }
                     e.getClickedBlock().setBlockData(blockData);
                 } else {
                     BlockData blockData = e.getClickedBlock().getBlockData();
-                    if(blockData instanceof Orientable) {
+                    if (blockData instanceof Orientable) {
                         Orientable orientation = (Orientable) blockData;
                         orientation.setAxis(Axis.X);
                     }
@@ -52,7 +52,7 @@ public class CustomPortals {
         }
     }
 
-    public static boolean isItemInHandPortalStick(ItemStack is){
+    public static boolean isItemInHandPortalStick(ItemStack is) {
         return is != null && is.getItemMeta() != null && is.getItemMeta().getLore() != null && "Custom Nether Portal Stick".equalsIgnoreCase(is.getItemMeta().getLore().get(0));
 
     }

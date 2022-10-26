@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class UnbanRequest extends ListenerAdapter {
+    private static final List<String> unbanFormAnswers = new ArrayList<>();
     public final long channelId;
     public final long authorId;
     public final MessageChannel unbanRequestChannel;
     int counter = 1;
-    private static final List<String> unbanFormAnswers = new ArrayList<>();
 
     public UnbanRequest(MessageChannel channel, User author, MessageChannel unbanRequestChannel) {
         this.channelId = channel.getIdLong();
@@ -35,18 +35,18 @@ public class UnbanRequest extends ListenerAdapter {
         unbanFormQuestions.add("2.) Why were you banned?");
         unbanFormQuestions.add("3.) Why do you think your ban should be revoked or shortened?");
         unbanFormAnswers.add(event.getMessage().getContentRaw());
-        if (counter <= unbanFormQuestions.size()-1){
+        if (counter <= unbanFormQuestions.size() - 1) {
             event.getChannel().sendMessage(unbanFormQuestions.get(counter)).queue();
         }
         counter++;
-        if (counter == unbanFormQuestions.size() + 1){
+        if (counter == unbanFormQuestions.size() + 1) {
             counter = 1;
             event.getChannel().sendMessage("\n-------------------\nLatch will review your unban request and he \n will decide if you will be unbanned or not.").queue();
             int appCounter = 0;
             StringBuilder unbanFormCompleted = new StringBuilder();
             unbanFormCompleted.append("Unban Form:\n[Discord Username :").append(event.getAuthor().getName()).append("] \n");
             unbanFormCompleted.append("[Minecraft Username :").append(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getAuthor().getId()))).getName()).append("] \n");
-            for (String str : unbanFormAnswers){
+            for (String str : unbanFormAnswers) {
                 unbanFormCompleted.append(unbanFormQuestions.get(appCounter)).append(" ---> ").append(str).append("\n");
                 appCounter++;
             }

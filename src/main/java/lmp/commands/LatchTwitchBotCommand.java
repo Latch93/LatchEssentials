@@ -19,11 +19,12 @@ import java.util.List;
 
 public class LatchTwitchBotCommand implements CommandExecutor {
     public static List<LatchTwitchBotRunnable> twitchBotList = new ArrayList<>();
+
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
-        FileConfiguration twitchCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_TWITCH_FILE_NAME));
+        FileConfiguration twitchCfg = Api.getFileConfiguration(YmlFileNames.YML_TWITCH_FILE_NAME);
         try {
-            if (args[0].equalsIgnoreCase(ServerCommands.ADD_BOT_COMMAND) && args[1] != null && args[2] != null ){
+            if (args[0].equalsIgnoreCase(ServerCommands.ADD_BOT_COMMAND) && args[1] != null && args[2] != null) {
                 String twitchUsername = args[1].toLowerCase();
                 twitchCfg.set(Constants.YML_PLAYERS + twitchUsername + ".twitchUsername", twitchUsername);
                 twitchCfg.set(Constants.YML_PLAYERS + twitchUsername + ".minecraftUsername", player.getName().toLowerCase());
@@ -35,8 +36,8 @@ public class LatchTwitchBotCommand implements CommandExecutor {
                 }
                 player.sendMessage(ChatColor.GREEN + "Your twitch bot credentials have been saved. Run " + ChatColor.AQUA + "/twitch start " + ChatColor.GREEN + "to connect to your twitch chat.");
                 Api.messageInConsole(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " added their credentials for twitch bot.");
-            } else if (args[0].equalsIgnoreCase(ServerCommands.START_BOT_COMMAND)){
-                FileConfiguration cfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_TWITCH_FILE_NAME));
+            } else if (args[0].equalsIgnoreCase(ServerCommands.START_BOT_COMMAND)) {
+                FileConfiguration cfg = Api.getFileConfiguration(YmlFileNames.YML_TWITCH_FILE_NAME);
 //                for(String user : cfg.getConfigurationSection("players").getKeys(false)) {
 //                    String twitchUsername = twitchCfg.getString(Constants.YML_PLAYERS + user + ".twitchUsername");
 //                    String minecraftUsername = twitchCfg.getString(Constants.YML_PLAYERS + user + ".minecraftUsername");
@@ -45,18 +46,18 @@ public class LatchTwitchBotCommand implements CommandExecutor {
 //                    twitchBot.run();
 //                    twitchBotList.add(twitchBot);
 //                }
-                if (Api.getTwitchUsername(player.getName()) != null){
+                if (Api.getTwitchUsername(player.getName()) != null) {
                     String twitchUsername = twitchCfg.getString(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()).toLowerCase() + ".twitchUsername");
                     String minecraftUsername = twitchCfg.getString(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()).toLowerCase() + ".minecraftUsername");
                     String oauthToken = twitchCfg.getString(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".oauthToken");
                     String channelID = null;
-                    if (twitchCfg.isSet(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".channelID")){
+                    if (twitchCfg.isSet(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".channelID")) {
                         channelID = String.valueOf(twitchCfg.getInt(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".channelID"));
                     }
                     assert twitchUsername != null;
                     assert oauthToken != null;
                     assert minecraftUsername != null;
-                    LatchTwitchBotRunnable twitchBot =  new LatchTwitchBotRunnable(twitchUsername, oauthToken, minecraftUsername, channelID);
+                    LatchTwitchBotRunnable twitchBot = new LatchTwitchBotRunnable(twitchUsername, oauthToken, minecraftUsername, channelID);
                     twitchBot.run();
                     twitchBotList.add(twitchBot);
 
@@ -64,12 +65,12 @@ public class LatchTwitchBotCommand implements CommandExecutor {
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "Invalid twitch bot credentials. Go to " + ChatColor.AQUA + "https://twitchapps.com/tmi/" + ChatColor.YELLOW + " and copy the oauth token. For more info, type " + ChatColor.AQUA + "/twitch help");
                 }
-            } else if (args[0].equalsIgnoreCase(ServerCommands.STOP_BOT_COMMAND)){
+            } else if (args[0].equalsIgnoreCase(ServerCommands.STOP_BOT_COMMAND)) {
                 Api.stopTwitchBot(twitchBotList, player);
-            } else if (args[0].equalsIgnoreCase("stopall")){
+            } else if (args[0].equalsIgnoreCase("stopall")) {
                 Api.stopAllTwitchBots(twitchBotList);
                 player.sendMessage(ChatColor.GREEN + "All TwitchBots have been " + ChatColor.RED + "terminated.");
-            } else if (args[0].equalsIgnoreCase(ServerCommands.HELP_COMMAND )) {
+            } else if (args[0].equalsIgnoreCase(ServerCommands.HELP_COMMAND)) {
                 player.sendMessage(ChatColor.WHITE + "1.) " + ChatColor.GREEN + "You need to get your Twitch oauth to use the Twitch bot.");
                 player.sendMessage(ChatColor.WHITE + "2.) " + ChatColor.GREEN + "You can get your Twitch oauth from this link -> " + ChatColor.AQUA + "https://twitchapps.com/tmi/");
                 player.sendMessage(ChatColor.WHITE + "3.) " + ChatColor.GREEN + "Copy the whole oauth token which includes the 'oauth:");
@@ -80,27 +81,27 @@ public class LatchTwitchBotCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.WHITE + "8.) " + ChatColor.GREEN + "You can download a Chrome extension to get your twitch channelId. It is a string of numbers. Example: 161082218");
                 player.sendMessage(ChatColor.WHITE + "9.) " + ChatColor.GREEN + "If you want to get follow/subscriber event messages in minecraft, you need to add your channelID to your bot credentials.");
                 player.sendMessage(ChatColor.WHITE + "10.) " + ChatColor.GREEN + "To add your channelID to your bot credentials, type " + ChatColor.AQUA + "/twitch addChannelId [channelId]");
-            } else if (args[0].equalsIgnoreCase(ServerCommands.SEND_TWITCH_MESSAGE_COMMAND)){
+            } else if (args[0].equalsIgnoreCase(ServerCommands.SEND_TWITCH_MESSAGE_COMMAND)) {
                 Iterator<LatchTwitchBotRunnable> iter = twitchBotList.iterator();
                 StringBuilder messageString = new StringBuilder();
-                for (int i = 1; i < args.length; i++){
+                for (int i = 1; i < args.length; i++) {
                     messageString.append(args[i]).append(" ");
                 }
-                while(iter.hasNext()) {
-                    LatchTwitchBotRunnable runBot  =  iter.next();
+                while (iter.hasNext()) {
+                    LatchTwitchBotRunnable runBot = iter.next();
                     if (runBot.getMinecraftName().equalsIgnoreCase(player.getName())) {
                         runBot.getTwitchClient().getChat().sendMessage(runBot.getTwitchName(), String.valueOf(messageString));
                     }
                 }
-            } else if (args[0].equalsIgnoreCase(ServerCommands.ADD_CHANNEL_ID)){
-                if (args[1] != null){
+            } else if (args[0].equalsIgnoreCase(ServerCommands.ADD_CHANNEL_ID)) {
+                if (args[1] != null) {
                     twitchCfg.set(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".channelID", args[1]);
                     twitchCfg.save(YmlFileNames.YML_TWITCH_FILE_NAME);
                 } else {
                     player.sendMessage(ChatColor.RED + "Must enter in a channelID. Use command like this -> " + ChatColor.AQUA + "/twitch addChannelId [channelId]");
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException | IOException e){
+        } catch (ArrayIndexOutOfBoundsException | IOException e) {
             player.sendMessage(ChatColor.RED + "Invalid command. Please type -> " + ChatColor.AQUA + "/twitch help");
         }
 

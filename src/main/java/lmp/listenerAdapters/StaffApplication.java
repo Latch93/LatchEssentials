@@ -10,14 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class StaffApplication extends ListenerAdapter {
+    private static final List<String> applicationAnswers = new ArrayList<>();
     public final long channelId;
     public final long authorId;
     public final MessageChannel applicationSubmittedChannel;
     int counter = 1;
-    private static final List<String> applicationAnswers = new ArrayList<>();
 
     public StaffApplication(MessageChannel channel, User author, MessageChannel applicationSubmittedChannel) {
-       this.channelId = channel.getIdLong();
+        this.channelId = channel.getIdLong();
         this.authorId = author.getIdLong();
         this.applicationSubmittedChannel = applicationSubmittedChannel;
     }
@@ -36,17 +36,17 @@ public class StaffApplication extends ListenerAdapter {
         applicationQuestions.add("6.) About how many hours per week are you able to be active in Discord and the Minecraft server?");
         applicationQuestions.add("7.) Will you do your best to watch new players while in vanish to ensure they are following the rules?");
         applicationAnswers.add(event.getMessage().getContentRaw());
-        if (counter <= applicationQuestions.size()-1){
+        if (counter <= applicationQuestions.size() - 1) {
             event.getChannel().sendMessage(applicationQuestions.get(counter)).queue();
         }
         counter++;
-        if (counter == applicationQuestions.size() + 1){
+        if (counter == applicationQuestions.size() + 1) {
             counter = 1;
             event.getChannel().sendMessage("\n-------------------\nThanks for applying! Latch and his staff will review your information and if \n they approve AND is in need of new staff, he will reach out to you. :smile:").queue();
             int appCounter = 0;
             StringBuilder application = new StringBuilder();
             application.append("Application Submitted: [Username :").append(event.getAuthor().getName()).append("] \n");
-            for (String str : applicationAnswers){
+            for (String str : applicationAnswers) {
                 application.append(applicationQuestions.get(appCounter)).append(" ---> ").append(str).append("\n");
                 appCounter++;
             }

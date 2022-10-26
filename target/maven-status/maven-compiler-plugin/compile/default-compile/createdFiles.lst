@@ -14,6 +14,7 @@ lmp\XPFarm.class
 lmp\DonationClaimRewards.class
 lmp\commands\DiscordStaffChatCommand.class
 lmp\Inventories.class
+lmp\customRecipes\CustomRecipes.class
 lmp\ExperienceManager.class
 lmp\configurations\LotteryConfig.class
 lmp\Main.class
@@ -38,6 +39,7 @@ lmp\constants\YmlFileNames.class
 lmp\Constants.class
 lmp\customItems\QuickBrew.class
 lmp\FarmMoney.class
+lmp\listeners\PlayerAdvancementDoneEvent.class
 lmp\configurations\LMPConfig.class
 lmp\listenerAdapters\LTSNomination.class
 lmp\Advancement.class
@@ -59,4 +61,5 @@ lmp\commands\AutoMinerCommand.class
 lmp\configurations\AdvancementConfig.class
 lmp\configurations\BossConfig.class
 lmp\customItems\CustomPortals.class
+lmp\donationBot\Donation.class
 lmp\LatchDiscord.class

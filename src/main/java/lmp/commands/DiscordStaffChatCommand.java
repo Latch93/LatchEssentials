@@ -16,13 +16,13 @@ public class DiscordStaffChatCommand implements CommandExecutor {
         if (sender instanceof Player) {
             try {
                 Player player = (Player) sender;
-                if (args[0] != null){
-                    if (player.hasPermission("group.jr-mod")){
+                if (args[0] != null) {
+                    if (player.hasPermission("group.jr-mod")) {
                         String playerName = player.getName();
                         TextChannel discordStaffChannel = LatchDiscord.jda.getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
                         StringBuilder messageString = new StringBuilder();
-                        for (int i = 0; i < args.length; i++){
-                            if (i != args.length-1){
+                        for (int i = 0; i < args.length; i++) {
+                            if (i != args.length - 1) {
                                 messageString.append(args[i]).append(" ");
                             } else {
                                 messageString.append(args[i]);
@@ -31,8 +31,8 @@ public class DiscordStaffChatCommand implements CommandExecutor {
                         assert discordStaffChannel != null;
                         String convertedMessage = Api.convertMinecraftMessageToDiscord(playerName, String.valueOf(messageString));
                         String[] messageArr = convertedMessage.split(" » ");
-                        for (Player p : Bukkit.getOnlinePlayers()){
-                            if (p.hasPermission("group.jr-mod")){
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (p.hasPermission("group.jr-mod")) {
                                 p.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + player.getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }
@@ -42,6 +42,6 @@ public class DiscordStaffChatCommand implements CommandExecutor {
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
             }
         }
-    return false;
+        return false;
     }
 }

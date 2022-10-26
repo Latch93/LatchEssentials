@@ -16,13 +16,13 @@ public class DiscordAdminChatCommand implements CommandExecutor {
         if (sender instanceof Player) {
             try {
                 Player player = (Player) sender;
-                if (args[0] != null){
-                    if (player.hasPermission("group.admin")){
+                if (args[0] != null) {
+                    if (player.hasPermission("group.admin")) {
                         String playerName = player.getName();
                         TextChannel adminChannel = LatchDiscord.jda.getTextChannelById(Constants.ADMIN_CHANNEL_ID);
                         StringBuilder messageString = new StringBuilder();
-                        for (int i = 0; i < args.length; i++){
-                            if (i != args.length-1){
+                        for (int i = 0; i < args.length; i++) {
+                            if (i != args.length - 1) {
                                 messageString.append(args[i]).append(" ");
                             } else {
                                 messageString.append(args[i]);
@@ -31,8 +31,8 @@ public class DiscordAdminChatCommand implements CommandExecutor {
                         assert adminChannel != null;
                         String convertedMessage = Api.convertMinecraftMessageToDiscord(playerName, String.valueOf(messageString));
                         String[] messageArr = convertedMessage.split(" » ");
-                        for (Player p : Bukkit.getOnlinePlayers()){
-                            if (p.hasPermission("group.admin")){
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (p.hasPermission("group.admin")) {
                                 p.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + player.getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }

@@ -38,6 +38,36 @@ public class ChestProtect extends ListenerAdapter {
         this.block = block;
     }
 
+    public static void setApprovedAllPlayer(String chestOwnerDcId, String thiefMinecraftName, FileConfiguration chestProtectCfg) throws IOException {
+        List<String> allowedPlayers;
+        allowedPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + Api.getMinecraftIdFromDCid(chestOwnerDcId) + ".approvedPlayers");
+        if (!allowedPlayers.contains(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName))) {
+            allowedPlayers.add(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName));
+        }
+        String minecraftID = Api.getMinecraftIdFromDCid(chestOwnerDcId);
+        chestProtectCfg.set(Constants.YML_PLAYERS + minecraftID + ".approvedPlayers", allowedPlayers);
+        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+    }
+
+    public static void setApprovedChestPlayer(String chestOwnerDcId, String thiefMinecraftName, FileConfiguration chestProtectCfg, Location chestLocation) throws IOException {
+        List<String> approvedPlayersForOneChest;
+        approvedPlayersForOneChest = chestProtectCfg.getStringList(Constants.YML_PLAYERS + Api.getMinecraftIdFromDCid(chestOwnerDcId) + "." + chestLocation.toString());
+        if (!approvedPlayersForOneChest.contains(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName))) {
+            approvedPlayersForOneChest.add(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName));
+        }
+        String minecraftID = Api.getMinecraftIdFromDCid(chestOwnerDcId);
+        chestProtectCfg.set(Constants.YML_PLAYERS + minecraftID + "." + chestLocation.toString(), approvedPlayersForOneChest);
+        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+    }
+
+    public static void setIgnoredChests(Location chestLocation, FileConfiguration chestProtectCfg) throws IOException {
+        List<String> ignoredChests;
+        ignoredChests = chestProtectCfg.getStringList("ignoredChests");
+        ignoredChests.add(chestLocation.toString());
+        chestProtectCfg.set("ignoredChests", ignoredChests);
+        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
@@ -45,13 +75,13 @@ public class ChestProtect extends ListenerAdapter {
         if (event.getChannel().getIdLong() != this.channelId) return;
         chestProtectQuestions.add("Minecraft User Name: " + thiefMinecraftName + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName)) + "\n" +
                 "Stole: " + itemTaken + "\nLocation: " + chestLocation.toString() + "\n" +
-                "ChestType: " + block.getType() + "\n* Type -> !approveAll | If you are ok with this user accessing any of your chests and want to add them to your list of approved chest users\n"+
+                "ChestType: " + block.getType() + "\n* Type -> !approveAll | If you are ok with this user accessing any of your chests and want to add them to your list of approved chest users\n" +
                 "* Type -> !approveChest | If you want to approve this user to be able to use only this chest\n" +
                 "* Type -> !deny | If are NOT ok with this user accessing your chests and want to report this player\n" +
                 "* Type -> !ignorechest | If you no longer want to be notified if someone takes from this chest\n" +
                 "* Type -> !ignoreall | If you no longer want to be notified if someone takes from any of your chests");
         TextChannel adminChannel = jda.getTextChannelById(Constants.JUNIOR_MOD_CHANNEL_ID);
-        FileConfiguration chestProtectCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+        FileConfiguration chestProtectCfg = Api.getFileConfiguration(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME);
         if (event.getMessage().getContentRaw().equalsIgnoreCase("!approveAll")) {
             assert adminChannel != null;
             try {
@@ -78,10 +108,10 @@ public class ChestProtect extends ListenerAdapter {
                 throw new RuntimeException(e);
             }
             event.getChannel().sendMessage("\n-------------------\nYou will no longer be notified if someone takes from this chest! :smile:").queue();
-        } else if (event.getMessage().getContentRaw().equalsIgnoreCase("!deny")){
+        } else if (event.getMessage().getContentRaw().equalsIgnoreCase("!deny")) {
             event.getChannel().sendMessage("\n-------------------\nLatch and his staff will review this and get back to you! :smile:").queue();
             assert adminChannel != null;
-            adminChannel.sendMessage("Discord User: " + event.getAuthor().getName() + " --- Minecraft User: " + Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getAuthor().getId()))).getName()  + " had their stuff stolen by\nMinecraft User Name: " + thiefMinecraftName + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName)) + "" +
+            adminChannel.sendMessage("Discord User: " + event.getAuthor().getName() + " --- Minecraft User: " + Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(event.getAuthor().getId()))).getName() + " had their stuff stolen by\nMinecraft User Name: " + thiefMinecraftName + "\nDiscord User Name: " + Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName)) + "" +
                     "\nLocation: " + chestLocation).queue();
         } else {
             event.getChannel().sendMessage("\n-------------------\nSomething went wrong. Make sure you type the command correctly").queue();
@@ -93,35 +123,5 @@ public class ChestProtect extends ListenerAdapter {
         }
         chestProtectQuestions.clear();
         event.getJDA().removeEventListener(this);
-    }
-
-    public static void setApprovedAllPlayer(String chestOwnerDcId, String thiefMinecraftName, FileConfiguration chestProtectCfg) throws IOException {
-        List<String> allowedPlayers;
-        allowedPlayers = chestProtectCfg.getStringList(Constants.YML_PLAYERS + Api.getMinecraftIdFromDCid(chestOwnerDcId) + ".approvedPlayers");
-        if (!allowedPlayers.contains(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName))){
-            allowedPlayers.add(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName));
-        }
-        String minecraftID = Api.getMinecraftIdFromDCid(chestOwnerDcId);
-        chestProtectCfg.set(Constants.YML_PLAYERS + minecraftID + ".approvedPlayers", allowedPlayers);
-        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
-    }
-
-    public static void setApprovedChestPlayer(String chestOwnerDcId, String thiefMinecraftName, FileConfiguration chestProtectCfg, Location chestLocation) throws IOException {
-        List<String> approvedPlayersForOneChest;
-        approvedPlayersForOneChest = chestProtectCfg.getStringList(Constants.YML_PLAYERS + Api.getMinecraftIdFromDCid(chestOwnerDcId) + "." + chestLocation.toString());
-        if (!approvedPlayersForOneChest.contains(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName))){
-            approvedPlayersForOneChest.add(Api.getMinecraftIdFromMinecraftName(thiefMinecraftName));
-        }
-        String minecraftID = Api.getMinecraftIdFromDCid(chestOwnerDcId);
-        chestProtectCfg.set(Constants.YML_PLAYERS + minecraftID +  "." + chestLocation.toString(), approvedPlayersForOneChest);
-        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
-    }
-
-    public static void setIgnoredChests(Location chestLocation, FileConfiguration chestProtectCfg) throws IOException {
-        List<String> ignoredChests;
-        ignoredChests = chestProtectCfg.getStringList("ignoredChests");
-        ignoredChests.add(chestLocation.toString());
-        chestProtectCfg.set("ignoredChests", ignoredChests);
-        chestProtectCfg.save(Api.getConfigFile(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
     }
 }

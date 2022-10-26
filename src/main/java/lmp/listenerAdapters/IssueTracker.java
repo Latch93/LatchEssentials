@@ -17,13 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IssueTracker extends ListenerAdapter {
+    private static final List<String> issueAnswers = new ArrayList<>();
     public final long channelId;
     public final User author;
     public final long authorId;
     public final MessageChannel issueTrackerChannel;
     public final String issueType;
     int counter = 0;
-    private static final List<String> issueAnswers = new ArrayList<>();
 
     public IssueTracker(MessageChannel channel, User author, MessageChannel issueTrackerChannel, String issueType) {
         this.channelId = channel.getIdLong();
@@ -46,12 +46,12 @@ public class IssueTracker extends ListenerAdapter {
         if (counter == 1) {
             event.getChannel().sendMessage(issueTrackerQuestions.get(1)).queue();
         }
-        if (counter == 2){
+        if (counter == 2) {
             event.getChannel().sendMessage("\n-------------------\nThanks for submitting your " + issueType + ". Latch will review this " + issueType + " when he gets the chance. :smile:").queue();
             StringBuilder issue = new StringBuilder();
             issue.append(issueType).append(" Submitted --- [Username :").append(author.getName()).append("] \n");
             issue.append(issueAnswers.get(0)).append("\n");
-            if (!issueAnswers.get(1).equalsIgnoreCase("no")){
+            if (!issueAnswers.get(1).equalsIgnoreCase("no")) {
                 issue.append(issueAnswers.get(1));
             }
             issue.append("\n-------------------");
@@ -61,7 +61,7 @@ public class IssueTracker extends ListenerAdapter {
             githubIssue.setTitle(issueType.toUpperCase() + ": DC[" + author.getName() + "]");
             StringBuilder issueBody = new StringBuilder();
             issueBody.append(issueAnswers.get(0));
-            if (!issueAnswers.get(1).equalsIgnoreCase("no")){
+            if (!issueAnswers.get(1).equalsIgnoreCase("no")) {
                 issueBody.append("\n").append(issueAnswers.get(1));
             }
             List<Label> labelList = new ArrayList<>();

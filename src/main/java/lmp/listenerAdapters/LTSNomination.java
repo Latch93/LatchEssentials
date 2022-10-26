@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class LTSNomination extends ListenerAdapter {
+    private static final List<String> nominationAnswers = new ArrayList<>();
     public final long channelId;
     public final long authorId;
     public final MessageChannel LTSNominationChannel;
     int counter = 1;
-    private static final List<String> nominationAnswers = new ArrayList<>();
 
     public LTSNomination(MessageChannel channel, User author, MessageChannel LTSNominationChannel) {
         this.channelId = channel.getIdLong();
@@ -36,18 +36,18 @@ public class LTSNomination extends ListenerAdapter {
         ltsNominationQuestions.add("6.) What block do you nominate?");
         ltsNominationQuestions.add("7.) What additional block or head do you nominate, if any?");
         nominationAnswers.add(event.getMessage().getContentRaw());
-        if (counter <= ltsNominationQuestions.size()-1){
+        if (counter <= ltsNominationQuestions.size() - 1) {
             event.getChannel().sendMessage(ltsNominationQuestions.get(counter)).queue();
         }
         counter++;
-        if (counter == ltsNominationQuestions.size() + 1){
+        if (counter == ltsNominationQuestions.size() + 1) {
             counter = 1;
             event.getChannel().sendMessage("\n-------------------\nThank you for nominating items for the LTS :smile:").queue();
 
             int appCounter = 0;
             StringBuilder application = new StringBuilder();
             application.append("Nomination Submitted: [Username :").append(event.getAuthor().getName()).append("] \n");
-            for (String str : nominationAnswers){
+            for (String str : nominationAnswers) {
                 application.append(ltsNominationQuestions.get(appCounter)).append(" ---> ").append(str).append("\n");
                 appCounter++;
             }

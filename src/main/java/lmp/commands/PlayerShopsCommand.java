@@ -20,6 +20,7 @@ import java.util.UUID;
 
 public class PlayerShopsCommand implements CommandExecutor {
     Inventory inv;
+
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             try {
@@ -27,10 +28,10 @@ public class PlayerShopsCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 int invSize = 27;
                 String playerName = player.getName();
-                if (args[0] != null){
+                if (args[0] != null) {
                     if (args[0].equalsIgnoreCase(ServerCommands.MY_SHOP_COMMAND)) {
                         String invTitle = playerName + "'s Shop";
-                        if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(player.getUniqueId() + ".isOpen"))){
+                        if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(player.getUniqueId() + ".isOpen"))) {
                             inv = Inventories.setInventoryWhenOpened(player, YmlFileNames.YML_PLAYER_SHOP_FILE_NAME, invSize, invTitle, playerName);
                             Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setLoreInPlayerShop(playerName, inv, player.getName()));
                             playerShopCfg.set(player.getUniqueId() + ".isOpen", true);
@@ -42,7 +43,7 @@ public class PlayerShopsCommand implements CommandExecutor {
                     if (args[0].equalsIgnoreCase(ServerCommands.SET_WORTH_COMMAND)) {
                         try {
                             int itemWorth = Integer.parseInt(args[1]);
-                            if (!player.getInventory().getItemInMainHand().getType().isAir()){
+                            if (!player.getInventory().getItemInMainHand().getType().isAir()) {
                                 ItemStack itemStack = player.getInventory().getItemInMainHand();
                                 int totalItemCount = player.getInventory().getItemInMainHand().getAmount();
                                 ItemStack singleItemStack = player.getInventory().getItemInMainHand();
@@ -63,7 +64,7 @@ public class PlayerShopsCommand implements CommandExecutor {
                         try {
                             String playerShopToOpen = args[1];
                             String invTitle = args[1] + "'s Shop";
-                            if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(Objects.requireNonNull(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(playerShopToOpen)))).getUniqueId() + ".isOpen"))){
+                            if (!Boolean.TRUE.equals(playerShopCfg.getBoolean(Objects.requireNonNull(Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromMinecraftName(playerShopToOpen)))).getUniqueId() + ".isOpen"))) {
                                 inv = Inventories.setInventoryWhenOpened(player, YmlFileNames.YML_PLAYER_SHOP_FILE_NAME, invSize, invTitle, playerShopToOpen);
                                 player.openInventory(Inventories.setLoreInPlayerShop(playerShopToOpen, inv, player.getName()));
                                 playerShopCfg.set(Api.getMinecraftIdFromMinecraftName(playerShopToOpen) + ".isOpen", true);
@@ -71,7 +72,7 @@ public class PlayerShopsCommand implements CommandExecutor {
                             } else {
                                 player.sendMessage(ChatColor.YELLOW + "That player's shop is currently open. Player's shop can only be opened by one player at a time. Try again later.");
                             }
-                        } catch (ArrayIndexOutOfBoundsException e){
+                        } catch (ArrayIndexOutOfBoundsException e) {
                             player.sendMessage(ChatColor.RED + "That player does not have a shop.");
                         }
                     }

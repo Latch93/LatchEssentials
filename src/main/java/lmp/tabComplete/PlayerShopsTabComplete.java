@@ -24,19 +24,19 @@ public class PlayerShopsTabComplete implements TabCompleter {
         playerShopCommandList.add(ServerCommands.OPEN_COMMAND);
         List<String> tabList = new ArrayList<>();
         String commandText = "";
-        if (!args[0].equalsIgnoreCase(ServerCommands.OPEN_COMMAND)){
+        if (!args[0].equalsIgnoreCase(ServerCommands.OPEN_COMMAND)) {
             tabList = playerShopCommandList;
             commandText = args[0];
         } else {
-            for (String minecraftId : playerShopCfg.getKeys(false)){
-                if (playerShopCfg.isSet(minecraftId + ".slots") && playerShopCfg.getString(minecraftId + ".slots") != null){
+            for (String minecraftId : playerShopCfg.getKeys(false)) {
+                if (playerShopCfg.isSet(minecraftId + ".slots") && playerShopCfg.getString(minecraftId + ".slots") != null) {
 
                     tabList.add(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)).getName());
                 }
             }
             try {
                 return StringUtil.copyPartialMatches(args[1], tabList, new ArrayList<>());
-            } catch (IndexOutOfBoundsException e){
+            } catch (IndexOutOfBoundsException e) {
                 Api.messageInConsole(ChatColor.RED + "Incorrect player shop command.");
             }
         }

@@ -21,24 +21,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomTeleport {
-    public static void randomTp(Player player) throws IOException, ExecutionException, InterruptedException { ;
+    public static void randomTp(Player player) throws IOException, ExecutionException, InterruptedException {
+        ;
         World world = player.getWorld();
         OfflinePlayer olp = Bukkit.getOfflinePlayer(player.getUniqueId());
         double playerBalance = Api.getEconomy().getBalance(olp);
         DecimalFormat df = new DecimalFormat("0.00");
-        FileConfiguration configCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
+        FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
         int overworldRTPCost = configCfg.getInt("overworldRTPCost");
         int theEndRTPCost = configCfg.getInt("theEndRTPCost");
         int overworldRadius = configCfg.getInt("overworldRTPRadius");
         int theEndRadius = configCfg.getInt("theEndRTPRadius");
-        if (player.getWorld().getName().equalsIgnoreCase("world")){
+        if (player.getWorld().getName().equalsIgnoreCase("world")) {
             if (playerBalance >= overworldRTPCost) {
                 teleportPlayerRandomly(player, overworldRTPCost, overworldRadius);
             } else {
                 player.sendMessage(ChatColor.RED + "You need at least $" + overworldRTPCost + " to teleport to a random location.");
             }
         }
-        if (player.getWorld().getName().equalsIgnoreCase("world_the_end")){
+        if (player.getWorld().getName().equalsIgnoreCase("world_the_end")) {
             if (playerBalance >= theEndRTPCost) {
                 teleportPlayerRandomly(player, theEndRTPCost, theEndRadius);
             } else {
@@ -48,24 +49,24 @@ public class RandomTeleport {
     }
 
     public static void teleportPlayerRandomly(Player player, int teleportCost, int teleportRadius) throws ExecutionException, InterruptedException, IOException {
-        if (Api.doesPlayerHavePermission(player.getUniqueId().toString(), "member")){
+        if (Api.doesPlayerHavePermission(player.getUniqueId().toString(), "member")) {
             Date date = new Date();
             long timeMilli = date.getTime();
             boolean canPlayerTeleport = false;
-            FileConfiguration whitelistCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+            FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
             String uuid = player.getUniqueId().toString();
-            if (whitelistCfg.isSet(Constants.YML_PLAYERS + uuid + ".lastRTP")){
+            if (whitelistCfg.isSet(Constants.YML_PLAYERS + uuid + ".lastRTP")) {
                 long timePlayerLastRTP = whitelistCfg.getLong(Constants.YML_PLAYERS + uuid + ".lastRTP");
                 long timeSinceLastRTP = timeMilli - timePlayerLastRTP;
-                int rtpHourTimer = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME)).getInt("rtpHourTimer");
+                int rtpHourTimer = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getInt("rtpHourTimer");
                 long totalTime = 1000 * (rtpHourTimer * 3600L);
-                if (timeSinceLastRTP >= totalTime){
+                if (timeSinceLastRTP >= totalTime) {
                     canPlayerTeleport = true;
                 } else {
                     org.joda.time.LocalDateTime currentLocalDateTime = new org.joda.time.LocalDateTime();
                     DateTime timeUntilCanRTP = new DateTime(timePlayerLastRTP, DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Chicago")));
                     timeUntilCanRTP = timeUntilCanRTP.plusHours(rtpHourTimer);
-                    org.joda.time.Period p = new org.joda.time.Period(currentLocalDateTime,org.joda.time.LocalDateTime.parse(StringUtils.substring(timeUntilCanRTP.toString(), 0, timeUntilCanRTP.toString().length() - 6)), PeriodType.yearMonthDayTime());
+                    org.joda.time.Period p = new org.joda.time.Period(currentLocalDateTime, org.joda.time.LocalDateTime.parse(StringUtils.substring(timeUntilCanRTP.toString(), 0, timeUntilCanRTP.toString().length() - 6)), PeriodType.yearMonthDayTime());
                     int days = p.getDays();
                     int hours = p.getHours();
                     int minutes = p.getMinutes();
@@ -73,8 +74,8 @@ public class RandomTeleport {
                     int hoursOfTheDay = hours % 24;
                     int minutesOfTheHour = minutes % 60;
                     int secondsOfTheMinute = seconds % 60;
-                    if (hours > 0){
-                        player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + hoursOfTheDay  + " hours | " + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
+                    if (hours > 0) {
+                        player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + hoursOfTheDay + " hours | " + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
                     } else if (minutes > 0) {
                         player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
                     } else {
@@ -85,27 +86,27 @@ public class RandomTeleport {
             } else {
                 canPlayerTeleport = true;
             }
-            if (Boolean.TRUE.equals(canPlayerTeleport)){
+            if (Boolean.TRUE.equals(canPlayerTeleport)) {
                 World world = player.getWorld();
                 int smallestLocation = -1 * teleportRadius;
                 int highestLocation = 125;
                 int lowestLocation = 50;
-                int x =  ThreadLocalRandom.current().nextInt(smallestLocation, teleportRadius + 1);
+                int x = ThreadLocalRandom.current().nextInt(smallestLocation, teleportRadius + 1);
                 int y = ThreadLocalRandom.current().nextInt(lowestLocation, highestLocation + 1);
                 int z = ThreadLocalRandom.current().nextInt(smallestLocation, teleportRadius + 1);
                 Location randomLocation = new Location(player.getWorld(), x, y, z);
                 Block blockToTeleporttTo = world.getHighestBlockAt(randomLocation);
                 Location finalLocation = null;
-                if (blockToTeleporttTo.getType().isSolid()){
+                if (blockToTeleporttTo.getType().isSolid()) {
                     finalLocation = blockToTeleporttTo.getLocation();
-                    finalLocation.setY(finalLocation.getY()+2.0);
+                    finalLocation.setY(finalLocation.getY() + 2.0);
                 }
-                if (finalLocation != null){
+                if (finalLocation != null) {
                     Api.getEconomy().withdrawPlayer(player, teleportCost);
                     world.getChunkAt(finalLocation).load();
                     player.teleport(finalLocation);
                     String biome = finalLocation.getBlock().getBiome().getKey().getKey();
-                    if (biome.contains("_")){
+                    if (biome.contains("_")) {
                         String[] arr = biome.split("_");
                         biome = WordUtils.capitalizeFully(arr[0]) + " " + WordUtils.capitalizeFully(arr[1]) + " Spawner";
                     }
@@ -113,14 +114,14 @@ public class RandomTeleport {
                     TextChannel chatChannel = LatchDiscord.jda.getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
                     assert chatChannel != null;
                     String worldName = player.getWorld().getName();
-                    if (worldName.equalsIgnoreCase("world")){
+                    if (worldName.equalsIgnoreCase("world")) {
                         chatChannel.sendMessage(player.getName() + " was randomly teleported to a " + WordUtils.capitalizeFully(biome) + " biome.").queue();
                         Bukkit.broadcastMessage(player.getName() + " was randomly teleported to a " + WordUtils.capitalizeFully(biome) + " biome.");
                     } else if (worldName.equalsIgnoreCase("world_the_end")) {
                         chatChannel.sendMessage(player.getName() + " was randomly teleported to a place in The End").queue();
                         Bukkit.broadcastMessage(player.getName() + " was randomly teleported to a place in The End.");
                     }
-                    whitelistCfg.set(Constants.YML_PLAYERS +  uuid + ".lastRTP", timeMilli);
+                    whitelistCfg.set(Constants.YML_PLAYERS + uuid + ".lastRTP", timeMilli);
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "Unable to send you to a safe random spot. Please try again");
                 }

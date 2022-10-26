@@ -18,28 +18,29 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MobileSpawner {
-    public static void disableSpawnerMobChange(PlayerInteractEvent event){
+    public static void disableSpawnerMobChange(PlayerInteractEvent event) {
         if (event.getAction().toString().equals("RIGHT_CLICK_BLOCK") &&
                 event.getPlayer().getInventory().getItemInMainHand().getType().toString().contains("SPAWN_EGG") &&
-                    Objects.requireNonNull(event.getClickedBlock()).getType().toString().equals("SPAWNER")){
-                    event.setCancelled(true);
-                    event.getPlayer().sendMessage(ChatColor.RED + "Unable to change mob in spawner");
+                Objects.requireNonNull(event.getClickedBlock()).getType().toString().equals("SPAWNER")) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(ChatColor.RED + "Unable to change mob in spawner");
         }
     }
-    public static void setSpawnerOnBreak(BlockBreakEvent event){
-        if(event.getBlock().getState() instanceof CreatureSpawner) {
+
+    public static void setSpawnerOnBreak(BlockBreakEvent event) {
+        if (event.getBlock().getState() instanceof CreatureSpawner) {
             Map<Enchantment, Integer> itemEnchants = event.getPlayer().getInventory().getItemInMainHand().getEnchantments();
             Iterator it = itemEnchants.entrySet().iterator();
             while (it.hasNext()) {
                 // get the pair
-                Map.Entry pair = (Map.Entry)it.next();
-                if (pair.getKey().toString().contains("silk_touch") && pair.getValue().toString().equals("2")){
+                Map.Entry pair = (Map.Entry) it.next();
+                if (pair.getKey().toString().contains("silk_touch") && pair.getValue().toString().equals("2")) {
                     EntityType t = ((CreatureSpawner) event.getBlock().getState()).getSpawnedType();
                     ItemStack item = new ItemStack(Material.SPAWNER);
                     ItemMeta meta = item.getItemMeta();
                     assert meta != null;
                     meta.setLore(Collections.singletonList(t.name()));
-                    if (t.name().contains("_")){
+                    if (t.name().contains("_")) {
                         String[] arr = t.name().split("_");
                         meta.setDisplayName(WordUtils.capitalizeFully(arr[0]) + " " + WordUtils.capitalizeFully(arr[1]) + " Spawner");
                     } else {
@@ -57,8 +58,8 @@ public class MobileSpawner {
         }
     }
 
-    public static void setSpawnerOnPlace(BlockPlaceEvent event, Economy econ){
-        if(event.getItemInHand().getItemMeta().getLore() != null && event.getItemInHand().getType() == Material.SPAWNER) {
+    public static void setSpawnerOnPlace(BlockPlaceEvent event, Economy econ) {
+        if (event.getItemInHand().getItemMeta().getLore() != null && event.getItemInHand().getType() == Material.SPAWNER) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(event.getPlayer().getUniqueId());
             if (econ.getBalance(player) >= 5000) {
                 EntityType e = EntityType.valueOf(event.getItemInHand().getItemMeta().getLore().get(0));

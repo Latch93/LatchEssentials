@@ -15,13 +15,13 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 public class QuickSmelt {
-    public static void quickSmelt(Player player, Economy econ, PlayerInteractEvent event){
-        if (event.getPlayer().getInventory().getItemInMainHand().getEnchantments().toString().contains("mending") && event.getAction().toString().equals("LEFT_CLICK_BLOCK") && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK) && event.getClickedBlock().getType().equals(Material.FURNACE)){
+    public static void quickSmelt(Player player, Economy econ, PlayerInteractEvent event) {
+        if (event.getPlayer().getInventory().getItemInMainHand().getEnchantments().toString().contains("mending") && event.getAction().toString().equals("LEFT_CLICK_BLOCK") && event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.STICK) && event.getClickedBlock().getType().equals(Material.FURNACE)) {
             double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player));
 
-            if (playerBalance >= 5.0){
+            if (playerBalance >= 5.0) {
                 Furnace furnace = (Furnace) Objects.requireNonNull(event.getClickedBlock()).getState();
-                if (furnace.getInventory().getSmelting() == null){
+                if (furnace.getInventory().getSmelting() == null) {
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "No items available to smelt"));
                 } else if (furnace.getInventory().getResult() != null && furnace.getInventory().getResult().getAmount() == 64) {
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Smelted items in furnace are full. Please remove them to use Quick Smelt Stick"));
@@ -29,10 +29,10 @@ public class QuickSmelt {
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Error has occurred. Double check furnace contents"));
                 } else {
                     DecimalFormat df = new DecimalFormat("0.00");
-                    if (Boolean.TRUE.equals(player.isSneaking())){
+                    if (Boolean.TRUE.equals(player.isSneaking())) {
                         ItemStack result = furnace.getInventory().getResult();
                         int amountToSmelt = furnace.getInventory().getSmelting().getAmount();
-                        if (playerBalance >= (amountToSmelt * 5)){
+                        if (playerBalance >= (amountToSmelt * 5)) {
                             furnace.getInventory().setResult(new ItemStack(result.getType(), amountToSmelt + furnace.getInventory().getResult().getAmount()));
                             furnace.getInventory().setSmelting(null);
                             Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(player), 5 * amountToSmelt);

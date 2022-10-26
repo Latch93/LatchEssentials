@@ -20,19 +20,19 @@ public class MessageDiscordUserFromServerCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             try {
-                if (args[0] != null && args[1] != null){
+                if (args[0] != null && args[1] != null) {
                     StringBuilder messageString = new StringBuilder();
-                    for (int i = 1; i <= args.length - 1 ; i++){
-                        if (i != (args.length - 1) ){
+                    for (int i = 1; i <= args.length - 1; i++) {
+                        if (i != (args.length - 1)) {
                             messageString.append(args[i]).append(" ");
                         } else {
                             messageString.append(args[i]);
                         }
                     }
-                    String offlineDiscordUserID = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME)).getString(Constants.YML_PLAYERS + Api.getMinecraftIdFromMinecraftName(args[0]) + ".discordId");
+                    String offlineDiscordUserID = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME).getString(Constants.YML_PLAYERS + Api.getMinecraftIdFromMinecraftName(args[0]) + ".discordId");
                     String senderDiscordName = Api.getDiscordNameFromMCid(player.getUniqueId().toString());
-                    if (offlineDiscordUserID != null || !offlineDiscordUserID.isEmpty()){
-                        Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(offlineDiscordUserID)).getUser().openPrivateChannel().flatMap(dm -> dm.sendMessage("LMP Mail from [Minecraft Name: " + player.getName() +" --- Discord Name: " + senderDiscordName + "]\n" +
+                    if (offlineDiscordUserID != null || !offlineDiscordUserID.isEmpty()) {
+                        Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(offlineDiscordUserID)).getUser().openPrivateChannel().flatMap(dm -> dm.sendMessage("LMP Mail from [Minecraft Name: " + player.getName() + " --- Discord Name: " + senderDiscordName + "]\n" +
                                 messageString)).queue(null, new ErrorHandler()
                                 .handle(ErrorResponse.CANNOT_SEND_TO_USER,
                                         (ex) -> Main.log.info("Cannot send message to " + Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(offlineDiscordUserID)).getUser().getName())));

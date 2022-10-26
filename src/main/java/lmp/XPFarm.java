@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.joda.time.DateTime;
@@ -21,13 +22,13 @@ import java.util.UUID;
 public class XPFarm {
 
     public static void teleportPlayerToXPFarm(PlayerInteractEvent e) throws IOException {
-        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(YmlFileNames.YML_XP_FARM_FILE_NAME);
         double xpFarmWarpButtonX = xpFarmCfg.getDouble("xpFarmWarpButtonX");
         double xpFarmWarpButtonY = xpFarmCfg.getDouble("xpFarmWarpButtonY");
         double xpFarmWarpButtonZ = xpFarmCfg.getDouble("xpFarmWarpButtonZ");
         Location buttonToWarpToFarmLocation = new Location(Bukkit.getWorld("world"), xpFarmWarpButtonX, xpFarmWarpButtonY, xpFarmWarpButtonZ);
-        if (e.getClickedBlock() != null && e.getClickedBlock().getLocation().equals(buttonToWarpToFarmLocation)){
-            if (Boolean.TRUE.equals(xpFarmCfg.getBoolean("isFarmInUse"))){
+        if (e.getClickedBlock() != null && e.getClickedBlock().getLocation().equals(buttonToWarpToFarmLocation)) {
+            if (Boolean.TRUE.equals(xpFarmCfg.getBoolean("isFarmInUse"))) {
                 e.getPlayer().sendMessage(ChatColor.YELLOW + "XP Farm is currently being used by " + ChatColor.AQUA + xpFarmCfg.get("playerNameUsingFarm"));
                 e.getPlayer().sendMessage(ChatColor.YELLOW + "You have to wait for them to leave before you can use the farm.");
             } else {
@@ -43,7 +44,7 @@ public class XPFarm {
                     double xpFarmLocationY = xpFarmCfg.getDouble("xpFarmLocationY");
                     double xpFarmLocationZ = xpFarmCfg.getDouble("xpFarmLocationZ");
                     File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
-                    FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
+                    FileConfiguration playerDataCfg = YamlConfiguration.loadConfiguration(playerDataFile);
                     playerDataCfg.set("lastlocation.x", xpFarmLocationX);
                     playerDataCfg.set("lastlocation.y", xpFarmLocationY);
                     playerDataCfg.set("lastlocation.z", xpFarmLocationZ);
@@ -74,7 +75,7 @@ public class XPFarm {
     }
 
     public static void teleportPlayerToSpawn(PlayerInteractEvent e) throws IOException {
-        FileConfiguration xpFarmCfg = Api.getFileConfiguration(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
+        FileConfiguration xpFarmCfg = Api.getFileConfiguration(YmlFileNames.YML_XP_FARM_FILE_NAME);
         double spawnButtonX = xpFarmCfg.getDouble("spawnButtonX");
         double spawnButtonY = xpFarmCfg.getDouble("spawnButtonY");
         double spawnButtonZ = xpFarmCfg.getDouble("spawnButtonZ");

@@ -86,7 +86,7 @@ public class Constants {
     public static final String DONOR_PLUS_ROLE_ID = "994064561399398480";
     public static final String DONOR_PLUS_PLUS_ROLE_ID = "994064302866714765";
 
-    public static final String MEMBER_PLUS_ROLE_ID ="1030754230899855460";
+    public static final String MEMBER_PLUS_ROLE_ID = "1030754230899855460";
 
     // Backpack message strings
     public static final String YML_YOU_NEED_AT_LEAST = "You need at least ";
@@ -104,11 +104,11 @@ public class Constants {
     public static final String YML_POSSESSIVE_BACKPACK = "'s Backpack";
 
     // Player Shops message strings
-    public static final String YML_POSSESSIVE_PLAYER_SHOP ="'s Shop";
+    public static final String YML_POSSESSIVE_PLAYER_SHOP = "'s Shop";
 
     // yml strings
     public static final String YML_PLAYERS = "players.";
-    public static final String YML_ENCHANTS =".enchants.";
+    public static final String YML_ENCHANTS = ".enchants.";
     public static final String YML_SIZE = ".size";
     public static final String YML_ITEMS = "items.";
     public static final String YML_SLOTS = ".slots.";

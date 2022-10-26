@@ -18,10 +18,11 @@ import java.util.Objects;
 
 public class AutoMiner {
     private static final File autoMinerFile = Api.getConfigFile(YmlFileNames.YML_AUTO_MINER_FILE_NAME);
-    private static final FileConfiguration autoMinerCfg = Api.getFileConfiguration(autoMinerFile);
+    private static final FileConfiguration autoMinerCfg = Api.getFileConfiguration(YmlFileNames.YML_AUTO_MINER_FILE_NAME);
+
     public static void setChestLocation(PlayerInteractEvent e) throws IOException {
         ItemStack itemInPlayersHand = e.getPlayer().getInventory().getItemInMainHand();
-        if (itemInPlayersHand.getType().toString().equalsIgnoreCase("STICK") && itemInPlayersHand.getEnchantments().toString().contains("fire") && Objects.requireNonNull(e.getClickedBlock()).getType().toString().equalsIgnoreCase("CHEST")){
+        if (itemInPlayersHand.getType().toString().equalsIgnoreCase("STICK") && itemInPlayersHand.getEnchantments().toString().contains("fire") && Objects.requireNonNull(e.getClickedBlock()).getType().toString().equalsIgnoreCase("CHEST")) {
             Player player = e.getPlayer();
             autoMinerCfg.set(Constants.YML_PLAYERS + player.getName() + ".chestLocation.world", player.getWorld().getName());
             autoMinerCfg.set(Constants.YML_PLAYERS + player.getName() + ".chestLocation.x", e.getClickedBlock().getLocation().getBlockX());
@@ -31,8 +32,8 @@ public class AutoMiner {
         }
     }
 
-    public static void mineBlocks(BlockPlaceEvent e){
-        if (e.getBlockPlaced().getType().toString().equalsIgnoreCase("NETHERITE_BLOCK")){
+    public static void mineBlocks(BlockPlaceEvent e) {
+        if (e.getBlockPlaced().getType().toString().equalsIgnoreCase("NETHERITE_BLOCK")) {
             Player player = e.getPlayer();
 
             int mineDistanceX = autoMinerCfg.getInt(Constants.YML_PLAYERS + player.getName() + ".mine.x");
@@ -46,11 +47,11 @@ public class AutoMiner {
             int mineY = e.getBlock().getY();
             int mineZ = e.getBlock().getZ();
             double counter = 1.0;
-            if (Boolean.TRUE.equals(isMiningAreaValid(mineDistanceX, mineDistanceY, mineDistanceZ))){
-                for (double y = 1.0; y <= setAbsoluteValue(mineDistanceX); y++){
-                    for (double x = 1.0; x <= setAbsoluteValue(mineDistanceY); x++){
-                        for (double z = 1.0; z <= setAbsoluteValue(mineDistanceZ); z++){
-                            Location dig = new Location(world, setDistance(e.getBlock().getX(), mineX ,x), setDistance(e.getBlock().getY(), mineY, y), setDistance(e.getBlock().getZ(), mineZ, z));
+            if (Boolean.TRUE.equals(isMiningAreaValid(mineDistanceX, mineDistanceY, mineDistanceZ))) {
+                for (double y = 1.0; y <= setAbsoluteValue(mineDistanceX); y++) {
+                    for (double x = 1.0; x <= setAbsoluteValue(mineDistanceY); x++) {
+                        for (double z = 1.0; z <= setAbsoluteValue(mineDistanceZ); z++) {
+                            Location dig = new Location(world, setDistance(e.getBlock().getX(), mineX, x), setDistance(e.getBlock().getY(), mineY, y), setDistance(e.getBlock().getZ(), mineZ, z));
                             Main.log.info("dig: " + dig);
                             Location chestLocation = new Location(Bukkit.getWorld("world"), chestX, chestY, chestZ);
                             Chest chest = (Chest) chestLocation.getBlock().getState();
@@ -70,10 +71,9 @@ public class AutoMiner {
     }
 
 
-
-    public static double setDistance(int mineCoordinate, int distance, double loopCount){
+    public static double setDistance(int mineCoordinate, int distance, double loopCount) {
         double digDistance = 0;
-        if (distance < 0){
+        if (distance < 0) {
             digDistance = mineCoordinate - loopCount;
         } else {
             digDistance = mineCoordinate + loopCount;
@@ -81,19 +81,19 @@ public class AutoMiner {
         return digDistance;
     }
 
-    public static boolean isMiningAreaValid(int X, int Y, int Z){
+    public static boolean isMiningAreaValid(int X, int Y, int Z) {
         boolean isValid = false;
         int x = Math.abs(X);
         int y = Math.abs(Y);
         int z = Math.abs(Z);
         int area = x * y * z;
-        if (area < 4097){
+        if (area < 4097) {
             isValid = true;
         }
         return isValid;
     }
 
-    public static int setAbsoluteValue(int coordinate){
+    public static int setAbsoluteValue(int coordinate) {
         if (coordinate < 0) {
             coordinate *= -1;
         }

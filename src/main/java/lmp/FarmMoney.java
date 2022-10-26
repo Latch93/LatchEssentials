@@ -17,9 +17,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class FarmMoney {
-    private FarmMoney(){}
+    private FarmMoney() {
+    }
 
-    public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ){
+    public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ) {
         ArrayList<String> deniedWorlds = new ArrayList<>();
         deniedWorlds.add("season1");
         deniedWorlds.add("season4");
@@ -28,12 +29,12 @@ public class FarmMoney {
         deniedWorlds.add("hardcore_nether");
         deniedWorlds.add("hardcore_the_end");
 
-        if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())){
+        if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())) {
             FileConfiguration mainConfig = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);
             OfflinePlayer player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
             DecimalFormat df = new DecimalFormat("0.00");
-            if (event.getBlock().getBlockData().toString().contains("age=7")){
-                if (event.getBlock().getType().equals(Material.WHEAT) ){
+            if (event.getBlock().getBlockData().toString().contains("age=7")) {
+                if (event.getBlock().getType().equals(Material.WHEAT)) {
                     econ.depositPlayer(player, mainConfig.getDouble("farmMoney.wheat"));
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(econ.getBalance(player))));
                 }
@@ -65,7 +66,7 @@ public class FarmMoney {
                 if (event.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.ATTACHED_MELON_STEM) ||
                         event.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.ATTACHED_MELON_STEM) ||
                         event.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.ATTACHED_MELON_STEM) ||
-                        event.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.ATTACHED_MELON_STEM)){
+                        event.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.ATTACHED_MELON_STEM)) {
                     econ.depositPlayer(player, mainConfig.getDouble("farmMoney.melon"));
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(econ.getBalance(player))));
                 }
@@ -75,7 +76,7 @@ public class FarmMoney {
                 if (event.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.ATTACHED_PUMPKIN_STEM) ||
                         event.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.ATTACHED_PUMPKIN_STEM) ||
                         event.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.ATTACHED_PUMPKIN_STEM) ||
-                        event.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.ATTACHED_PUMPKIN_STEM)){
+                        event.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.ATTACHED_PUMPKIN_STEM)) {
                     econ.depositPlayer(player, mainConfig.getDouble("farmMoney.pumpkin"));
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(econ.getBalance(player))));
                 }

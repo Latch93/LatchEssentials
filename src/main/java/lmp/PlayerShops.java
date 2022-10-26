@@ -21,10 +21,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class PlayerShops {
-    private PlayerShops(){
+    private PlayerShops() {
     }
 
-    public static void itemWorthNotSet(InventoryClickEvent e, Player player, FileConfiguration playerShopCfg){
+    public static void itemWorthNotSet(InventoryClickEvent e, Player player, FileConfiguration playerShopCfg) {
         ItemStack itemStack = e.getCurrentItem();
         assert itemStack != null;
         int totalItemAmount = itemStack.getAmount();
@@ -32,7 +32,7 @@ public class PlayerShops {
         String[] arr = e.getView().getTitle().split(Constants.YML_POSSESSIVE_PLAYER_SHOP);
         String sellerShopPlayerName = arr[0];
         itemStack.setItemMeta(Inventories.getItemWorthWithLore(player, itemStack, sellerShopPlayerName));
-        if (!playerShopCfg.isSet(player.getUniqueId() + ".itemWorth." + itemStack)){
+        if (!playerShopCfg.isSet(player.getUniqueId() + ".itemWorth." + itemStack)) {
             e.setCancelled(true);
             player.sendMessage(ChatColor.RED + "You need to set this item's worth with " + ChatColor.AQUA + "/ps setworth [amount]" + ChatColor.RED + " before you can add it to your shop.");
         }
@@ -41,17 +41,17 @@ public class PlayerShops {
 
     public static void removeLoreFromSellerInventory(InventoryCloseEvent e, File playerShopFile) throws IOException {
         Player player = (Player) e.getPlayer();
-        if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP)){
+        if (e.getView().getTitle().contains(Constants.YML_POSSESSIVE_PLAYER_SHOP)) {
             Inventories.saveCustomInventory(e, playerShopFile);
-            if (e.getView().getTitle().contains(e.getPlayer().getName())){
-                for (int i = 0; i < 39; i++){
+            if (e.getView().getTitle().contains(e.getPlayer().getName())) {
+                for (int i = 0; i < 39; i++) {
                     ItemStack itemStack = player.getInventory().getItem(i);
-                    if (itemStack != null){
+                    if (itemStack != null) {
                         ItemMeta im = Inventories.setItemLore(e, i, true);
-                        if (im != null){
+                        if (im != null) {
                             itemStack.setItemMeta(im);
                         }
-                        player.getInventory().setItem(i,itemStack);
+                        player.getInventory().setItem(i, itemStack);
                     }
                     player.updateInventory();
                 }
@@ -64,7 +64,7 @@ public class PlayerShops {
         OfflinePlayer offlineSeller = null;
 
         FileConfiguration playerShopCfg = Api.loadConfig(YmlFileNames.YML_PLAYER_SHOP_FILE_NAME);
-        if (Boolean.TRUE.equals(e.isShiftClick())){
+        if (Boolean.TRUE.equals(e.isShiftClick())) {
             e.setCancelled(true);
         } else {
             if (Objects.requireNonNull(e.getClickedInventory()).getSize() == 27) {
@@ -76,13 +76,13 @@ public class PlayerShops {
                 assert ims != null;
                 int itemAmount = ims.getAmount();
                 ims.setAmount(1);
-                ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName() );
+                ItemMeta im = Inventories.getItemWorthWithLore(player, ims, offlineSeller.getName());
                 ims.setItemMeta(im);
                 int itemCost = playerShopCfg.getInt(offlineSeller.getUniqueId() + ".itemWorth." + ims);
                 ims.setAmount(itemAmount);
-                if (e.getClick().toString().equalsIgnoreCase("LEFT")){
+                if (e.getClick().toString().equalsIgnoreCase("LEFT")) {
                     leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
-                } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")){
+                } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")) {
                     rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
                 }
 //                else if (e.getClick().toString().equalsIgnoreCase("MIDDLE")){
@@ -95,10 +95,10 @@ public class PlayerShops {
     }
 
     private static void leftClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
-        if (buyerBalance < itemCost){
+        if (buyerBalance < itemCost) {
             player.sendMessage(ChatColor.RED + "Not enough money to buy this item.");
         } else {
-            if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null){
+            if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString())) != null) {
                 Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
                 assert seller != null;
                 seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought 1 " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemCost).queue()));
@@ -113,10 +113,10 @@ public class PlayerShops {
         if (Objects.requireNonNull(e.getCurrentItem()).getAmount() >= 10) {
             int itemTotalAmount = e.getCurrentItem().getAmount();
             int itemTotalCost = itemCost * itemTotalAmount;
-            if (buyerBalance < itemTotalCost){
+            if (buyerBalance < itemTotalCost) {
                 player.sendMessage(ChatColor.RED + "Not enough money to buy these " + itemTotalAmount + " items.");
             } else {
-                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null)){
+                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString())) != null)) {
                     Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
                     assert seller != null;
                     seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought " + itemTotalAmount + " " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));
@@ -126,14 +126,15 @@ public class PlayerShops {
         }
         e.setCancelled(true);
     }
+
     private static void middleClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
         e.setCancelled(true);
         if (Objects.requireNonNull(e.getCurrentItem()).getAmount() != 0) {
             int itemTotalCost = itemCost * 10;
-            if (buyerBalance < itemTotalCost){
+            if (buyerBalance < itemTotalCost) {
                 player.sendMessage(ChatColor.RED + "Not enough money to buy these 10 items.");
             } else {
-                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()))!= null)){
+                if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString())) != null)) {
                     Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
                     assert seller != null;
                     seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought 10 " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));

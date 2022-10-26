@@ -33,22 +33,23 @@ public class Lottery {
             }
             Random rand = new Random();
             int n = rand.nextInt(playerList.size());
-            double totalLottoAmount = (count * maxLottoAmount) + lotteryCfg.getDouble("additionalPrize");;
+            double totalLottoAmount = (count * maxLottoAmount) + lotteryCfg.getDouble("additionalPrize");
+            ;
             Api.messageInConsole(ChatColor.GREEN + playerList.get(n));
             OfflinePlayer winningPlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerList.get(n)));
             TextChannel lotteryWinnerChannel = LatchDiscord.jda.getTextChannelById(lmp.Constants.LOTTERY_WINNER_CHANNEL_ID);
             assert lotteryWinnerChannel != null;
             lotteryWinnerChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(playerList.get(n)) + "> won the lottery!!! They won $" + totalLottoAmount).queue();
             Api.getEconomy().depositPlayer(winningPlayer, totalLottoAmount);
-            Bukkit.broadcastMessage(ChatColor.GOLD + winningPlayer.getName() + ChatColor.GREEN + " won the lottery!!! They won " + ChatColor.GOLD + "$" + totalLottoAmount );
+            Bukkit.broadcastMessage(ChatColor.GOLD + winningPlayer.getName() + ChatColor.GREEN + " won the lottery!!! They won " + ChatColor.GOLD + "$" + totalLottoAmount);
             lotteryCfg.save(Api.getConfigFile(YmlFileNames.YML_LOTTERY_FILE_NAME));
-        } catch (IllegalArgumentException ignored){
-            
+        } catch (IllegalArgumentException ignored) {
+
         }
 
     }
 
-    public static void lottoCommands(Player player, String parameter, CommandSender sender){
+    public static void lottoCommands(Player player, String parameter, CommandSender sender) {
         String playerName = player.getName();
         String playerId = player.getUniqueId().toString();
         FileConfiguration lotteryCfg = Api.loadConfig(YmlFileNames.YML_LOTTERY_FILE_NAME);
@@ -56,10 +57,10 @@ public class Lottery {
         String lottoPlayerCheck = lmp.Constants.YML_PLAYERS + playerId;
         boolean playerBoughtIn;
         try {
-            if (parameter.equalsIgnoreCase("check")){
-                if (lotteryCfg.isSet(lottoPlayerCheck)){
+            if (parameter.equalsIgnoreCase("check")) {
+                if (lotteryCfg.isSet(lottoPlayerCheck)) {
                     playerBoughtIn = lotteryCfg.getBoolean(lottoPlayerCheck + ".boughtIn");
-                    if (Boolean.TRUE.equals(playerBoughtIn)){
+                    if (Boolean.TRUE.equals(playerBoughtIn)) {
                         player.sendMessage(ChatColor.GREEN + "You have bought in the current lotto for " + ChatColor.GOLD + "$" + lottoBuyinAmount);
                     } else {
                         player.sendMessage(ChatColor.RED + "You have to buy in with " + ChatColor.AQUA + "/lmp lotto buyin");
@@ -67,10 +68,10 @@ public class Lottery {
                 } else {
                     player.sendMessage(ChatColor.RED + "You have to buy in with " + ChatColor.AQUA + "/lmp lotto buyin");
                 }
-            } else if (parameter.equalsIgnoreCase("buyin")){
+            } else if (parameter.equalsIgnoreCase("buyin")) {
                 double playerBalance = Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(player.getUniqueId()));
-                if (playerBalance >= lottoBuyinAmount){
-                    if (Boolean.FALSE.equals(lotteryCfg.getBoolean(lmp.Constants.YML_PLAYERS + playerId + ".boughtIn"))){
+                if (playerBalance >= lottoBuyinAmount) {
+                    if (Boolean.FALSE.equals(lotteryCfg.getBoolean(lmp.Constants.YML_PLAYERS + playerId + ".boughtIn"))) {
                         player.sendMessage(ChatColor.GREEN + "You bought into the current lottery for " + ChatColor.GOLD + "$" + lottoBuyinAmount);
                         Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), lottoBuyinAmount);
                         lotteryCfg.set(lottoPlayerCheck + ".boughtIn", true);
@@ -93,14 +94,14 @@ public class Lottery {
                         count++;
                     }
                 }
-                double totalLottoAmount = (count * lottoBuyinAmount) + lotteryCfg.getDouble("additionalPrize") ;
+                double totalLottoAmount = (count * lottoBuyinAmount) + lotteryCfg.getDouble("additionalPrize");
                 player.sendMessage(ChatColor.GREEN + "Current lottery worth " + ChatColor.GOLD + "$" + totalLottoAmount);
-            } else if (parameter.equalsIgnoreCase("run")){
-                if (playerName.equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) || sender != null){
+            } else if (parameter.equalsIgnoreCase("run")) {
+                if (playerName.equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) || sender != null) {
                     Lottery.executeLotto();
                 }
             }
-        } catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             player.sendMessage(ChatColor.RED + "Invalid command. Please use this command as follows -> " + ChatColor.AQUA + "[/lmp lotto check] [/lmp lotto buyin] [/lmp lotto total]");
         } catch (IOException e) {
             throw new RuntimeException(e);
