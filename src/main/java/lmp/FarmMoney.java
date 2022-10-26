@@ -1,9 +1,10 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ public class FarmMoney {
         deniedWorlds.add("hardcore_the_end");
 
         if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())){
-            FileConfiguration mainConfig = Api.loadConfig(Constants.YML_CONFIG_FILE_NAME);
+            FileConfiguration mainConfig = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);
             OfflinePlayer player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
             DecimalFormat df = new DecimalFormat("0.00");
             if (event.getBlock().getBlockData().toString().contains("age=7")){

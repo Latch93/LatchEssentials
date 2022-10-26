@@ -1,5 +1,7 @@
 package lmp;
 
+import lmp.api.Api;
+import lmp.constants.YmlFileNames;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -134,7 +136,7 @@ public class Advancements {
     }
 
     public static void setPlayerCompletedAdvancementsOnLogin(Player player) throws IOException {
-        FileConfiguration advancementCfg = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
+        FileConfiguration advancementCfg = Api.loadConfig(YmlFileNames.YML_ADVANCEMENT_FILE_NAME);
         Iterator<org.bukkit.advancement.Advancement> advancements = Bukkit.getServer().advancementIterator();
         String playerName = player.getName();
         int totalCompletedAdvancementCount = 0;
@@ -152,7 +154,7 @@ public class Advancements {
         advancementCfg.set(Constants.YML_PLAYERS + playerName + ".name", playerName);
         advancementCfg.set(Constants.YML_PLAYERS + playerName + ".advancementCount", totalCompletedAdvancementCount);
         advancementCfg.set("totalAdvancements", Advancements.getAdvancements().size());
-        advancementCfg.save(Api.getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME));
+        advancementCfg.save(Api.getConfigFile(YmlFileNames.YML_ADVANCEMENT_FILE_NAME));
     }
 
     public static void setPlayerAdvancementOnCompletion(PlayerAdvancementDoneEvent e) throws IOException {
@@ -160,9 +162,9 @@ public class Advancements {
             for (Advancement advancement : getAdvancements()){
                 if (e.getAdvancement().getKey().toString().equalsIgnoreCase(advancement.getID())){
                     String playerName = e.getPlayer().getName();
-                    FileConfiguration advancementCfg = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME);
+                    FileConfiguration advancementCfg = Api.loadConfig(YmlFileNames.YML_ADVANCEMENT_FILE_NAME);
                     advancementCfg.set(Constants.YML_PLAYERS + playerName + ".advancementCount", advancementCfg.getInt(Constants.YML_PLAYERS + playerName + ".advancementCount") + 1);
-                    advancementCfg.save(Api.getConfigFile(Constants.YML_ADVANCEMENT_FILE_NAME));
+                    advancementCfg.save(Api.getConfigFile(YmlFileNames.YML_ADVANCEMENT_FILE_NAME));
                 }
             }
         }
@@ -187,7 +189,7 @@ public class Advancements {
         if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")){
             worldPrefix = "[Hardcore] - ";
         }
-        int playerAchievementCount = Api.loadConfig(Constants.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
+        int playerAchievementCount = Api.loadConfig(YmlFileNames.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
         for (Advancement advance : getAdvancements()) {
             if (advancement.equalsIgnoreCase(advance.getID()) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
                 eb.setTitle(worldPrefix + advance.getName() + "!");

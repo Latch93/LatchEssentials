@@ -5,7 +5,132 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0affd6cf-3b41-47aa-8bc4-d9a699a88543" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/constants/Constants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/constants/ServerCommands.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/constants/YmlFileNames.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/api/Api.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/AutoMiner/AutoMiner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/AutoMiner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/AutoMiner/AutoMinerCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/AutoMinerCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/AutoMiner/AutoMinerConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/AutoMinerConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/AutoMiner/AutoMinerTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/AutoMinerTabComplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Backbacks/BackPackCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/BackPackCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Backbacks/BackPackInventoryConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/BackPackInventoryConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Backbacks/BackpackTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/BackpackTabComplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Backbacks/Inventories.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Inventories.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Bank/Bank.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Bank.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Bank/BankConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/BankConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/BossBattle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/BossBattle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/ChestProtect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/ChestProtect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Configurations/AdvancementConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/AdvancementConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Configurations/AutoSorterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/AutoSorterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Configurations/BossConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/BossConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Configurations/LotteryConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/LotteryConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Configurations/WhitelistConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/WhitelistConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/CustomPortals.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/CustomPortals.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordAdminChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordAdminChatCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordStaffChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordStaffChatCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommandTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/LMPCommandTabComplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/LMPConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DonationClaimRewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DonationClaimRewards.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/FarmMoney.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/FarmMoney.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/IssueTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/IssueTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/runnable/LMPTimer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LTSNomination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/LTSNomination.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchTwitchBot/LatchTwitchBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/twitch/LatchTwitchBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchTwitchBot/LatchTwitchBotCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/LatchTwitchBotCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchTwitchBot/LatchTwitchBotConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/LatchTwitchBotConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchTwitchBot/LatchTwitchBotRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/runnable/LatchTwitchBotRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchTwitchBot/LatchTwitchBotTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/LatchTwitchBotTabComplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Lottery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Lottery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/MessageDiscordUserFromServerCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/MessageDiscordUserFromServerCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/MobileSpawner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/MobileSpawner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PingTabList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/runnable/PingTabListRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PingUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/util/PingUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops/PlayerShops.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops/PlayerShopsCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/PlayerShopsCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops/PlayerShopsInventoryConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/configurations/PlayerShopsInventoryConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops/PlayerShopsTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/PlayerShopsTabComplete.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PortalBlocker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/PortalBlocker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/QuickBrew.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickBrew.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/QuickSmelt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickSmelt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/SlimeChunkFinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/SlimeChunkFinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/StaffApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/StaffApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/UnbanRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/UnbanRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/XPFarm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/XPFarm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2-shaded.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchLMP-1.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Api.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner/AutoMiner.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner/AutoMinerCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner/AutoMinerConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner/AutoMinerTabComplete.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Backbacks/BackPackCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Backbacks/BackPackInventoryConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Backbacks/BackpackTabComplete.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Backbacks/Inventories.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Bank/Bank.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Bank/BankConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/BossBattle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/BossBattle.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/ChestProtect.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/AdvancementConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/AdvancementConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoSorterConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoSorterConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/BossConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/BossConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/LotteryConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/LotteryConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/WhitelistConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/WhitelistConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/CustomPortals.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordAdminChatCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordStaffChatCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPCommandTabComplete.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DiscordText/LMPConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DonationClaimRewards.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DonationClaimRewards.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/FarmMoney.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/FarmMoney.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/IssueTracker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LMPTimer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LTSNomination.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchTwitchBot/LatchTwitchBot.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchTwitchBot/LatchTwitchBotCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchTwitchBot/LatchTwitchBotConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchTwitchBot/LatchTwitchBotRunnable.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchTwitchBot/LatchTwitchBotTabComplete.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/MessageDiscordUserFromServerCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/MobileSpawner.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PingTabList.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PingUtil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShops.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShopsCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShopsInventoryConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops/PlayerShopsTabComplete.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PortalBlocker.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/PortalBlocker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/QuickBrew.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/QuickSmelt.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/SlimeChunkFinder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/StaffApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/UnbanRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/original-LatchLMP-1.2.jar" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,20 +152,20 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/Advancements.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/Api.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/ChestProtect.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/Constants.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/DiscordStaffChatCommand.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/DiscordText/LMPCommand.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/LMPTimer.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/Lottery.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/Main.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/QuickSmelt.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/SlimeChunkFinder.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/XPFarm.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/api/Api.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/commands/DiscordStaffChatCommand.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/customItems/QuickSmelt.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/customItems/SlimeChunkFinder.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/ChestProtect.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/runnable/LMPTimer.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -57,18 +182,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Latch/OneDrive - The Integration Group of Americas/Documents/Projects/Money4Mobs&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.6183908&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.editor&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "C:/Users/Latch/OneDrive - The Integration Group of Americas/Documents/Projects/Money4Mobs",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.6183908",
+    "settings.editor.selected.configurable": "inlay.hints"
   }
-}</component>
+}]]></component>
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="mvn clean" />
