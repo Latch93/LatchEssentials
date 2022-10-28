@@ -50,10 +50,12 @@ public class Constants {
     public static final String PLAYSTATION_ROLE_ID = "976308441528270888";
     public static final String XBOX_ROLE_ID = "976308156189794375";
     public static final String JAVA_ROLE_ID = "976309331177902161";
+    public static final String SWITCH_ROLE_ID = "1035273277997854720";
     public static final String MOBILE_MESSAGE_ID = "976310931481034772";
     public static final String PLAYSTATION_MESSAGE_ID = "976310469633638420";
     public static final String XBOX_MESSAGE_ID = "976310645198827532";
     public static final String JAVA_MESSAGE_ID = "976311072334155797";
+    public static final String SWITCH_MESSAGE_ID = "1035274527057395832";
     public static final String GENERAL_CHANNEL_ID = "625983914049142790";
     public static final String ADMIN_CHANNEL_ID = "628708543440093215";
     public static final String PIXELMON_BOT_ID = "999469341894508644";

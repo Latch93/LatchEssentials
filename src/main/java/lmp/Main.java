@@ -10,6 +10,22 @@ import lmp.constants.YmlFileNames;
 import lmp.customItems.*;
 import lmp.customRecipes.CustomRecipes;
 import lmp.listenerAdapters.ChestProtect;
+import lmp.listeners.asyncPlayerChatEvents.BroadcastServerChatToDiscord;
+import lmp.listeners.entityDeathEvents.DisableEntityCrammingEvent;
+import lmp.listeners.entityDeathEvents.LogVillagerDeathEvent;
+import lmp.listeners.playerAdvancementDoneEvents.PlayerAdvancementEvent;
+import lmp.listeners.playerCommandPreprocessEvents.LogPlayerBanFromServerCommandEvent;
+import lmp.listeners.playerDeathEvents.BroadcastDeathMessageToDiscordEvent;
+import lmp.listeners.playerDeathEvents.DeathByJerryEvent;
+import lmp.listeners.playerDeathEvents.HardcoreDeathEvent;
+import lmp.listeners.playerDeathEvents.WithdrawPlayerMoneyOnDeathEvent;
+import lmp.listeners.playerInteractEntityEvents.GiveJerryArmorEvent;
+import lmp.listeners.playerJoinEvents.*;
+import lmp.listeners.playerMoveEvents.DenyMoveForUnlinkedPlayerEvent;
+import lmp.listeners.playerQuitEvents.BankLogoutEvent;
+import lmp.listeners.playerQuitEvents.BroadcastPlayerQuitMessageToDiscordEvent;
+import lmp.listeners.playerQuitEvents.StopTwitchBotOnPlayerLogoutEvent;
+import lmp.listeners.playerQuitEvents.TurnOffXPFarmOnPlayerLogoutEvent;
 import lmp.runnable.LMPTimer;
 import lmp.runnable.PingTabListRunnable;
 import lmp.tabComplete.BackpackTabComplete;
@@ -18,15 +34,9 @@ import lmp.tabComplete.LatchTwitchBotTabComplete;
 import lmp.tabComplete.PlayerShopsTabComplete;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.NodeEqualityPredicate;
-import net.luckperms.api.node.types.InheritanceNode;
-import net.luckperms.api.util.Tristate;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -34,9 +44,7 @@ import org.bukkit.block.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -48,7 +56,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -59,17 +69,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.egit.github.core.client.GitHubClient;
 
 import javax.security.auth.login.LoginException;
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
-
-import static lmp.LatchDiscord.jda;
-import static org.bukkit.Bukkit.getOnlinePlayers;
 
 
 public class Main extends JavaPlugin implements Listener {
@@ -87,8 +95,28 @@ public class Main extends JavaPlugin implements Listener {
         log = getLogger();
         log.info(Constants.PLUGIN_NAME + " is enabled");
         pm.registerEvents(this, this);
-//        pm.registerEvents(, this);
-        if (Boolean.FALSE.equals(getIsParameterInTesting("startDiscord"))) {
+        new PlayerAdvancementEvent(this);
+        new DeathByJerryEvent(this);
+        new WithdrawPlayerMoneyOnDeathEvent(this);
+        new BroadcastDeathMessageToDiscordEvent(this);
+        new HardcoreDeathEvent(this);
+        new DisableEntityCrammingEvent(this);
+        new LogVillagerDeathEvent(this);
+        new BroadcastPlayerJoinMessageToDiscordEvent(this);
+        new SetPlayerCompletedAdvancementsOnLoginEvent(this);
+        new UpdatePlayerWhitelistOnJoinEvent(this);
+        new SendJoinMessageEvent(this);
+        new SendHowToLinkMessageEvent(this);
+        new BankLoginEvent(this);
+        new BankLogoutEvent(this);
+        new GiveJerryArmorEvent(this);
+        new BroadcastPlayerQuitMessageToDiscordEvent(this);
+        new TurnOffXPFarmOnPlayerLogoutEvent(this);
+        new StopTwitchBotOnPlayerLogoutEvent(this);
+        new BroadcastServerChatToDiscord(this);
+        new LogPlayerBanFromServerCommandEvent(this);
+        new DenyMoveForUnlinkedPlayerEvent(this);
+        if (Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME).getBoolean("enableDiscord")) {
             try {
                 new LatchDiscord();
             } catch (LoginException e) {
@@ -122,57 +150,13 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
             Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
-            getLogger().info(Constants.PLUGIN_NAME + " is disabled");
             LatchDiscord.stopBot();
+        }
+        FileConfiguration enabledEventsCfg = Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME);
+        if (enabledEventsCfg.getBoolean("broadcastServerStoppedMessageToDiscord")) {
             LatchDiscord.sendServerStoppedMessage();
         }
-    }
-
-    @EventHandler
-    public static void advancementDoneEvent(PlayerAdvancementDoneEvent e) throws IOException {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("advancementDoneEvent"))) {
-            Advancements.setPlayerAdvancementOnCompletion(e);
-            Advancements.showAdvancementInDiscord(e);
-            Advancements.broadcastAdvancement(e);
-        }
-    }
-
-    @EventHandler
-    public static void onPlayerDeath(PlayerDeathEvent e) throws IOException {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerDeath"))) {
-            EmbedBuilder eb = new EmbedBuilder();
-            String worldPrefix = "[LMP] - ";
-            if (e.getEntity().getWorld().getName().equalsIgnoreCase("hardcore")) {
-                worldPrefix = "[Hardcore] - ";
-            }
-            eb.setTitle(worldPrefix + e.getDeathMessage());
-            eb.setColor(new Color(0xE1922E00, true));
-            eb.setThumbnail("https://minotar.net/avatar/" + e.getEntity().getName() + ".png?size=5");
-            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
-            assert minecraftChatChannel != null;
-            minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
-            if (Objects.requireNonNull(e.getDeathMessage()).contains("Super Jerry")) {
-                LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("<@" + Api.getDiscordIdFromMCid(e.getEntity().getUniqueId().toString()) + "> - AKA: " + e.getEntity().getName() + " tried to hurt Super Jerry.").queue();
-            }
-            if (e.getEntity().getKiller() == null && Boolean.TRUE.equals(Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getBoolean("doesPlayerLoseMoneyOnDeath"))) {
-                DecimalFormat df = new DecimalFormat("0.00");
-                double playerBalance = Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(e.getEntity()));
-                double percentToRemove = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getDouble("deathBalancePercentage");
-                double amountToRemove = (playerBalance / 100.00) * percentToRemove;
-                Api.getEconomy().withdrawPlayer(Api.getOfflinePlayerFromPlayer(e.getEntity()), amountToRemove);
-                e.getEntity().sendMessage(ChatColor.YELLOW + "You lost " + ChatColor.RED + "$" + df.format(amountToRemove) + ChatColor.YELLOW + " because you died.");
-            }
-            if (e.getEntity().getWorld().getName().contains("hardcore")) {
-                FileConfiguration hardcoreCfg = Api.getFileConfiguration(YmlFileNames.YML_HARDCORE_FILE_NAME);
-                Player player = e.getEntity();
-                String uuid = player.getUniqueId().toString();
-                if (Boolean.TRUE.equals(hardcoreCfg.getBoolean(uuid + ".isAlive"))) {
-                    hardcoreCfg.set(uuid + ".isAlive", false);
-                    hardcoreCfg.save(Api.getConfigFile(YmlFileNames.YML_HARDCORE_FILE_NAME));
-                }
-            }
-        }
-
+        getLogger().info(Constants.PLUGIN_NAME + " is disabled");
     }
 
     public static boolean getIsParameterInTesting(String parameter) {
@@ -260,8 +244,6 @@ public class Main extends JavaPlugin implements Listener {
         } catch (NullPointerException ignored) {
 
         }
-
-
     }
 
     public static LuckPerms getLuckPerms() {
@@ -271,29 +253,6 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void EntityDamageEvent(EntityDamageEvent e) {
         BossBattle.bossHurtEvent(e);
-    }
-
-    @EventHandler
-    public void EntityDeathEvent(EntityDeathEvent e) throws IOException {
-        if (e.getEntity().getType().equals(EntityType.VILLAGER)) {
-            FileConfiguration villagerHurtLog = Api.getFileConfiguration(YmlFileNames.YML_VILLAGER_HURT_LOG_FILE_NAME);
-            Date date = new Date();
-            Villager villager = (Villager) e.getEntity();
-            String id = "other";
-            if (e.getEntity().getKiller() != null) {
-                id = e.getEntity().getKiller().getUniqueId().toString();
-                villagerHurtLog.set(id + ".playerName", e.getEntity().getKiller().getName());
-            }
-            villagerHurtLog.set(id + "." + date + ".type", villager.getProfession().toString());
-            villagerHurtLog.set(id + "." + date + ".location.x", e.getEntity().getLocation().getBlockX());
-            villagerHurtLog.set(id + "." + date + ".location.y", e.getEntity().getLocation().getBlockY());
-            villagerHurtLog.set(id + "." + date + ".location.z", e.getEntity().getLocation().getBlockZ());
-            villagerHurtLog.save(Api.getConfigFile(YmlFileNames.YML_VILLAGER_HURT_LOG_FILE_NAME));
-        }
-        if (e.getEntity().getLastDamageCause() != null && e.getEntity().getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.CRAMMING)) {
-            e.setDroppedExp(0);
-            e.getDrops().clear();
-        }
     }
 
     @EventHandler
@@ -331,96 +290,9 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerJoinEvent e) throws IOException {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onLogin"))) {
-            LatchDiscord.sendPlayerOnJoinMessage(e);
-            Bank.setLoginTime(e);
-            Bank.getPlayerBalance(e.getPlayer());
-            Bank.setPlayerBalanceInConfigOnLogin(e.getPlayer());
-            Bank.showLastSessionReward(e.getPlayer());
-            Advancements.setPlayerCompletedAdvancementsOnLogin(e.getPlayer());
-            Api.checkPlayerMemberStatus(e.getPlayer());
-            Api.updateUserInfo(e.getPlayer());
-        }
-    }
-
-    @EventHandler
-    public void onLogout(PlayerQuitEvent event) throws IOException {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onLogout"))) {
-            LatchDiscord.sendPlayerLogoutMessage(event);
-            Bank.setLogoutTime(event);
-            Bank.setPlayerSessionSecondsPlayed(event);
-            Bank.getPlayerBalance(event.getPlayer());
-            Bank.setPlayerBalanceWithInterest(event.getPlayer());
-            Api.stopTwitchBot(LatchTwitchBotCommand.twitchBotList, event.getPlayer());
-        }
-        Api.turnOffXPFarmOnPlayerLogoff(event);
-    }
-
-//    @EventHandler
-//    public void onPlayerBlockPlace(BlockPlaceEvent e) {
-//        Block blockPlaced = e.getBlock();
-//        if (e.getBlock().getType().equals(Material.CHEST)){
-//            Chest chest = (Chest) e.getBlock().getState();
-//            chest.setCustomName(e.getPlayer().getName() + "'s Chest");
-//        }
-//    }
-
-    @EventHandler
-    public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
-        FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
-        if (e.getRightClicked().getType() == EntityType.GIANT) {
-            Monster monster = (Monster) e.getRightClicked();
-            String boss = "bosses.zombieBoss";
-            Objects.requireNonNull(monster.getEquipment()).setHelmet(new ItemStack(Objects.requireNonNull(bossCfg.getItemStack(boss + ".bossHelmet"))));
-            Objects.requireNonNull(monster.getEquipment()).setChestplate(Objects.requireNonNull(bossCfg.getItemStack(boss + ".bossChestplate")));
-            Objects.requireNonNull(monster.getEquipment()).setBoots(Objects.requireNonNull(bossCfg.getItemStack(boss + ".bossBoots")));
-            Objects.requireNonNull(monster.getEquipment()).setLeggings(Objects.requireNonNull(bossCfg.getItemStack(boss + ".bossLeggings")));
-            Objects.requireNonNull(monster.getEquipment()).setItemInMainHand(Objects.requireNonNull(bossCfg.getItemStack(boss + ".bossWeapon")));
-        }
-    }
-
-    @EventHandler
-    public void onPlayerChatEvent(AsyncPlayerChatEvent e) {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChatEvent"))) {
-            String worldPrefix = "[LMP] - ";
-            if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
-                worldPrefix = "[Hardcore] - ";
-            }
-            if (Boolean.TRUE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
-                Objects.requireNonNull(jda.getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
-                for (Player player : getOnlinePlayers()) {
-                    if (player.hasPermission("group.jr-mod")) {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
-                    }
-                }
-                e.setCancelled(true);
-            } else {
-                TextChannel minecraftChatChannel = jda.getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
-                assert minecraftChatChannel != null;
-                minecraftChatChannel.sendMessage(worldPrefix + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("linkingEnabled"))) {
-            User user = luckPerms.getUserManager().getUser(e.getPlayer().getUniqueId());
-            assert user != null;
-            if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT).equals(Tristate.TRUE)) {
-                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.RED + "Go to Discord and type " + ChatColor.AQUA + "!link " + ChatColor.RED + " in the General channel"));
-                e.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     public void onCommandEvent(PlayerCommandPreprocessEvent event) throws IOException, ExecutionException, InterruptedException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onCommandEvent"))) {
-            LatchDiscord.logPlayerBan(event, null);
             if (event.getMessage().equalsIgnoreCase("/back")) {
-                Api.denyBackIntoBossArena(event);
                 Api.denyBackIntoXPFarm(event);
             }
             if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {

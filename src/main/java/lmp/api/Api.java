@@ -9,6 +9,7 @@ import lmp.twitch.LatchTwitchBot;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.node.types.InheritanceNode;
@@ -29,7 +30,6 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -261,17 +262,19 @@ public class Api {
         return time;
     }
 
-    public static void checkPlayerMemberStatus(Player player) {
-        net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
-        assert user != null;
-        if (!"default".equalsIgnoreCase(user.getPrimaryGroup()) && Boolean.TRUE.equals(Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getBoolean("showJoinMessage"))) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Objects.requireNonNull(Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getString("joinMessage")))));
-        }
-        if (user.data().contains(InheritanceNode.builder("default").value(true).build(), NodeEqualityPredicate.EXACT).equals(Tristate.TRUE)) {
-            player.sendMessage(ChatColor.RED + "You need to link your Discord and Minecraft accounts.\n" +
-                    "Go to Discord and type the following into the General Channel -> " + ChatColor.AQUA + "!link\n" +
-                    ChatColor.RED + "Then copy and paste the command into Minecraft chat and click enter.");
-        }
+    public static double getPlayerBalance(Player player) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
+        Economy econ = Api.getEconomy();
+        return econ.getBalance(offlinePlayer);
+    }
+
+    public static Long getSecondsPlayedInSession(String playerId) {
+        FileConfiguration bankCfg = Api.getFileConfiguration(YmlFileNames.YML_BANK_FILE_NAME);
+        long loginTime = bankCfg.getLong(lmp.Constants.YML_PLAYERS + playerId + ".loginTime");
+        Date date = new Date();
+        long logoutTime = date.getTime();
+        long totalTimePlayedMilli = logoutTime - loginTime;
+        return TimeUnit.MILLISECONDS.toSeconds(totalTimePlayedMilli);
     }
 
     public static boolean cancelJrModEvent(UUID uniqueId) {
@@ -287,24 +290,8 @@ public class Api {
         return isInvisibleJrMod;
     }
 
-    public static void updateUserInfo(Player player) throws IOException {
-        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
-        if (whitelistCfg.isSet(String.valueOf(player.getUniqueId()))) {
-            whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
-            String discordId = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordId");
-            assert discordId != null;
-            if (LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getMemberById(discordId) != null) {
-                whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordName", Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(discordId)).getUser().getName());
-                whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", true);
-                if (!player.getName().equalsIgnoreCase(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName"))) {
-                    whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
-                }
-            } else {
-                whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".isPlayerInDiscord", false);
-                player.kickPlayer("You not in Latch's Discord.");
-            }
-        }
-        whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+    public static LuckPerms getLuckPerms() {
+        return Main.luckPerms;
     }
 
     public static void stopTwitchBot(List<LatchTwitchBotRunnable> twitchBotList, Player player) {
@@ -318,6 +305,14 @@ public class Api {
                 iter.remove();
             }
         }
+    }
+
+    public static String getPlayerChatWorldPrefix(String worldName){
+        String worldPrefix = "[LMP] - ";
+        if (worldName.equalsIgnoreCase("hardcore")) {
+            worldPrefix = "[Hardcore] - ";
+        }
+        return worldPrefix;
     }
 
     public static void stopAllTwitchBots(List<LatchTwitchBotRunnable> twitchBotList) {
@@ -370,27 +365,27 @@ public class Api {
         return player.getPing();
     }
 
-    public static void addPlayerToPermissionGroup(String minecraftId, String groupName) {
-        InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
-        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
-        userFuture.thenAcceptAsync(user -> {
-            user.data().add(node);
-            Main.luckPerms.getUserManager().saveUser(user);
-        });
-    }
-
+    // Luck Perms Api
     public static Boolean doesPlayerHavePermission(String minecraftId, String groupName) throws ExecutionException, InterruptedException {
-        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Api.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
         return userFuture.thenApplyAsync(user -> {
             Collection<Group> inheritedGroups = user.getInheritedGroups(user.getQueryOptions());
             return inheritedGroups.stream().anyMatch(g -> g.getName().equals(groupName));
         }).get();
     }
 
+    public static void addPlayerToPermissionGroup(String minecraftId, String groupName) {
+        InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Api.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        userFuture.thenAcceptAsync(user -> {
+            user.data().add(node);
+            Main.luckPerms.getUserManager().saveUser(user);
+        });
+    }
 
     public static void removePlayerFromPermissionGroup(String minecraftId, String groupName) {
         InheritanceNode node = InheritanceNode.builder(groupName).value(true).build();
-        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Main.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
+        CompletableFuture<net.luckperms.api.model.user.User> userFuture = Api.getLuckPerms().getUserManager().loadUser(UUID.fromString(minecraftId));
         userFuture.thenAcceptAsync(user -> {
             user.data().remove(node);
             Main.luckPerms.getUserManager().saveUser(user);
@@ -420,23 +415,6 @@ public class Api {
             break;
         }
         return overworldPlayer;
-    }
-
-    public static void denyBackIntoBossArena(PlayerCommandPreprocessEvent e) {
-        Player player = e.getPlayer();
-        File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
-        FileConfiguration playerDataCfg = YamlConfiguration.loadConfiguration(playerDataFile);
-        Location lastLocation = new Location(Bukkit.getWorld("world"), playerDataCfg.getDouble("lastlocation.x"), playerDataCfg.getDouble("lastlocation.y"), playerDataCfg.getDouble("lastlocation.z"));
-        if (player.getWorld().equals(Bukkit.getWorld("world"))) {
-            if (lastLocation.getBlockX() >= -2941 && lastLocation.getBlockX() <= -2798) {
-                if (lastLocation.getBlockY() >= 57 && lastLocation.getBlockY() <= 83) {
-                    if (lastLocation.getBlockZ() >= 32884 && lastLocation.getBlockZ() <= 33023) {
-                        e.setCancelled(true);
-                        player.sendMessage(ChatColor.RED + "You can't use /back into the arena. Use /warp coliseum to collect your things.");
-                    }
-                }
-            }
-        }
     }
 
     public static void denyBackIntoXPFarm(PlayerCommandPreprocessEvent e) {
@@ -542,16 +520,6 @@ public class Api {
             playerAtFarm.sendMessage(ChatColor.AQUA + "Your time is up!");
             xpFarmCfg.set("isFarmInUse", false);
             xpFarmCfg.save(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
-        }
-    }
-
-    public static void turnOffXPFarmOnPlayerLogoff(PlayerQuitEvent e) throws IOException {
-        FileConfiguration xpFarmCfg = Api.getFileConfiguration(YmlFileNames.YML_XP_FARM_FILE_NAME);
-        if (Boolean.TRUE.equals(xpFarmCfg.get("isFarmInUse"))) {
-            if (e.getPlayer().getUniqueId().toString().equalsIgnoreCase(xpFarmCfg.getString("playerIDUsingFarm"))) {
-                xpFarmCfg.set("isFarmInUse", false);
-                xpFarmCfg.save(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
-            }
         }
     }
 
