@@ -481,7 +481,6 @@ public class Api {
         commandBypassList.add("/lmp withdraw");
         commandBypassList.add("/co i");
         commandBypassList.add("/geyser offhand");
-
         if (!commandBypassList.contains(message) && !playerBypassList.contains(e.getPlayer().getUniqueId().toString()) && player.getWorld().equals(Bukkit.getWorld("world"))) {
             FileConfiguration xpFarmCfg = Api.getFileConfiguration(YmlFileNames.YML_XP_FARM_FILE_NAME);
             Location lastLocation = e.getPlayer().getLocation();
@@ -521,6 +520,10 @@ public class Api {
             xpFarmCfg.set("isFarmInUse", false);
             xpFarmCfg.save(Api.getConfigFile(YmlFileNames.YML_XP_FARM_FILE_NAME));
         }
+    }
+
+    public static void stopDiscordBot() {
+        LatchDiscord.getJDA().shutdown();
     }
 
     public static void placeBlockLog(BlockPlaceEvent event) throws IOException {

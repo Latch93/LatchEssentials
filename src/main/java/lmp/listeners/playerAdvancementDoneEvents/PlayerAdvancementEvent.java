@@ -36,7 +36,6 @@ public final class PlayerAdvancementEvent implements Listener {
             broadcastAdvancementInDiscord(e);
             broadcastAdvancementOnLMP(e);
         }
-
     }
 
     public static void broadcastAdvancementInDiscord(PlayerAdvancementDoneEvent e) {
@@ -67,32 +66,30 @@ public final class PlayerAdvancementEvent implements Listener {
     }
 
     public static void broadcastAdvancementOnLMP(PlayerAdvancementDoneEvent e) {
-        if (Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
-            String advancement = e.getAdvancement().getKey().toString();
-            net.md_5.bungee.api.chat.TextComponent advancementName = null;
-            HoverEvent he = null;
-            String worldPrefix = "[LMP] - ";
-            if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
-                worldPrefix = "[Hardcore] - ";
-            }
-            net.md_5.bungee.api.chat.TextComponent playerName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + e.getPlayer().getName() + ChatColor.WHITE + " has made the advancement ");
-            for (Advancement advance : advancementList) {
-                if (advancement.equalsIgnoreCase(advance.getID())) {
-                    advancementName = new TextComponent(ChatColor.GREEN + "[" + advance.getName() + "]");
-                    he = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + advance.getCriteria()));
-                    advancementName.setHoverEvent(he);
-                    advancementName.setColor(net.md_5.bungee.api.ChatColor.GREEN);
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        player.spigot().sendMessage(playerName, advancementName);
-                    }
+        String advancement = e.getAdvancement().getKey().toString();
+        net.md_5.bungee.api.chat.TextComponent advancementName = null;
+        HoverEvent he = null;
+        String worldPrefix = "[LMP] - ";
+        if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
+            worldPrefix = "[Hardcore] - ";
+        }
+        net.md_5.bungee.api.chat.TextComponent playerName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + e.getPlayer().getName() + ChatColor.WHITE + " has made the advancement ");
+        for (Advancement advance : advancementList) {
+            if (advancement.equalsIgnoreCase(advance.getID())) {
+                advancementName = new TextComponent(ChatColor.GREEN + "[" + advance.getName() + "]");
+                he = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + advance.getCriteria()));
+                advancementName.setHoverEvent(he);
+                advancementName.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.spigot().sendMessage(playerName, advancementName);
                 }
             }
-
         }
+
     }
 
     public static void setPlayerAdvancementOnCompletion(PlayerAdvancementDoneEvent e) throws IOException {
-        if (Boolean.TRUE.equals(isValidAdvancement(e))) {
+        if (isValidAdvancement(e)) {
             for (Advancement advancement : advancementList) {
                 if (e.getAdvancement().getKey().toString().equalsIgnoreCase(advancement.getID())) {
                     String playerName = e.getPlayer().getName();

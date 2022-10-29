@@ -5,114 +5,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0affd6cf-3b41-47aa-8bc4-d9a699a88543" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/guildMemberRemoveEvents/SetWhiteListOnMemberLeaveGuildEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/messageReactionAddEvents/AddDiscordRoleOnMemberMessageReactEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/messageReactionRemoveEvents/RemoveDiscordRoleOnMemberMessageReactEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/onReadyEvents/SendServerStartedMessageToDiscordEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/entityDeathEvents/DisableEntityCrammingEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/entityDeathEvents/LogVillagerDeathEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerCommandPreprocessEvents/DenyBackCommandIntoBossArenaEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/BroadcastDeathMessageToDiscordEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/DeathByJerryEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/HardcoreDeathEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/WithdrawPlayerMoneyOnDeathEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEntityEvents/GiveJerryArmorEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BankLoginEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/SendHowToLinkMessageEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/SendJoinMessageEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/SetPlayerCompletedAdvancementsOnLoginEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/UpdatePlayerWhitelistOnJoinEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerMoveEvents/DenyMoveForUnlinkedPlayerEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BankLogoutEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/StopTwitchBotOnPlayerLogoutEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/TurnOffXPFarmOnPlayerLogoutEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/GeneralDiscordCommands.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/LatchsConfigCommands.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/BanPlayerForTypingTheNWordInDiscordChat.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/LogGithubIssue.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/LogPlayerBanFromDiscordConsole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/guildMemberJoinAdapters/NewGuildMemberJoin.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/guildMemberRoleRemoveAdapters/RemoveServerRoleOnGuildMemberRemove.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/autosort/inventoryMoveItemEvents/SendItemToOutputChestFromMasterChestEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/BanAndLogBanChestThief.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_11_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_12_0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LatchLMP.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LatchEssentials.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LatchEssentials.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LatchEssentials.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Bank.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/api/Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/api/Api.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/constants/YmlFileNames.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/constants/YmlFileNames.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/PlayerAdvancementDoneEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/ChestProtect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/ChestProtect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/IssueTracker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/IssueTracker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/LTSNomination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/LTSNomination.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/StaffApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/StaffApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/UnbanRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/UnbanRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/guildMemberRemoveEvents/SetWhiteListOnMemberLeaveGuildEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/guildRemoveAdapters/SetWhiteListOnMemberLeaveGuildEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/messageReactionAddEvents/AddDiscordRoleOnMemberMessageReactEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/reactionAdapters/AddDiscordRoleOnMemberMessageReactEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/messageReactionRemoveEvents/RemoveDiscordRoleOnMemberMessageReactEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/reactionAdapters/RemoveDiscordRoleOnMemberMessageReactEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/onReadyEvents/SendServerStartedMessageToDiscordEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/SendServerStartedMessageToDiscordEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerCommandPreprocessEvents/DenyBackCommandIntoBossArenaEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/bossBattle/DenyBackCommandIntoBossArenaEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.2-shaded.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchEssentials-1.2-shaded.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.2.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchEssentials-1.2.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancement.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/AutoMiner.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Bank.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/BossBattle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/BossBattle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/AdvancementConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/AdvancementConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoMinerConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoMinerConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoSorterConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/AutoSorterConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/BackPackInventoryConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/BackPackInventoryConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/BankConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/BankConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/BossConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/BossConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/LMPConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/LMPConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/LatchTwitchBotConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/LatchTwitchBotConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/LotteryConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/LotteryConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/PlayerShopsInventoryConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/PlayerShopsInventoryConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Configurations/WhitelistConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Configurations/WhitelistConfig.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/DonationClaimRewards.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/DonationClaimRewards.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/ExperienceManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/ExperienceManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/FarmMoney.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/FarmMoney.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Inventories.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Inventories.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/LatchDiscord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Lottery.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PlayerShops.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/PlayerShops.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/PortalBlocker.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/PortalBlocker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/RandomTeleport.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/XPFarm.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/api/Api.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/api/Api.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/AutoMinerCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/AutoMinerCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/BackPackCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/BackPackCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordAdminChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordAdminChatCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordStaffChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordStaffChatCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/LMPCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/LMPCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/LatchTwitchBotCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/LatchTwitchBotCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/MessageDiscordUserFromServerCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/MessageDiscordUserFromServerCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/PlayerShopsCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/PlayerShopsCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/constants/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/constants/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/constants/ServerCommands.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/constants/ServerCommands.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/constants/YmlFileNames.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/constants/YmlFileNames.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customItems/CustomPortals.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customItems/CustomPortals.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customItems/MobileSpawner.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customItems/MobileSpawner.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customItems/QuickBrew.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customItems/QuickBrew.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customItems/QuickSmelt.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customItems/QuickSmelt.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customItems/SlimeChunkFinder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customItems/SlimeChunkFinder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/customRecipes/CustomRecipes.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/customRecipes/CustomRecipes.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/donationBot/Donation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/donationBot/Donation.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/ChestProtect.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/ChestProtect.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/IssueTracker.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/IssueTracker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/LTSNomination.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/LTSNomination.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/StaffApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/StaffApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/UnbanRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/UnbanRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/PlayerAdvancementDoneEvent.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/runnable/LMPTimer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/runnable/LMPTimer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/runnable/LatchTwitchBotRunnable$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/runnable/LatchTwitchBotRunnable$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/runnable/LatchTwitchBotRunnable.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/runnable/LatchTwitchBotRunnable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/runnable/PingTabListRunnable.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/runnable/PingTabListRunnable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/AutoMinerTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/AutoMinerTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/BackpackTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/BackpackTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/LMPCommandTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/LMPCommandTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/LatchTwitchBotTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/LatchTwitchBotTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/PlayerShopsTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/PlayerShopsTabComplete.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/twitch/LatchTwitchBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/twitch/LatchTwitchBot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/util/PingUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/util/PingUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/ChestProtect.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/IssueTracker.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/LTSNomination.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/StaffApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listenerAdapters/UnbanRequest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/discord/messageReactionAddEvents/AddDiscordRoleOnMemberMessageReactEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/discord/messageReactionRemoveEvents/RemoveDiscordRoleOnMemberMessageReactEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/discord/onReadyEvents/SendServerStartedMessageToDiscordEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerCommandPreprocessEvents/DenyBackCommandIntoBossArenaEvent.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
@@ -150,7 +98,7 @@
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/customItems/QuickSmelt.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/customItems/SlimeChunkFinder.java" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/listenerAdapters/ChestProtect.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/ChestProtect.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main/java/lmp/runnable/LMPTimer.java" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -162,6 +110,9 @@
         <option name="useMavenConfig" value="true" />
       </MavenGeneralSettings>
     </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectId" id="2BBVQHlE80HzJD5FZ4PQM4txkVK" />
   <component name="ProjectViewState">
@@ -181,6 +132,14 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Latch\Desktop\DiscordText\src\main" />
+    </key>
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="lmp.discord.chatMessageAdapters" />
+    </key>
+  </component>
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="mvn install:install-file -Dfile=C:\Users\Latch\Documents\coreprotect-21.2.jar" />

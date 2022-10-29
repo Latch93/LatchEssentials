@@ -9,8 +9,10 @@ import lmp.constants.ServerCommands;
 import lmp.constants.YmlFileNames;
 import lmp.customItems.*;
 import lmp.customRecipes.CustomRecipes;
-import lmp.listenerAdapters.ChestProtect;
+import lmp.discord.privateMessageAdapters.ChestProtect;
 import lmp.listeners.asyncPlayerChatEvents.BroadcastServerChatToDiscord;
+import lmp.listeners.autosort.inventoryMoveItemEvents.SendItemToOutputChestFromMasterChestEvent;
+import lmp.listeners.discord.BanAndLogBanChestThief;
 import lmp.listeners.entityDeathEvents.DisableEntityCrammingEvent;
 import lmp.listeners.entityDeathEvents.LogVillagerDeathEvent;
 import lmp.listeners.playerAdvancementDoneEvents.PlayerAdvancementEvent;
@@ -54,7 +56,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -94,6 +95,13 @@ public class Main extends JavaPlugin implements Listener {
     public void onEnable() {
         log = getLogger();
         log.info(Constants.PLUGIN_NAME + " is enabled");
+        if (Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME).getBoolean("enableDiscord")) {
+            try {
+                new LatchDiscord();
+            } catch (LoginException e) {
+                e.printStackTrace();
+            }
+        }
         pm.registerEvents(this, this);
         new PlayerAdvancementEvent(this);
         new DeathByJerryEvent(this);
@@ -116,13 +124,9 @@ public class Main extends JavaPlugin implements Listener {
         new BroadcastServerChatToDiscord(this);
         new LogPlayerBanFromServerCommandEvent(this);
         new DenyMoveForUnlinkedPlayerEvent(this);
-        if (Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME).getBoolean("enableDiscord")) {
-            try {
-                new LatchDiscord();
-            } catch (LoginException e) {
-                e.printStackTrace();
-            }
-        }
+        new SendItemToOutputChestFromMasterChestEvent(this);
+        new BanAndLogBanChestThief(this);
+
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
         Advancements.setAdvancements();
@@ -148,48 +152,18 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onDisable"))) {
-            Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
-            LatchDiscord.stopBot();
-        }
+        Api.stopAllTwitchBots(LatchTwitchBotCommand.twitchBotList);
         FileConfiguration enabledEventsCfg = Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME);
         if (enabledEventsCfg.getBoolean("broadcastServerStoppedMessageToDiscord")) {
             LatchDiscord.sendServerStoppedMessage();
         }
+        Api.stopDiscordBot();
         getLogger().info(Constants.PLUGIN_NAME + " is disabled");
     }
 
     public static boolean getIsParameterInTesting(String parameter) {
         return Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getBoolean("testingParameters." + parameter);
     }
-    //                            donationsCfg.set(Constants.YML_DONATIONS + transactionId + ".discordID", discordID);
-//                            if (productID.equalsIgnoreCase(Constants.DONOR_PRODUCT_ID) && !discordID.equalsIgnoreCase("123")){
-//                                String donorRoleName = "";
-//                                String minecraftID = Api.getMinecraftIdFromDCid(discordID);
-//                                if (Double.parseDouble(price) < 5.00){
-//                                    donorRoleName = "Donor";
-//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor");
-//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064302866714765"))).queue();
-//                                } else if (Double.parseDouble(price) > 9.99) {
-//                                    donorRoleName = "Donor+";
-//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor+");
-//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064735194599494"))).queue();
-//                                } else {
-//                                    donorRoleName = "Donor++";
-//                                    Api.addPlayerToPermissionGroup(minecraftID, "donor++");
-//                                    LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).addRoleToMember(UserSnowflake.fromId(discordID), Objects.requireNonNull(jda.getRoleById("994064561399398480"))).queue();
-//                                }
-//                                OfflinePlayer minecraftMember = Bukkit.getOfflinePlayer(UUID.fromString(minecraftID));
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".discordName", LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(discordID).getUser().getName());
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".discordID", discordID);
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".minecraftName", minecraftMember.getName());
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".minecraftID", minecraftID);
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorRole", donorRoleName);
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorPurchaseDate", purchaseDate);
-//                                DateTime dateTime = new DateTime(purchaseDate);
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".donorEndDate", dateTime.plusDays(30).getMillis());
-//                                donationsCfg.set(Constants.YML_MEMBERS + discordID + ".purchases.donations." + transactionId, transactionId);
-//                            }
 
     public static void loadAllConfigManagers() {
         new WhitelistConfig().setup();
@@ -204,47 +178,6 @@ public class Main extends JavaPlugin implements Listener {
         new BossConfig().setup();
     }
 
-    @EventHandler
-    public static void onItemMove(InventoryMoveItemEvent e) {
-        try {
-            Location destinationLocation = e.getDestination().getLocation();
-            String playerName = "";
-            boolean isSameChest = false;
-            FileConfiguration autoSorterCfg = Api.getFileConfiguration(YmlFileNames.YML_AUTO_SORTER_FILE_NAME);
-            for (String player : autoSorterCfg.getKeys(false)) {
-                Location masterChestLocation = new Location(Bukkit.getWorld("world"), autoSorterCfg.getDouble(player + ".masterChest.x"), autoSorterCfg.getDouble(player + ".masterChest.y"), autoSorterCfg.getDouble(player + ".masterChest.z"));
-                if (destinationLocation.equals(masterChestLocation)) {
-                    playerName = player;
-                    isSameChest = true;
-                    break;
-                }
-            }
-            if (Boolean.TRUE.equals(isSameChest)) {
-                Inventory masterChestInventory = e.getDestination();
-                int count = 0;
-                boolean itemsSent = false;
-                for (ItemStack is : masterChestInventory) {
-                    if (is != null && autoSorterCfg.isSet(playerName + "." + is.getType())) {
-                        double chestToX = autoSorterCfg.getDouble(playerName + "." + is.getType() + ".x");
-                        double chestToY = autoSorterCfg.getDouble(playerName + "." + is.getType() + ".y");
-                        double chestToZ = autoSorterCfg.getDouble(playerName + "." + is.getType() + ".z");
-                        Location chestSortLocation = new Location(Bukkit.getWorld("world"), chestToX, chestToY, chestToZ);
-                        Material chest = chestSortLocation.getBlock().getType();
-                        if (chest.equals(Material.CHEST)) {
-                            Chest sortChest = (Chest) chestSortLocation.getBlock().getState();
-                            sortChest.getInventory().addItem(is);
-                            masterChestInventory.setItem(count, new ItemStack(Material.AIR, 1));
-                            itemsSent = true;
-                        }
-                    }
-                    count++;
-                }
-            }
-
-        } catch (NullPointerException ignored) {
-
-        }
-    }
 
     public static LuckPerms getLuckPerms() {
         return luckPerms;
@@ -558,12 +491,9 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerChestItemRemove(InventoryClickEvent event) throws ExecutionException, InterruptedException, IOException {
-        if (Boolean.FALSE.equals(getIsParameterInTesting("onPlayerChestItemRemove"))) {
-            LatchDiscord.banPlayerStealing(event);
-        }
         try {
             if (Boolean.FALSE.equals(getIsParameterInTesting("chestProtect"))) {
-                if (event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world")) {
+                if (Objects.requireNonNull(event.getWhoClicked().getLocation().getWorld()).getName().equalsIgnoreCase("world")) {
                     if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() != null && event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world") && (event.getClickedInventory().getHolder() instanceof DoubleChest || event.getClickedInventory().getHolder() instanceof Chest || event.getClickedInventory().getHolder() instanceof ShulkerBox || event.getClickedInventory().getHolder() instanceof Barrel)) {
                         OfflinePlayer olp = null;
                         if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {

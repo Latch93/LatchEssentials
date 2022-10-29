@@ -311,7 +311,7 @@ public class LMPCommand implements CommandExecutor {
                             try {
                                 TextChannel modChatChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
                                 assert modChatChannel != null;
-                                modChatChannel.sendMessage("<@971160639932362783> New player has joined the server. Discord Name: " + discordMember.getUser().getName() + " | Minecraft Name: " + player.getName()).queue();
+                                modChatChannel.sendMessage("<@&971160639932362783> New player has joined the server. Discord Name: " + discordMember.getUser().getName() + " | Minecraft Name: " + player.getName()).queue();
                                 whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
                             } catch (IOException e) {
                                 e.printStackTrace();

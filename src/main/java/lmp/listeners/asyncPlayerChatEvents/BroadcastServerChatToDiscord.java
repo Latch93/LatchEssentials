@@ -1,5 +1,6 @@
 package lmp.listeners.asyncPlayerChatEvents;
 
+import lmp.LatchDiscord;
 import lmp.Main;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
@@ -14,7 +15,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Objects;
 
-import static lmp.LatchDiscord.jda;
 import static org.bukkit.Bukkit.getOnlinePlayers;
 
 public class BroadcastServerChatToDiscord implements Listener {
@@ -26,11 +26,11 @@ public class BroadcastServerChatToDiscord implements Listener {
         if (enabledEventsCfg.getBoolean("broadcastServerMessagesToDiscord")){
             String worldName = e.getPlayer().getWorld().getName();
             if (Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
-                TextChannel minecraftChatChannel = jda.getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
+                TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
                 assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessage(Api.getPlayerChatWorldPrefix(worldName) + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
             } else {
-                Objects.requireNonNull(jda.getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(Api.getPlayerChatWorldPrefix(worldName) + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
+                Objects.requireNonNull(LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage(Api.getPlayerChatWorldPrefix(worldName) + Api.convertMinecraftMessageToDiscord(e.getPlayer().getDisplayName(), e.getMessage())).queue();
                 for (Player player : getOnlinePlayers()) {
                     if (player.hasPermission("group.jr-mod")) {
                         player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + e.getPlayer().getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + e.getMessage());
