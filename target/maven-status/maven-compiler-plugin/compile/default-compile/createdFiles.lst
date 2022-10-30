@@ -3,6 +3,7 @@ lmp\runnable\LMPTimer.class
 lmp\constants\Constants.class
 lmp\commands\LMPCommand.class
 lmp\discord\chatMessageAdapters\LogPlayerBanFromDiscordConsole.class
+lmp\listeners\FurnaceBurnEvents\DisableAutoSmeltStickFromBurning.class
 lmp\listeners\playerQuitEvents\StopTwitchBotOnPlayerLogoutEvent.class
 lmp\commands\LatchTwitchBotCommand.class
 lmp\commands\BackPackCommand.class
@@ -18,6 +19,7 @@ lmp\listeners\playerQuitEvents\BroadcastPlayerQuitMessageToDiscordEvent.class
 lmp\RandomItem.class
 lmp\AutoMiner.class
 lmp\configurations\LatchTwitchBotConfig.class
+lmp\discord\chatMessageAdapters\SendAFKMessageIfMentionLatch.class
 lmp\discord\reactionAdapters\AddDiscordRoleOnMemberMessageReactEvent.class
 lmp\listeners\autosort\inventoryMoveItemEvents\SendItemToOutputChestFromMasterChestEvent.class
 lmp\listeners\playerInteractEntityEvents\GiveJerryArmorEvent.class

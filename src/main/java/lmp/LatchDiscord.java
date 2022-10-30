@@ -67,8 +67,17 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 
     public static final Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME);
 
-    public static String username = "";
-    public static String userId = "";
+    public static String senderDiscordUsername = "";
+    public static String senderDiscordUserID = "";
+    public static User senderDiscordUser;
+    public static Member senderDiscordMember;
+    public static Message message;
+    public static String messageContents;
+    public static String messageID;
+    public static Mentions mentionedChannelsList;
+    public static List<User> mentionedUsersList;
+    public static MessageChannel messageChannel;
+    public static String messageChannelID;
     public static JDA jda;
     public static final JDABuilder jdaBuilder = JDABuilder.createDefault(Constants.DISCORD_BOT_TOKEN)
             .setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
@@ -98,6 +107,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     public static JDA getJDA() {
         return jda;
     }
+    public static Message getMessage(){return message;}
 
     public static String convertDiscordMessageToServer(Member member, String message, String senderName, Boolean isReply, Message repliedMessage) {
         int count = 0;
@@ -176,27 +186,31 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        MessageChannel channel = event.getChannel();
+        messageChannel = event.getChannel();
         if (event.getMember() != null) {
-            username = Objects.requireNonNull(event.getMember().getUser().getName());
-            userId = Objects.requireNonNull(event.getMember().getId());
+            senderDiscordUsername = Objects.requireNonNull(event.getMember().getUser().getName());
+            senderDiscordUserID = Objects.requireNonNull(event.getMember().getId());
         }
-        Mentions mentionedChannelsList = event.getMessage().getMentions();
-        List<User> mentionedUsersList = event.getMessage().getMentions().getUsers();
-        String messageId = event.getMessageId();
-        String message = event.getMessage().getContentRaw();
-        String senderName = event.getAuthor().getName();
-        Member messageSender = event.getMember();
+        mentionedChannelsList = event.getMessage().getMentions();
+        mentionedUsersList = event.getMessage().getMentions().getUsers();
+        messageID = event.getMessageId();
+        messageContents = event.getMessage().getContentRaw();
+        senderDiscordUsername = event.getAuthor().getName();
+        senderDiscordMember = event.getMember();
+        messageChannelID = event.getChannel().getId();
+        senderDiscordUser = event.getAuthor();
+        jda = getJDA();
+        Main.log.info("first");
         for (GuildChannel guildChannel : mentionedChannelsList.getChannels()) {
-            message = message.replace(guildChannel.getId(), guildChannel.getName());
+            messageContents = messageContents.replace(guildChannel.getId(), guildChannel.getName());
         }
         for (User user : mentionedUsersList) {
-            message = message.replace(user.getId(), user.getName());
+            messageContents = messageContents.replace(user.getId(), user.getName());
         }
         if (Boolean.FALSE.equals(Main.getIsParameterInTesting("global"))) {
             try {
                 // Gets online players
-                if (channel.getId().equals(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && message.equalsIgnoreCase(lmp.Constants.ONLINE_COMMAND)) {
+                if (messageChannelID.equals(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.ONLINE_COMMAND)) {
                     ArrayList<String> onlinePlayers = new ArrayList<>();
                     EmbedBuilder eb = new EmbedBuilder();
                     TextChannel minecraftChannel = jda.getTextChannelById(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID);
@@ -228,7 +242,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     minecraftChannel.sendMessageEmbeds(eb.build()).queue();
                 }
                 // Get online players and include vanished players
-                if (channel.getId().equals(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && message.equalsIgnoreCase(lmp.Constants.ONLINE_COMMAND)) {
+                if (messageChannel.getId().equals(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.ONLINE_COMMAND)) {
                     ArrayList<String> onlinePlayers = new ArrayList<>();
                     EmbedBuilder eb = new EmbedBuilder();
                     TextChannel minecraftChannel = jda.getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
@@ -264,42 +278,44 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     minecraftChannel.sendMessageEmbeds(eb.build()).queue();
                 }
                 // List all blocks mined by a player
-//                if (channel.getId().equals(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && message.toLowerCase().contains("!searchblocks")) {
+//                if (messageChannel.getId().equals(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && messageContents.toLowerCase().contains("!searchblocks")) {
 //                    String[] arr = event.getMessage().getContentRaw().split("!searchBlocks");
 //                    String userID = Api.getMinecraftIdFromDCid(arr[1]);
 //                    FileConfiguration
-//                    clearAllUserMessages(channel, messageId, userID);
+//                    clearAllUserMessages(messageChannel, messageID, userID);
 //                }
                 // get the
-                if ((channel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(lmp.Constants.LATCH93BOT_USER_ID))) {
+                if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equals(lmp.Constants.LATCH93BOT_USER_ID))) {
                     if (event.getMessage().getReferencedMessage() != null) {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(messageSender, message, senderName, true, event.getMessage().getReferencedMessage()));
+                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, event.getMessage().getReferencedMessage()));
                     } else {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(messageSender, message, senderName, false, null));
+                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
                     }
                 }
-                if ((channel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) || channel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID))) {
-                    if (message.toLowerCase().contains("!searchdiscord")) {
-                        String[] messageArr = message.split(" ");
+                if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) || messageChannel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID))) {
+                    if (messageContents.toLowerCase().contains("!searchdiscord")) {
+                        String[] messageArr = messageContents.split(" ");
                         try {
                             String discordUserName = Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(messageArr[1]));
-                            channel.sendMessage(messageArr[1] + "'s Discord username is: " + discordUserName).queue();
+                            messageChannel.sendMessage(messageArr[1] + "'s Discord username is: " + discordUserName).queue();
 
                         } catch (IllegalArgumentException e) {
-                            channel.sendMessage("That player does not have a discord account linked to their minecraft account. Maybe try again.\nCommand usage: !searchDiscord [minecraftName]").queue();
+                            messageChannel.sendMessage("That player does not have a discord account linked to their minecraft account. Maybe try again.\nCommand usage: !searchDiscord [minecraftName]").queue();
                         }
-                    } else if (message.toLowerCase().contains("!searchminecraft")) {
-                        String[] messageArr = message.split(" ");
+                    } else if (messageContents.toLowerCase().contains("!searchminecraft")) {
+                        String[] messageArr = messageContents.split(" ");
                         try {
-                            String minecraftUsername = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(messageArr[1]))).getName();
-                            channel.sendMessage(jda.getUserById(messageArr[1]).getName() + "'s Minecraft username is: " + minecraftUsername).queue();
 
+                                if (messageArr.length > 0) {
+                                    String minecraftUsername = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(messageArr[1]))).getName();
+                                    messageChannel.sendMessage(Objects.requireNonNull(jda.getUserById(messageArr[1])).getName() + "'s Minecraft username is: " + minecraftUsername).queue();
+                                }
                         } catch (IllegalArgumentException e) {
-                            channel.sendMessage("That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
+                            messageChannel.sendMessage("That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
                         }
                     }
                 }
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("claim")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("claim")) {
                     FileConfiguration claimFileCfg = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
                     for (String user : Objects.requireNonNull(claimFileCfg.getConfigurationSection("players")).getKeys(false)) {
                         if (!Api.getMinecraftIDOfLinkedPlayersInDiscord().contains(user)) {
@@ -308,24 +324,24 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                     claimFileCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
                 }
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.contains("cong")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.contains("cong")) {
                     event.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("Welcome to LMP (Latch Multiplayer)\n" +
                             "Users on PS4|XBox|Switch|Mobile are able to join\n" +
-                            "Please read the rules in the Rules channel and react to the rules message (thumbUp)\n" +
+                            "Please read the rules in the Rules messageChannel and react to the rules messageContents (thumbUp)\n" +
                             "Doing this assigns you the member role and access to all of the channels.\n" +
-                            "You can get the IP in the server-ip channel.\n" +
+                            "You can get the IP in the server-ip messageChannel.\n" +
                             "For Bedrock|Console users, you need to download the mobile app Bedrock Together:\n" +
                             "Android: https://play.google.com/store/apps/details?id=pl.extollite.bedrocktogetherapp&hl=en_US&gl=US\n" +
                             "iOS: https://apps.apple.com/us/app/bedrocktogether/id1534593376\n" +
                             "When you first join the server, you won't be able to move because you need to link your Discord account with your Minecraft Account.\n" +
-                            "In order to link accounts and move around the server freely, go to the General channel in the Discord Server and type the following command -> !link\n" +
+                            "In order to link accounts and move around the server freely, go to the General messageChannel in the Discord Server and type the following command -> !link\n" +
                             "My bot will generate a command for you run on your minecraft client chat.\n" +
                             "Copy and paste this command or type it out, its formatted like this -> /lmp link [discordID]\n" +
                             "I link accounts so you can use the features I coded into the game.\n" +
                             "View our wiki with commands and other information here -> https://github.com/Latch93/DiscordText/wiki/Server-Commands\n" +
                             "If you have any questions, feel free to post them in the Discord and Happy Mining!!!")).queue();
                 }
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.contains("pog")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.contains("pog")) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
@@ -343,9 +359,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 }
 
                 // Sends LTS Nomination Form to member
-                if (channel.getId().equals(lmp.Constants.LTS_NOMINEE_CHANNEL_ID) && message.equalsIgnoreCase(lmp.Constants.LTS_NOMINATION_COMMAND)) {
-                    channel.deleteMessageById(messageId).queue();
-                    if (message.equalsIgnoreCase(lmp.Constants.LTS_NOMINATION_COMMAND)) {
+                if (messageChannel.getId().equals(lmp.Constants.LTS_NOMINEE_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.LTS_NOMINATION_COMMAND)) {
+                    messageChannel.deleteMessageById(messageID).queue();
+                    if (messageContents.equalsIgnoreCase(lmp.Constants.LTS_NOMINATION_COMMAND)) {
                         event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
                             TextChannel applicationSubmittedChannel = jda.getTextChannelById(lmp.Constants.LTS_NOMINEE_CHANNEL_ID);
                             event.getJDA().addEventListener(new LTSNomination(privateChannel, event.getAuthor(), applicationSubmittedChannel));
@@ -358,8 +374,8 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                 }
                 // Sends staff application to member
-                if (channel.getId().equals(lmp.Constants.STAFF_APPLICATION_CHANNEL_ID) && message.equalsIgnoreCase(lmp.Constants.STAFF_APPLY_COMMAND)) {
-                    channel.deleteMessageById(messageId).queue();
+                if (messageChannel.getId().equals(lmp.Constants.STAFF_APPLICATION_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.STAFF_APPLY_COMMAND)) {
+                    messageChannel.deleteMessageById(messageID).queue();
                     event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
                         TextChannel applicationSubmittedChannel = jda.getTextChannelById(lmp.Constants.STAFF_APP_SUBMITTED_CHANNEL_ID);
                         event.getJDA().addEventListener(new StaffApplication(privateChannel, event.getAuthor(), applicationSubmittedChannel));
@@ -369,7 +385,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }).queue();
                 }
 
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!mark")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!mark")) {
                     TextChannel byebyeDiscordChat = jda.getTextChannelById(lmp.Constants.TEST_CHANNEL_ID);
                     assert byebyeDiscordChat != null;
                     String filePath = Api.getMainPlugin().getDataFolder().getPath();
@@ -381,7 +397,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     int n = rand.nextInt(gifCount);
                     byebyeDiscordChat.sendMessage(event.getMember().getUser().getName() + " left Discord. ").addFiles(FileUpload.fromData(new File(filePath + folderName + "/bye_bye" + n + ".gif"))).queue();
                 }
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!gifs")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!gifs")) {
                     ThreadChannel gifThread = jda.getThreadChannelById("1034135259060650075");
                     FileConfiguration gifCfg = Api.getFileConfiguration(YmlFileNames.YML_GIF_LIST_FILE_NAME);
                     List<String> giflinkList = new ArrayList<>();
@@ -421,7 +437,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         count++;
                     }
                 }
-                if (channel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("!compare")) {
+                if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!compare")) {
                     List<String> keep = Files.readAllLines(Paths.get("C:/Users/Latch/Downloads/keep.txt"));
                     List<String> tableIDS = Files.readAllLines(Paths.get("C:/Users/Latch/Desktop/sqlt_data_1_2015_01.txt"));
                     List<String> delete = new ArrayList<>();
@@ -440,25 +456,25 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     test.set("keepList", setToReturn);
                     test.save(Api.getConfigFile("deleteList"));
                 }
-                if (channel.getId().equals(lmp.Constants.PIXELMON_CHANNEL_ID) && message.contains("!startPixelmon")) {
+                if (messageChannel.getId().equals(lmp.Constants.PIXELMON_CHANNEL_ID) && messageContents.contains("!startPixelmon")) {
                     ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "startPixelmon.bat");
                     File dir = new File("E:\\Pixelmon");
                     pb.directory(dir);
                     pb.start();
                 }
                 // Sends unban request to member
-                if (channel.getId().equals(lmp.Constants.UNBAN_REQUEST_CHANNEL_ID) && message.equalsIgnoreCase(lmp.Constants.UNBAN_REQUEST)) {
-                    channel.deleteMessageById(messageId).queue();
+                if (messageChannel.getId().equals(lmp.Constants.UNBAN_REQUEST_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.UNBAN_REQUEST)) {
+                    messageChannel.deleteMessageById(messageID).queue();
                     event.getAuthor().openPrivateChannel().flatMap(privateChannel -> {
                         TextChannel unbanRequestSubmittedChannel = jda.getTextChannelById(lmp.Constants.UNBAN_REQUEST_COMPLETE_CHANNEL_ID);
                         event.getJDA().addEventListener(new UnbanRequest(privateChannel, event.getAuthor(), unbanRequestSubmittedChannel));
                         return privateChannel.sendMessage("Please enter your unban form line by line. \n Press enter after each question response. \n 1.) What is your Minecraft username?");
                     }).queue();
                 }
-                if (lmp.Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())) {
+                if (lmp.Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(messageChannel.getId())) {
                     File configFile = new File(Main.getPlugin(Main.class).getDataFolder(), "playerShops.yml");
                     FileConfiguration configCfg = YamlConfiguration.loadConfiguration(configFile);
-                    if (message.toLowerCase().contains("searchall")) {
+                    if (messageContents.toLowerCase().contains("searchall")) {
                         String playerName = "";
                         int count = 0;
                         for (String player : configCfg.getKeys(false)) {
@@ -478,11 +494,11 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                     }
                 }
                 // Searches the player shops and returns if items are in a player's shop
-                if (lmp.Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(channel.getId())) {
+                if (lmp.Constants.SEARCH_CHANNEL_ID.equalsIgnoreCase(messageChannel.getId())) {
                     File configFile = new File(Main.getPlugin(Main.class).getDataFolder(), "playerShops.yml");
                     FileConfiguration configCfg = YamlConfiguration.loadConfiguration(configFile);
-                    if (message.toLowerCase().contains(lmp.Constants.SEARCH_PLAYER_SHOP_COMMAND)) {
-                        String[] arr = message.split(lmp.Constants.SEARCH_PLAYER_SHOP_COMMAND);
+                    if (messageContents.toLowerCase().contains(lmp.Constants.SEARCH_PLAYER_SHOP_COMMAND)) {
+                        String[] arr = messageContents.split(lmp.Constants.SEARCH_PLAYER_SHOP_COMMAND);
                         String itemToSearch = arr[1].replace(" ", "").toUpperCase();
                         String playerName = "";
                         boolean isItemAvailable = false;
@@ -504,12 +520,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                                         if (!itemToSearch.equalsIgnoreCase("spawn_egg")) {
                                             ItemStack is = new ItemStack(Material.valueOf(itemToSearch.toUpperCase()), 1);
                                             if (configCfg.getInt(player + ".itemWorth." + is) != 0) {
-                                                channel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop for $" + configCfg.getDouble(player + ".itemWorth." + is) + " per item.").queue();
+                                                messageChannel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop for $" + configCfg.getDouble(player + ".itemWorth." + is) + " per item.").queue();
                                             } else {
-                                                channel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
+                                                messageChannel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
                                             }
                                         } else {
-                                            channel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
+                                            messageChannel.sendMessage(Bukkit.getOfflinePlayer(UUID.fromString(player)).getName() + " has " + totalAmount + " " + itemToSearch + "(s) in their shop.").queue();
                                         }
                                     }
 
@@ -517,7 +533,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                             }
                         }
                         if (Boolean.FALSE.equals(isItemAvailable)) {
-                            channel.sendMessage("No one has " + itemToSearch + "s in their shop").queue();
+                            messageChannel.sendMessage("No one has " + itemToSearch + "s in their shop").queue();
                         }
                     }
                 }
@@ -527,29 +543,29 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 throw new RuntimeException(e);
             }
         }
-        if (channel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
+        if (messageChannel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.jr-mod")) {
                     if (event.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(messageSender, message, senderName, true, event.getMessage().getReferencedMessage()));
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, event.getMessage().getReferencedMessage()));
                     } else {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(messageSender, message, senderName, false, null));
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
                     }
                 }
             }
         }
-        if (channel.getId().equalsIgnoreCase(lmp.Constants.ADMIN_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
+        if (messageChannel.getId().equalsIgnoreCase(lmp.Constants.ADMIN_CHANNEL_ID) && !event.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.admin")) {
                     if (event.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(messageSender, message, senderName, true, event.getMessage().getReferencedMessage()));
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, event.getMessage().getReferencedMessage()));
                     } else {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(messageSender, message, senderName, false, null));
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
                     }
                 }
             }
         }
-        if (channel.getId().equalsIgnoreCase(lmp.Constants.TEST_CHANNEL_ID) && message.equalsIgnoreCase("plop")) {
+        if (messageChannel.getId().equalsIgnoreCase(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("plop")) {
             try {
                 Api.setIsPlayerInDiscord();
             } catch (IOException e) {
@@ -557,7 +573,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             }
         }
 
-        if (message.toLowerCase().contains("<@latch>")) {
+        if (messageContents.toLowerCase().contains("<@latch>")) {
             FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
             if (Boolean.TRUE.equals(configCfg.getBoolean("isLatchAFK"))) {
                 org.joda.time.LocalDateTime currentLocalDateTime = new org.joda.time.LocalDateTime();
@@ -569,7 +585,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 int minutes = p.getMinutes();
                 int hoursOfTheDay = hours % 24;
                 int minutesOfTheHour = minutes % 60;
-                channel.sendMessage(configCfg.getString("afkMessage") + " He will return in " + days + " days | " + hoursOfTheDay + " hours | " + minutesOfTheHour + " minutes").queue();
+                messageChannel.sendMessage(configCfg.getString("afkMessage") + " He will return in " + days + " days | " + hoursOfTheDay + " hours | " + minutesOfTheHour + " minutes").queue();
             }
         }
 

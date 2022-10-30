@@ -50,6 +50,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Advancement.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\reactionAdapters\RemoveDiscordRoleOnMemberMessageReactEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\LTSNomination.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Constants.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\FurnaceBurnEvents\DisableAutoSmeltStickFromBurning.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\entityDeathEvents\DisableEntityCrammingEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\SendHowToLinkMessageEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\PlayerShopsCommand.java
@@ -75,6 +76,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BackPackInve
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customRecipes\CustomRecipes.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\SetPlayerCompletedAdvancementsOnLoginEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\GeneralDiscordCommands.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\chatMessageAdapters\SendAFKMessageIfMentionLatch.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\PingTabListRunnable.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEntityEvents\GiveJerryArmorEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\SlimeChunkFinder.java

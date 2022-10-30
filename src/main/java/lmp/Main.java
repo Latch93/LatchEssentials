@@ -10,6 +10,7 @@ import lmp.constants.YmlFileNames;
 import lmp.customItems.*;
 import lmp.customRecipes.CustomRecipes;
 import lmp.discord.privateMessageAdapters.ChestProtect;
+import lmp.listeners.FurnaceBurnEvents.DisableAutoSmeltStickFromBurning;
 import lmp.listeners.asyncPlayerChatEvents.BroadcastServerChatToDiscord;
 import lmp.listeners.autosort.inventoryMoveItemEvents.SendItemToOutputChestFromMasterChestEvent;
 import lmp.listeners.discord.BanAndLogBanChestThief;
@@ -126,6 +127,7 @@ public class Main extends JavaPlugin implements Listener {
         new DenyMoveForUnlinkedPlayerEvent(this);
         new SendItemToOutputChestFromMasterChestEvent(this);
         new BanAndLogBanChestThief(this);
+        new DisableAutoSmeltStickFromBurning(this);
 
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
