@@ -21,6 +21,7 @@ lmp\AutoMiner.class
 lmp\configurations\LatchTwitchBotConfig.class
 lmp\discord\chatMessageAdapters\SendAFKMessageIfMentionLatch.class
 lmp\discord\reactionAdapters\AddDiscordRoleOnMemberMessageReactEvent.class
+lmp\discord\chatMessageAdapters\TestChannelChatEvent.class
 lmp\listeners\autosort\inventoryMoveItemEvents\SendItemToOutputChestFromMasterChestEvent.class
 lmp\listeners\playerInteractEntityEvents\GiveJerryArmorEvent.class
 lmp\runnable\PingTabListRunnable.class
@@ -67,6 +68,7 @@ lmp\tabComplete\BackpackTabComplete.class
 lmp\listeners\playerMoveEvents\DenyMoveForUnlinkedPlayerEvent.class
 lmp\listeners\playerJoinEvents\BroadcastPlayerJoinMessageToDiscordEvent.class
 lmp\listeners\playerQuitEvents\TurnOffXPFarmOnPlayerLogoutEvent.class
+lmp\discord\channelCommands\ShowOnlinePlayersInDiscord.class
 lmp\commands\PlayerShopsCommand.class
 lmp\PlayerShops.class
 lmp\discord\guildMemberRoleRemoveAdapters\RemoveServerRoleOnGuildMemberRemove.class
@@ -76,6 +78,7 @@ lmp\BossBattle.class
 lmp\discord\channelCommands\LatchsConfigCommands.class
 lmp\configurations\BackPackInventoryConfig.class
 lmp\listeners\playerDeathEvents\WithdrawPlayerMoneyOnDeathEvent.class
+lmp\discord\channelCommands\SendLTSNominationForm.class
 lmp\Constants.class
 lmp\discord\privateMessageAdapters\UnbanRequest.class
 lmp\configurations\LMPConfig.class

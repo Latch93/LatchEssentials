@@ -35,6 +35,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\twitch\LatchTwitchBot.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\LatchTwitchBotConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\SendServerStartedMessageToDiscordEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\LatchTwitchBotRunnable.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\chatMessageAdapters\TestChannelChatEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\TurnOffXPFarmOnPlayerLogoutEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\api\Api.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\asyncPlayerChatEvents\BroadcastServerChatToDiscord.java
@@ -50,6 +51,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Advancement.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\reactionAdapters\RemoveDiscordRoleOnMemberMessageReactEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\LTSNomination.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Constants.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\SendLTSNominationForm.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\FurnaceBurnEvents\DisableAutoSmeltStickFromBurning.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\entityDeathEvents\DisableEntityCrammingEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\SendHowToLinkMessageEvent.java
@@ -61,6 +63,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\RandomTeleport.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\LotteryConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\discord\BanAndLogBanChestThief.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BankConfig.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\ShowOnlinePlayersInDiscord.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\MobileSpawner.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\LMPTimer.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\AutoSorterConfig.java

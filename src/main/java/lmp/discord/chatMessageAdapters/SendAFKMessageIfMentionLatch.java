@@ -8,8 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.PeriodType;
 
-import static lmp.LatchDiscord.messageChannel;
-import static lmp.LatchDiscord.messageContents;
+import static lmp.LatchDiscord.*;
 
 public class SendAFKMessageIfMentionLatch extends ListenerAdapter {
 
@@ -20,7 +19,6 @@ public class SendAFKMessageIfMentionLatch extends ListenerAdapter {
             if (Boolean.TRUE.equals(configCfg.getBoolean("isLatchAFK"))) {
                 org.joda.time.LocalDateTime currentLocalDateTime = new org.joda.time.LocalDateTime();
                 String endTimeString = configCfg.getString("returnTime");
-                //currentLocalDateTime, LocalDateTime.parse(endTimeString), PeriodType.yearMonthDayTime()
                 org.joda.time.Period p = new org.joda.time.Period(currentLocalDateTime, org.joda.time.LocalDateTime.parse(endTimeString), PeriodType.yearMonthDayTime());
                 int days = p.getDays();
                 int hours = p.getHours();
