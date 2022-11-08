@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
+import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeEqualityPredicate;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.util.Tristate;
@@ -33,6 +34,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import java.io.File;
@@ -309,8 +311,11 @@ public class Api {
 
     public static String getPlayerChatWorldPrefix(String worldName){
         String worldPrefix = "[LMP] - ";
-        if (worldName.equalsIgnoreCase("hardcore")) {
+        if (worldName.contains("hardcore")) {
             worldPrefix = "[Hardcore] - ";
+        }
+        if (worldName.contains("anarchy")) {
+            worldPrefix = "[Anarchy] - ";
         }
         return worldPrefix;
     }
@@ -547,27 +552,30 @@ public class Api {
         materialBreakList.add(Material.IRON_ORE);
         materialBreakList.add(Material.DEEPSLATE_IRON_ORE);
         materialBreakList.add(Material.ANCIENT_DEBRIS);
+        String worldName = event.getPlayer().getWorld().getName();
         if (materialBreakList.contains(event.getBlock().getType())) {
             if (!Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "helper")) {
                 FileConfiguration blockBreakLogCfg = Api.getFileConfiguration(YmlFileNames.YML_BLOCK_BREAK_LOG_FILE_NAME);
                 Date date = new Date();
                 Player player = event.getPlayer();
+                Location location = event.getBlock().getLocation();
                 blockBreakLogCfg.set(player.getUniqueId().toString() + ".playerName", event.getPlayer().getName());
                 blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".blockType", event.getBlock().getType().toString());
-                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", event.getBlock().getLocation().getBlockX());
-                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", event.getBlock().getLocation().getBlockY());
-                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", event.getBlock().getLocation().getBlockZ());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.worldName", worldName);
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.x", location.getBlockX());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.y", location.getBlockY());
+                blockBreakLogCfg.set(player.getUniqueId().toString() + "." + date + ".location.z", location.getBlockZ());
                 blockBreakLogCfg.save(Api.getConfigFile(YmlFileNames.YML_BLOCK_BREAK_LOG_FILE_NAME));
             }
             if (!Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "mod")) {
                 if (event.getBlock().getType().equals(Material.DIAMOND_ORE) || event.getBlock().getType().equals(Material.DEEPSLATE_DIAMOND_ORE)) {
-                    LatchDiscord.getJDA().getTextChannelById(lmp.Constants.TEST_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                    Objects.requireNonNull(LatchDiscord.getJDA().getTextChannelById(lmp.Constants.TEST_CHANNEL_ID)).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke 1 " + event.getBlock().getType().toString() + " block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "] --- World: " + worldName).queue();
                 }
                 if (event.getBlock().getType().equals(Material.ANCIENT_DEBRIS)) {
-                    LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "]").queue();
+                    Objects.requireNonNull(LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID)).sendMessage("MC Name: " + event.getPlayer().getName() + " | DC Name: " + Api.getDiscordNameFromMCid(event.getPlayer().getUniqueId().toString()) + " | Broke an Ancient Debris block at [" + event.getBlock().getLocation().getBlockX() + ", " + event.getBlock().getLocation().getBlockY() + ", " + event.getBlock().getLocation().getBlockZ() + "] --- World: " + worldName).queue();
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         if (Api.doesPlayerHavePermission(p.getUniqueId().toString(), "mod")) {
-                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris.");
+                            p.sendMessage("[" + ChatColor.YELLOW + "XRAY CHECK" + ChatColor.WHITE + "] - " + ChatColor.RED + event.getPlayer().getName() + ChatColor.WHITE + " » " + ChatColor.YELLOW + "Just mined 1 Ancient Debris. World: " + worldName);
                         }
                     }
                 }
@@ -766,16 +774,21 @@ public class Api {
         configCfg.save(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
     }
 
-    public static boolean denyCommandInHardcore(PlayerCommandPreprocessEvent e) {
+    public static boolean denyCommandInMultiverseWorlds(@NotNull PlayerCommandPreprocessEvent e) {
         boolean denyCommand = true;
         ArrayList<String> allowedCommandList = new ArrayList<>();
         allowedCommandList.add("/mv spawn");
+        allowedCommandList.add("/dtsc");
+        allowedCommandList.add("/adsc");
         allowedCommandList.add("/spawn");
         allowedCommandList.add("/msg ");
         allowedCommandList.add("/r");
         allowedCommandList.add("/v");
-        allowedCommandList.add("/op ");
-
+        allowedCommandList.add("/op");
+        allowedCommandList.add("/hardcore afk");
+        allowedCommandList.add("/anarchy afk");
+        allowedCommandList.add("/lmp online");
+        allowedCommandList.add("/lmp money");
         String command = e.getMessage().toLowerCase();
         for (String commandToCheck : allowedCommandList) {
             if (command.contains(commandToCheck)) {
@@ -819,6 +832,20 @@ public class Api {
         hardcoreCfg.save(Api.getConfigFile(YmlFileNames.YML_HARDCORE_FILE_NAME));
     }
 
+    public static void setAnarchyPlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration anarchyCfg = Api.getFileConfiguration(YmlFileNames.YML_ANARCHY_FILE_NAME);
+        String uuid = e.getPlayer().getUniqueId().toString();
+        anarchyCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        anarchyCfg.save(Api.getConfigFile(YmlFileNames.YML_ANARCHY_FILE_NAME));
+    }
+
+    public static void setCreativePlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration creativeCfg = Api.getFileConfiguration(YmlFileNames.YML_CREATIVE_FILE_NAME);
+        String uuid = e.getPlayer().getUniqueId().toString();
+        creativeCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        creativeCfg.save(Api.getConfigFile(YmlFileNames.YML_CREATIVE_FILE_NAME));
+    }
+
     public static void teleportHardcorePlayerToLastLocation(Player player) {
         FileConfiguration hardcoreCfg = Api.getFileConfiguration(YmlFileNames.YML_HARDCORE_FILE_NAME);
         String uuid = player.getUniqueId().toString();
@@ -827,8 +854,58 @@ public class Api {
         }
     }
 
+    public static void teleportAnarchyPlayerToLastLocation(Player player) {
+        FileConfiguration anarchyCfg = Api.getFileConfiguration(YmlFileNames.YML_ANARCHY_FILE_NAME);
+        String uuid = player.getUniqueId().toString();
+        if (anarchyCfg.getLocation(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(anarchyCfg.getLocation(uuid + ".lastLocation")));
+        }
+    }
+
+    public static void teleportCreativePlayerToLastLocation(Player player) {
+        FileConfiguration creativeCfg = Api.getFileConfiguration(YmlFileNames.YML_CREATIVE_FILE_NAME);
+        String uuid = player.getUniqueId().toString();
+        if (creativeCfg.getLocation(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(creativeCfg.getLocation(uuid + ".lastLocation")));
+        } else {
+            player.teleport(Objects.requireNonNull(creativeCfg.getLocation("spawnLocation")));
+        }
+    }
+
+    public static void givePlayerLuckPermPermission(Player player, String permission){
+        // Add the permission
+        net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user != null){
+            user.data().add(Node.builder(permission).build());
+            // Now we need to save changes.
+            Main.getLuckPerms().getUserManager().saveUser(user);
+            player.sendMessage(ChatColor.GREEN + "You were granted " + ChatColor.AQUA + permission + ChatColor.GREEN + " permission.");
+        }
+    }
+
+    public static void removePlayerLuckPermPermission(Player player, String permission){
+        // Remove the permission
+        net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user != null){
+            user.data().remove(Node.builder(permission).build());
+            // Now we need to save changes.
+            Main.getLuckPerms().getUserManager().saveUser(user);
+            player.sendMessage(ChatColor.GREEN + "You were revoked " + ChatColor.AQUA + permission + ChatColor.GREEN + " permission.");
+        }
+    }
+
+    public static void setBankSessionToAFK(Boolean isPlayerAFKExempt, Player player) throws IOException {
+        FileConfiguration bankCfg = Api.getFileConfiguration(YmlFileNames.YML_BANK_FILE_NAME);
+        bankCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".isAFK", isPlayerAFKExempt);
+        bankCfg.save(Api.getConfigFile(YmlFileNames.YML_BANK_FILE_NAME));
+    }
+
     public static void givePlayerMoney(String minecraftId, double amount) {
         Api.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)), amount);
+    }
+
+    public static void takePlayerMoney(String minecraftId, double amount) {
+        Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)), amount);
     }
 
     public static String getMinecraftIDFromTwitchName(String twitchName) {

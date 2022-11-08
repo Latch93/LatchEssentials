@@ -4,12 +4,15 @@ import lmp.*;
 import lmp.api.Api;
 import lmp.constants.Constants;
 import lmp.constants.YmlFileNames;
+import lmp.listeners.playerJoinEvents.BankLoginEvent;
+import lmp.listeners.playerQuitEvents.BankLogoutEvent;
 import lmp.runnable.LMPTimer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.InheritanceNode;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -274,7 +277,10 @@ public class LMPCommand implements CommandExecutor {
                             e.printStackTrace();
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("link") && args[1] != null) {
+                } else if (args[0].equalsIgnoreCase("createDonationClaimList")){
+                    DonationClaimRewards.createDonationUserFile();
+                }
+                else if (args[0].equalsIgnoreCase("link") && args[1] != null) {
                     Member discordMember = null;
                     try {
                         boolean hasMemberRole = false;
@@ -316,7 +322,7 @@ public class LMPCommand implements CommandExecutor {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            DonationClaimRewards.createDonationUserFile(player.getUniqueId().toString());
+                            DonationClaimRewards.addNewPlayerToDonationFile(player);
                             whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
                             player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
                             whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
@@ -410,9 +416,142 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("xp")) {
                     player.sendMessage(ChatColor.GREEN + "You have " + ChatColor.GOLD + Api.getPlayerExp(player) + ChatColor.GREEN + " experience points");
+                } else if (player.getUniqueId().toString().equals(Constants.SERVER_OWNER_MINECRAFT_ID) && args[0].equalsIgnoreCase("addItemClaim")) {
+                    ItemStack itemToAdd = player.getInventory().getItemInMainHand();
+                    Bukkit.getScheduler().runTaskAsynchronously(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> {
+                        try {
+                            DonationClaimRewards.addItemToClaim(itemToAdd);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    player.sendMessage(ChatColor.GREEN + "You have added " + ChatColor.GOLD + itemToAdd.getAmount() + " " +itemToAdd.getType() + ChatColor.GREEN + " to the claim list.");
+                } else if (player.getUniqueId().toString().equals(Constants.SERVER_OWNER_MINECRAFT_ID) && args[0].equalsIgnoreCase("createClaimFile")) {
+                    Bukkit.getScheduler().runTaskAsynchronously(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> {
+                        try {
+                            DonationClaimRewards.createDonationUserFile();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+
+                } else if (args[0].equalsIgnoreCase("creative")) {
+                    if (!player.getWorld().getName().contains("creative")){
+                            Api.teleportCreativePlayerToLastLocation(player);
+                    } else {
+                        player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP Creative when you are already there.");
+                    }
+                } else if (args[0].equalsIgnoreCase("money")) {
+                    BankLogoutEvent.setPlayerSessionTime(player);
+                    BankLoginEvent.setPlayerLoginTime(player);
+                } else if (args[0].equalsIgnoreCase("gift")) {
+                    if (args[1] != null){
+                        List<String> potentialGiftPlayerNameList = new ArrayList<>();
+                        List<String> enabledGiftWorlds = new ArrayList<>();
+                        enabledGiftWorlds.add("world");
+                        enabledGiftWorlds.add("world_nether");
+                        enabledGiftWorlds.add("world_the_end");
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            String playerWorld = onlinePlayer.getWorld().getName();
+                            if (enabledGiftWorlds.contains(playerWorld)){
+                                potentialGiftPlayerNameList.add(onlinePlayer.getName().toLowerCase());
+                            }
+                        }
+                        if (enabledGiftWorlds.contains(player.getWorld().getName())) {
+                            if (!player.getName().equalsIgnoreCase(args[1])) {
+                                if (potentialGiftPlayerNameList.contains(args[1].toLowerCase())) {
+                                    if (!player.getInventory().getItemInMainHand().getType().isAir()) {
+                                        ItemStack itemToGift = player.getInventory().getItemInMainHand();
+                                        Player playerToGift = Bukkit.getPlayer(args[1]);
+                                        if (playerToGift != null) {
+                                            playerToGift.getWorld().dropItem(playerToGift.getLocation(), itemToGift);
+                                            player.sendMessage(ChatColor.GREEN + "You gifted an item to " + ChatColor.GOLD + playerToGift.getName());
+                                            playerToGift.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " gifted you an item!!!");
+                                            player.getInventory().setItemInMainHand(null);
+                                            player.updateInventory();
+                                        } else {
+                                            player.sendMessage(ChatColor.YELLOW + "Player either doesn't exist, not online, or not on LMP Community. Please try again.");
+                                        }
+                                    } else {
+                                        player.sendMessage(ChatColor.YELLOW + "You can't gift air. Please try again by holding an item in your main hand then running the command.");
+
+                                    }
+                                } else {
+                                    player.sendMessage(ChatColor.YELLOW + "Player either doesn't exist, not online, or not on LMP Community. Please try again.");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.YELLOW + "You can't gift yourself an item.");
+
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You have to be on LMP Community to gift another an item.");
+                        }
+                    }
                 }
+                else if (args[0].equalsIgnoreCase("online")) {
+                    StringBuilder communityWorldList = new StringBuilder();
+                    communityWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "LMP" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder anarchyWorldList = new StringBuilder();
+                    anarchyWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Anarchy" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder hardcoreWorldList = new StringBuilder();
+                    hardcoreWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Hardcore" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder creativeWorldList = new StringBuilder();
+                    creativeWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Creative" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    int communityCount = 0;
+                    int hardcoreCount = 0;
+                    int anarchyCount = 0;
+                    int creativeCount = 0;
+                    for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()){
+                        if (!Api.isPlayerInvisible(onlinePlayer.getUniqueId().toString())){
+                            if (onlinePlayer.getWorld().getName().contains("anarchy")){
+                                anarchyWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                anarchyCount++;
+                            } else if (onlinePlayer.getWorld().getName().contains("hardcore")){
+                                hardcoreWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                hardcoreCount++;
+                            } else if (onlinePlayer.getWorld().getName().contains("creative")) {
+                                creativeWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                creativeCount++;
+                            } else {
+                                communityWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                communityCount++;
+                            }
+                        }
+                    }
+                    if (communityCount == 0){
+                        communityWorldList.append(ChatColor.RED + "None");
+                    }
+                    if (anarchyCount == 0){
+                        anarchyWorldList.append(ChatColor.RED + "None");
+                    }
+                    if (hardcoreCount == 0){
+                        hardcoreWorldList.append(ChatColor.RED + "None");
+                    }
+                    if (creativeCount == 0){
+                        creativeWorldList.append(ChatColor.RED + "None");
+                    }
+                    String finalCommunityMessage = String.valueOf(communityWorldList);
+                    String finalAnarchyMessage = String.valueOf(anarchyWorldList);
+                    String finalHardcoreMessage = String.valueOf(hardcoreWorldList);
+                    String finalCreativeMessage = String.valueOf(creativeWorldList);
+                    if (finalCommunityMessage.contains("|")){
+                        finalCommunityMessage = StringUtils.substring(finalCommunityMessage, 0, finalCommunityMessage.length() - 4);
+                    }
+                    if (finalAnarchyMessage.contains("|")){
+                        finalAnarchyMessage = StringUtils.substring(finalAnarchyMessage, 0, finalAnarchyMessage.length() - 4);
+                    }
+                    if (finalHardcoreMessage.contains("|")){
+                        finalHardcoreMessage = StringUtils.substring(finalHardcoreMessage, 0, finalHardcoreMessage.length() - 4);
+                    }
+                    if (finalCreativeMessage.contains("|")){
+                        finalCreativeMessage = StringUtils.substring(finalCreativeMessage, 0, finalCreativeMessage.length() - 4);
 
-
+                    }
+                    player.sendMessage(finalCommunityMessage);
+                    player.sendMessage(finalAnarchyMessage);
+                    player.sendMessage(finalHardcoreMessage);
+                    player.sendMessage(finalCreativeMessage);
+                }
                 if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("uncraft")) {
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
@@ -449,10 +588,18 @@ public class LMPCommand implements CommandExecutor {
                         }
                         count++;
                     }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("setDonationItem")) {
-                    DonationClaimRewards.addItemToClaim(args[1]);
                 } else if (args[0].equalsIgnoreCase("claim")) {
-                    DonationClaimRewards.claimItems(player);
+                    player.sendMessage(ChatColor.GREEN + "Checking if you have unclaimed items. Please wait one moment...");
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
+                        public void run() {
+                            try {
+                                DonationClaimRewards.claimItems(player);
+                            } catch (IOException | ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }, 100);
+
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e) {

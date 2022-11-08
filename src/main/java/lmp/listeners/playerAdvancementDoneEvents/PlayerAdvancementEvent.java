@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class PlayerAdvancementEvent implements Listener {
@@ -26,7 +25,7 @@ public final class PlayerAdvancementEvent implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public static List<Advancement> advancementList = new ArrayList<>();
+    public static List<Advancement> advancementList = Advancements.getAdvancements();
 
     @EventHandler
     public void updateAndBroadcastPlayerAdvancement(PlayerAdvancementDoneEvent e) throws IOException {
@@ -44,8 +43,11 @@ public final class PlayerAdvancementEvent implements Listener {
         TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
         EmbedBuilder eb = new EmbedBuilder();
         String worldPrefix = "[LMP] - ";
-        if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
+        if (e.getPlayer().getWorld().getName().contains("hardcore")) {
             worldPrefix = "[Hardcore] - ";
+        }
+        if (e.getPlayer().getWorld().getName().contains("anarchy")) {
+            worldPrefix = "[Anarchy] - ";
         }
         int playerAchievementCount = Api.loadConfig(YmlFileNames.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
         for (Advancement advance : advancementList) {
@@ -53,11 +55,7 @@ public final class PlayerAdvancementEvent implements Listener {
                 eb.setTitle(worldPrefix + advance.getName() + "!");
                 eb.setColor(new Color(0xE1F504B9, true));
                 eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
-                if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
-                    advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria();
-                } else {
-                    advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + Advancements.getAdvancements().size();
-                }
+                advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + Advancements.getAdvancements().size();
                 eb.setDescription(advancementMessage);
                 assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
@@ -67,12 +65,16 @@ public final class PlayerAdvancementEvent implements Listener {
 
     public static void broadcastAdvancementOnLMP(PlayerAdvancementDoneEvent e) {
         String advancement = e.getAdvancement().getKey().toString();
-        net.md_5.bungee.api.chat.TextComponent advancementName = null;
-        HoverEvent he = null;
+        net.md_5.bungee.api.chat.TextComponent advancementName;
+        HoverEvent he;
         String worldPrefix = "[LMP] - ";
-        if (e.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
+        if (e.getPlayer().getWorld().getName().contains("hardcore")) {
             worldPrefix = "[Hardcore] - ";
         }
+        if (e.getPlayer().getWorld().getName().contains("anarchy")) {
+            worldPrefix = "[Anarchy] - ";
+        }
+
         net.md_5.bungee.api.chat.TextComponent playerName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + e.getPlayer().getName() + ChatColor.WHITE + " has made the advancement ");
         for (Advancement advance : advancementList) {
             if (advancement.equalsIgnoreCase(advance.getID())) {

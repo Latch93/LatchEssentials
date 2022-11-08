@@ -17,9 +17,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class FarmMoney {
-    private FarmMoney() {
-    }
-
     public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ) {
         ArrayList<String> deniedWorlds = new ArrayList<>();
         deniedWorlds.add("season1");
@@ -28,6 +25,9 @@ public class FarmMoney {
         deniedWorlds.add("hardcore");
         deniedWorlds.add("hardcore_nether");
         deniedWorlds.add("hardcore_the_end");
+        deniedWorlds.add("anarchy");
+        deniedWorlds.add("anarchy_nether");
+        deniedWorlds.add("anarchy_the_end");
 
         if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())) {
             FileConfiguration mainConfig = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);

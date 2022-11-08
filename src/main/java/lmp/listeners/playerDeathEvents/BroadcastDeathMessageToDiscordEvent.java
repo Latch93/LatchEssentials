@@ -25,8 +25,11 @@ public class BroadcastDeathMessageToDiscordEvent implements Listener {
         if (enabledEventsCfg.getBoolean("broadcastDeathMessageToDiscord") && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getEntity().getUniqueId().toString()))){
             EmbedBuilder eb = new EmbedBuilder();
             String worldPrefix = "[LMP] - ";
-            if (e.getEntity().getWorld().getName().equalsIgnoreCase("hardcore")) {
+            if (e.getEntity().getWorld().getName().contains("hardcore")) {
                 worldPrefix = "[Hardcore] - ";
+            }
+            if (e.getEntity().getWorld().getName().contains("anarchy")) {
+                worldPrefix = "[Anarchy] - ";
             }
             eb.setTitle(worldPrefix + e.getDeathMessage());
             eb.setColor(new Color(0xE1922E00, true));

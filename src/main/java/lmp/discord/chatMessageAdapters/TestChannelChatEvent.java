@@ -53,14 +53,14 @@ public class TestChannelChatEvent extends ListenerAdapter {
             int n = rand.nextInt(gifCount);
             byebyeDiscordChat.sendMessage(e.getMember().getUser().getName() + " left Discord. ").addFiles(FileUpload.fromData(new File(filePath + folderName + "/bye_bye" + n + ".gif"))).queue();
         }
-        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!gifs")) {
+        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!gifss")) {
             ThreadChannel gifThread = jda.getThreadChannelById("1034135259060650075");
             FileConfiguration gifCfg = Api.getFileConfiguration(YmlFileNames.YML_GIF_LIST_FILE_NAME);
             List<String> giflinkList = new ArrayList<>();
             List<Message> messageList;
             assert gifThread != null;
             try {
-                messageList = gifThread.getIterableHistory().takeAsync(50) // Collect 1000 messages
+                messageList = gifThread.getIterableHistory().takeAsync(1000) // Collect 1000 messages
                         .thenApply(ArrayList::new)
                         .get();
             } catch (InterruptedException | ExecutionException ex) {
@@ -142,7 +142,7 @@ public class TestChannelChatEvent extends ListenerAdapter {
                 count++;
             }
         }
-        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!compare")) {
+        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.equalsIgnoreCase("!compared")) {
             List<String> tableIDS;
             try {
                 tableIDS = Files.readAllLines(Paths.get("C:/Users/Latch/Desktop/sqlt_data_1_2015_01.txt"));

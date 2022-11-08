@@ -20,3 +20,7 @@ commands:
     description: "Admin Staff Chat"
   dcmsg:
     description: "Message Discord User from the Server"
+  hardcore:
+    description: "Hardcore Command"
+  anarchy:
+    description: "Anarchy Command"

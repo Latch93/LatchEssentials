@@ -1,4 +1,6 @@
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\constants\YmlFileNames.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerDeathEvents\SetPlayerWorldOfDeath.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\AnarchyCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\SendJoinMessageEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\BackPackCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\BroadcastPlayerQuitMessageToDiscordEvent.java
@@ -15,6 +17,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\MessageDiscordUser
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\LatchsConfigCommands.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\entityDeathEvents\LogVillagerDeathEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\BroadcastPlayerJoinMessageToDiscordEvent.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\AnarchyTabComplete.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\DiscordAdminChatCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\BankLoginEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\donationBot\Donation.java
@@ -22,7 +25,9 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\LatchTwitchBotT
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\ChestProtect.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\PlayerShopsInventoryConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerDeathEvents\WithdrawPlayerMoneyOnDeathEvent.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\HardcoreTabComplete.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\StaffApplication.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerRespawnEvents\SetPlayerLocationOnAnarchy.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerDeathEvents\DeathByJerryEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerDeathEvents\HardcoreDeathEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\StopTwitchBotOnPlayerLogoutEvent.java
@@ -74,6 +79,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BossConfig.j
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\constants\Constants.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\BossBattle.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\PortalBlocker.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerBedEnterEvents\SetPlayerBedLocation.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\LatchTwitchBotCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BackPackInventoryConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customRecipes\CustomRecipes.java
@@ -86,6 +92,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\SlimeChunkFinde
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Lottery.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\CustomPortals.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Main.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\HardcoreCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerCommandPreprocessEvents\LogPlayerBanFromServerCommandEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\LMPCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\chatMessageAdapters\LogGithubIssue.java

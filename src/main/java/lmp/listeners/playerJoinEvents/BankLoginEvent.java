@@ -4,6 +4,7 @@ import lmp.Constants;
 import lmp.Main;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,8 +21,21 @@ public class BankLoginEvent implements Listener {
 
     @EventHandler
     private void bankLoginEvent(PlayerJoinEvent e) throws IOException {
+        setPlayerLoginTime(e.getPlayer());
+        Api.setBankSessionToAFK(false, e.getPlayer());
+        Api.removePlayerLuckPermPermission(e.getPlayer(), "essentials.afk.kickexempt");
+    }
+
+    public static void showLastSessionMoneyRewardedMessage(FileConfiguration bankCfg, Player player) {
+        if (!bankCfg.getBoolean(Constants.YML_PLAYERS + player.getUniqueId() + ".isAFK")) {
+            if (bankCfg.isSet(Constants.YML_PLAYERS + player.getUniqueId() + ".lastSessionReward")) {
+                player.sendMessage(Objects.requireNonNull(bankCfg.getString(Constants.YML_PLAYERS + player.getUniqueId() + ".lastSessionReward")));
+            }
+        }
+    }
+
+    public static void setPlayerLoginTime(Player player) throws IOException {
         FileConfiguration bankCfg = Api.getFileConfiguration(YmlFileNames.YML_BANK_FILE_NAME);
-        Player player = e.getPlayer();
         String playerName = player.getName();
         String playerId = player.getUniqueId().toString();
         Date date = new Date();
@@ -32,14 +46,14 @@ public class BankLoginEvent implements Listener {
         }
         bankCfg.set(Constants.YML_PLAYERS + playerId + ".loginTime", timeMilli);
         bankCfg.set(Constants.YML_PLAYERS + player.getUniqueId() + ".loginBalance", Api.getPlayerBalance(player));
-        showLastSessionMoneyRewardedMessage(bankCfg, player);
-        bankCfg.save(Api.getConfigFile(YmlFileNames.YML_BANK_FILE_NAME));
-    }
-
-    private static void showLastSessionMoneyRewardedMessage(FileConfiguration bankCfg, Player player) {
-        if (bankCfg.isSet(Constants.YML_PLAYERS + player.getUniqueId() + ".lastSessionReward")) {
-            player.sendMessage(Objects.requireNonNull(bankCfg.getString(Constants.YML_PLAYERS + player.getUniqueId() + ".lastSessionReward")));
+        if (bankCfg.getInt(Constants.YML_PLAYERS + player.getUniqueId() + ".lastSessionSeconds") == 0) {
+            player.sendMessage(ChatColor.YELLOW + "You haven't logged any time. Please only claim money for time played sparingly.");
+        } else if (bankCfg.getBoolean(Constants.YML_PLAYERS + player.getUniqueId() + ".isAFK")){
+            player.sendMessage(ChatColor.GREEN + "You were afk exempt in your last session, so you weren't rewarded money for play time.");
+        } else {
+            showLastSessionMoneyRewardedMessage(bankCfg, player);
         }
+        bankCfg.save(Api.getConfigFile(YmlFileNames.YML_BANK_FILE_NAME));
     }
 
 }

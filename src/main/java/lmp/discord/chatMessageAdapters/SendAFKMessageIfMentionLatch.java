@@ -1,5 +1,6 @@
 package lmp.discord.chatMessageAdapters;
 
+import lmp.LatchDiscord;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,9 +15,12 @@ public class SendAFKMessageIfMentionLatch extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent e){
-        if (messageContents.toLowerCase().contains("<@latch>")) {
+        messageChannel = e.getChannel();
+        messageContents = e.getMessage().getContentRaw();
+        jda = LatchDiscord.getJDA();
+        if (messageContents.toLowerCase().contains("<@460463941542215691>")) {
             FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
-            if (Boolean.TRUE.equals(configCfg.getBoolean("isLatchAFK"))) {
+            if (configCfg.getBoolean("isLatchAFK")) {
                 org.joda.time.LocalDateTime currentLocalDateTime = new org.joda.time.LocalDateTime();
                 String endTimeString = configCfg.getString("returnTime");
                 org.joda.time.Period p = new org.joda.time.Period(currentLocalDateTime, org.joda.time.LocalDateTime.parse(endTimeString), PeriodType.yearMonthDayTime());

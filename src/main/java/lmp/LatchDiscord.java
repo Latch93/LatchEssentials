@@ -9,10 +9,7 @@ import lmp.discord.channelCommands.GeneralDiscordCommands;
 import lmp.discord.channelCommands.LatchsConfigCommands;
 import lmp.discord.channelCommands.SendLTSNominationForm;
 import lmp.discord.channelCommands.ShowOnlinePlayersInDiscord;
-import lmp.discord.chatMessageAdapters.BanPlayerForTypingTheNWordInDiscordChat;
-import lmp.discord.chatMessageAdapters.LogGithubIssue;
-import lmp.discord.chatMessageAdapters.LogPlayerBanFromDiscordConsole;
-import lmp.discord.chatMessageAdapters.TestChannelChatEvent;
+import lmp.discord.chatMessageAdapters.*;
 import lmp.discord.guildMemberJoinAdapters.NewGuildMemberJoin;
 import lmp.discord.guildMemberRoleRemoveAdapters.RemoveServerRoleOnGuildMemberRemove;
 import lmp.discord.guildRemoveAdapters.SetWhiteListOnMemberLeaveGuildEvent;
@@ -99,6 +96,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         jda.addEventListener(new ShowOnlinePlayersInDiscord());
         jda.addEventListener(new TestChannelChatEvent());
         jda.addEventListener(new SendLTSNominationForm());
+        jda.addEventListener(new SendAFKMessageIfMentionLatch());
     }
 
     public static JDA getJDA() {

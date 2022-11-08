@@ -27,6 +27,7 @@ public class ServerCommands {
     public static final String LMP_COMMAND = "lmp";
     public static final String TWITCH_COMMAND = "twitch";
     public static final String SERVER_TO_DISCORD_COMMAND = "dcmsg";
-
+    public static final String HARDCORE_COMMAND = "hardcore";
+    public static final String ANARCHY_COMMAND = "anarchy";
 
 }

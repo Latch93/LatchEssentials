@@ -3,6 +3,7 @@ package lmp.constants;
 public class YmlFileNames {
     // Config File Names
     public static final String YML_ADVANCEMENT_FILE_NAME = "advancement";
+    public static final String YML_ANARCHY_FILE_NAME = "anarchy";
     public static final String YML_AUTO_MINER_FILE_NAME = "autoMiner";
     public static final String YML_AUTO_SORTER_FILE_NAME = "autoSorter";
     public static final String YML_BACK_PACK_FILE_NAME = "playerBackpack";
@@ -27,4 +28,6 @@ public class YmlFileNames {
     public static final String YML_VILLAGER_HURT_LOG_FILE_NAME = "villagerHurtLog";
     public static final String YML_WHITELIST_FILE_NAME = "whitelist";
     public static final String YML_XP_FARM_FILE_NAME = "xpFarm";
+    public static final String YML_PLAYER_BED_LOCATION_FILE_NAME = "playerBedLocation";
+    public static final String YML_CREATIVE_FILE_NAME = "creative";
 }

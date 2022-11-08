@@ -17,11 +17,9 @@ import lmp.listeners.discord.BanAndLogBanChestThief;
 import lmp.listeners.entityDeathEvents.DisableEntityCrammingEvent;
 import lmp.listeners.entityDeathEvents.LogVillagerDeathEvent;
 import lmp.listeners.playerAdvancementDoneEvents.PlayerAdvancementEvent;
+import lmp.listeners.playerBedEnterEvents.SetPlayerBedLocation;
 import lmp.listeners.playerCommandPreprocessEvents.LogPlayerBanFromServerCommandEvent;
-import lmp.listeners.playerDeathEvents.BroadcastDeathMessageToDiscordEvent;
-import lmp.listeners.playerDeathEvents.DeathByJerryEvent;
-import lmp.listeners.playerDeathEvents.HardcoreDeathEvent;
-import lmp.listeners.playerDeathEvents.WithdrawPlayerMoneyOnDeathEvent;
+import lmp.listeners.playerDeathEvents.*;
 import lmp.listeners.playerInteractEntityEvents.GiveJerryArmorEvent;
 import lmp.listeners.playerJoinEvents.*;
 import lmp.listeners.playerMoveEvents.DenyMoveForUnlinkedPlayerEvent;
@@ -29,12 +27,10 @@ import lmp.listeners.playerQuitEvents.BankLogoutEvent;
 import lmp.listeners.playerQuitEvents.BroadcastPlayerQuitMessageToDiscordEvent;
 import lmp.listeners.playerQuitEvents.StopTwitchBotOnPlayerLogoutEvent;
 import lmp.listeners.playerQuitEvents.TurnOffXPFarmOnPlayerLogoutEvent;
+import lmp.listeners.playerRespawnEvents.SetPlayerLocationOnAnarchy;
 import lmp.runnable.LMPTimer;
 import lmp.runnable.PingTabListRunnable;
-import lmp.tabComplete.BackpackTabComplete;
-import lmp.tabComplete.LMPCommandTabComplete;
-import lmp.tabComplete.LatchTwitchBotTabComplete;
-import lmp.tabComplete.PlayerShopsTabComplete;
+import lmp.tabComplete.*;
 import net.coreprotect.CoreProtect;
 import net.coreprotect.CoreProtectAPI;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -128,6 +124,9 @@ public class Main extends JavaPlugin implements Listener {
         new SendItemToOutputChestFromMasterChestEvent(this);
         new BanAndLogBanChestThief(this);
         new DisableAutoSmeltStickFromBurning(this);
+        new SetPlayerWorldOfDeath(this);
+        new SetPlayerLocationOnAnarchy(this);
+        new SetPlayerBedLocation(this);
 
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
@@ -150,6 +149,47 @@ public class Main extends JavaPlugin implements Listener {
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
         githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getString("githubOauthToken"));
+//        Connection conn = null;
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/lmp?" +
+//                    "user=latch&password=admin");
+//        } catch (SQLException | ClassNotFoundException error) {
+//            Main.log.warning("asdasdassaas");
+//        }
+//        Statement stmt = null;
+//        assert conn != null;
+//
+//        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+//        for (String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
+//            String minecraftID = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".minecraftId");
+//            String minecraftName = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".minecraftName");
+//            String discordID = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".discordId");
+//
+//            String discordName = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".discordName");
+//            String joinTime = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".joinTime");
+//            String ipAddress = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".ip-info.ipAddress");
+//            boolean isPlayerInDiscord = whitelistCfg.getBoolean(lmp.Constants.YML_PLAYERS + user + ".isPlayerInDiscord");
+//            String query = "insert into users (minecraftID, minecraftName, discordID, discordName, joinTime, isPlayerInDiscord, ipAddress)" +
+//                    "values (?, ?, ?, ?, ?, ?, ?)" ;
+//            PreparedStatement preparedStmt;
+//            try {
+//                preparedStmt = conn.prepareStatement(query);
+//                preparedStmt.setString(1, minecraftID);
+//                preparedStmt.setString(2, minecraftName);
+//                preparedStmt.setString(3, discordID);
+//                preparedStmt.setString(4, discordName);
+//                preparedStmt.setString(5, joinTime);
+//                preparedStmt.setBoolean(6, isPlayerInDiscord);
+//                preparedStmt.setString(7,ipAddress);
+//                preparedStmt.execute();
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            Main.log.info("Insert for " + minecraftName + " recorded.");
+//        }
+
+
     }
 
     @Override
@@ -222,6 +262,13 @@ public class Main extends JavaPlugin implements Listener {
         // Twitch Bot Command
         Objects.requireNonNull(this.getCommand(ServerCommands.TWITCH_COMMAND)).setExecutor(new LatchTwitchBotCommand());
         Objects.requireNonNull(this.getCommand(ServerCommands.TWITCH_COMMAND)).setTabCompleter(new LatchTwitchBotTabComplete());
+        // Anarchy Commands
+        Objects.requireNonNull(this.getCommand(ServerCommands.HARDCORE_COMMAND)).setExecutor(new HardcoreCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.HARDCORE_COMMAND)).setTabCompleter(new HardcoreTabComplete());
+
+        Objects.requireNonNull(this.getCommand(ServerCommands.ANARCHY_COMMAND)).setExecutor(new AnarchyCommand());
+        Objects.requireNonNull(this.getCommand(ServerCommands.ANARCHY_COMMAND)).setTabCompleter(new AnarchyTabComplete());
+
     }
 
     @EventHandler
@@ -230,22 +277,26 @@ public class Main extends JavaPlugin implements Listener {
             if (event.getMessage().equalsIgnoreCase("/back")) {
                 Api.denyBackIntoXPFarm(event);
             }
-            if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
-                event.setCancelled(Api.denyCommandInHardcore(event));
+            String worldName = event.getPlayer().getWorld().getName();
+            if (!event.getPlayer().isOp() && (worldName.contains("hardcore") || worldName.contains("anarchy") )) {
+                event.setCancelled(Api.denyCommandInMultiverseWorlds(event));
             }
             Api.denyCommandUseInXPFarm(event);
         }
-        if (!event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/lmp hardcore")) {
-            if (Boolean.TRUE.equals(Api.doesPlayerHavePermission(event.getPlayer().getUniqueId().toString(), "hardcore"))) {
-                Api.addPlayerToHardcoreList(event);
-                Api.teleportHardcorePlayerToLastLocation(event.getPlayer());
-            } else {
-                event.getPlayer().sendMessage(ChatColor.RED + "You must purchase a hardcore season pass for " + ChatColor.GOLD + "$3 USD.");
+        if (event.getMessage().equalsIgnoreCase("/spawn")) {
+            if (event.getPlayer().getWorld().getName().contains("hardcore") ) {
+                Api.setHardcorePlayerLocation(event);
+                Api.removePlayerLuckPermPermission(event.getPlayer(), "essentials.afk.kickexempt");
+            }
+            if (event.getPlayer().getWorld().getName().contains("anarchy") ) {
+                Api.setAnarchyPlayerLocation(event);
+                Api.removePlayerLuckPermPermission(event.getPlayer(), "essentials.afk.kickexempt");
+            }
+            if (event.getPlayer().getWorld().getName().contains("creative") ) {
+                Api.setCreativePlayerLocation(event);
             }
         }
-        if (event.getPlayer().getWorld().getName().contains("hardcore") && event.getMessage().equalsIgnoreCase("/spawn")) {
-            Api.setHardcorePlayerLocation(event);
-        }
+
     }
 
     @EventHandler
@@ -310,9 +361,9 @@ public class Main extends JavaPlugin implements Listener {
                 event.setCancelled(true);
             }
         }
-        if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().equalsIgnoreCase("hardcore")) {
+        if (!event.getPlayer().isOp() && event.getPlayer().getWorld().getName().contains("hardcore")) {
             FileConfiguration hardcoreCfg = Api.getFileConfiguration(YmlFileNames.YML_HARDCORE_FILE_NAME);
-            if (hardcoreCfg.getString(event.getPlayer().getUniqueId().toString()) == null || Boolean.FALSE.equals(hardcoreCfg.getBoolean(event.getPlayer().getUniqueId().toString() + "." + "isAlive"))) {
+            if (hardcoreCfg.getBoolean(event.getPlayer().getUniqueId().toString() + ".isAlive")) {
                 event.getPlayer().setGameMode(GameMode.SURVIVAL);
             }
             event.setCancelled(Api.denyInteractInHardcore(event.getPlayer()));
@@ -495,7 +546,15 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerChestItemRemove(InventoryClickEvent event) throws ExecutionException, InterruptedException, IOException {
         try {
             if (Boolean.FALSE.equals(getIsParameterInTesting("chestProtect"))) {
-                if (Objects.requireNonNull(event.getWhoClicked().getLocation().getWorld()).getName().equalsIgnoreCase("world")) {
+                List<String> worldToProtectList = new ArrayList<>();
+                worldToProtectList.add("world");
+                worldToProtectList.add("world_nether");
+                worldToProtectList.add("world_the_end");
+                worldToProtectList.add("hardcore");
+                worldToProtectList.add("hardcore_nether");
+                worldToProtectList.add("hardcore_the_end");
+                String chestWorld = Objects.requireNonNull(event.getWhoClicked().getLocation().getWorld()).getName();
+                if (worldToProtectList.contains(chestWorld)) {
                     if (event.getClickedInventory() != null && event.getClickedInventory().getHolder() != null && event.getWhoClicked().getLocation().getWorld().getName().equalsIgnoreCase("world") && (event.getClickedInventory().getHolder() instanceof DoubleChest || event.getClickedInventory().getHolder() instanceof Chest || event.getClickedInventory().getHolder() instanceof ShulkerBox || event.getClickedInventory().getHolder() instanceof Barrel)) {
                         OfflinePlayer olp = null;
                         if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
