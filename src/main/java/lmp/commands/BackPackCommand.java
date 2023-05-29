@@ -13,10 +13,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+
+import static lmp.api.Api.getMainPlugin;
 
 public class BackPackCommand implements CommandExecutor {
 
@@ -26,7 +30,8 @@ public class BackPackCommand implements CommandExecutor {
         if (sender instanceof Player) {
             player = (Player) sender;
             String invTitle = player.getName() + "'s Backpack";
-            FileConfiguration backPackCfg = Api.loadConfig(YmlFileNames.YML_BACK_PACK_FILE_NAME);
+            File playerBPFile = new File(getMainPlugin().getDataFolder() + "/playerBackpacks/", player.getUniqueId().toString() + ".yml");
+            FileConfiguration backPackCfg = YamlConfiguration.loadConfiguration(playerBPFile);
             FileConfiguration configCfg = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
             if (args.length == 1) {
@@ -80,30 +85,60 @@ public class BackPackCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.GREEN + "You need to purchase a backpack before you are able to upgrade.");
                     }
-                }
-                if (args[0].equalsIgnoreCase(ServerCommands.BACKPACK_BUY_COMMAND)) {
+                } else if (args[0].equalsIgnoreCase(ServerCommands.BACKPACK_BUY_COMMAND)) {
                     double playerBalance = econ.getBalance(offlinePlayer);
                     if (backPackCfg.get(player.getUniqueId() + Constants.YML_SIZE) == null) {
                         if (playerBalance >= configCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_1)) {
                             backPackCfg.set(player.getUniqueId() + Constants.YML_SIZE, 9);
                             player.sendMessage(ChatColor.GREEN + "You just purchased a " + ChatColor.GOLD + "Level 1 Backpack" + ChatColor.GREEN + ". You can store " + ChatColor.GOLD + "9" + ChatColor.GREEN + " items.");
+                            Api.takePlayerMoney(player.getUniqueId().toString(),configCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_1) );
                         } else {
                             player.sendMessage(ChatColor.RED + Constants.YML_YOU_NEED_AT_LEAST + ChatColor.GOLD + "$" + configCfg.getInt(Constants.YML_BACKPACK_LEVEL_COST_LEVEL_1) + ChatColor.RED + " to purchase a backpack.");
                         }
                     } else {
                         player.sendMessage(ChatColor.GREEN + "You already own a backpack.");
                     }
-                }
-                if (args[0].equalsIgnoreCase(ServerCommands.OPEN_COMMAND)) {
+                } else if (args[0].equalsIgnoreCase(ServerCommands.OPEN_COMMAND)) {
                     try {
-                        Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setInventoryWhenOpened(player, YmlFileNames.YML_BACK_PACK_FILE_NAME, backPackCfg.getInt(player.getUniqueId() + ".size"), invTitle, player.getName()));
+                        Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setBackpackInventoryWhenOpened(player, playerBPFile, backPackCfg.getInt(player.getUniqueId() + ".size"), invTitle));
                     } catch (NullPointerException | IOException ignored) {
 
                     }
                 }
             }
+            if (args.length == 2){
+                if (args[0].equalsIgnoreCase("ticket")) {
+                    if (args[1].equalsIgnoreCase("buy")) {
+                        int slotTickets = backPackCfg.getInt(player.getUniqueId() + ".slotTickets");
+                        double playerBalance = econ.getBalance(offlinePlayer);
+                        if (playerBalance >= 35000) {
+                            if (slotTickets == 9) {
+                                player.sendMessage(ChatColor.RED + "You already have 9 slot tickets.");
+                            } else {
+                                slotTickets = slotTickets + 1;
+                                backPackCfg.set(player.getUniqueId() + ".slotTickets", slotTickets);
+                                Api.takePlayerMoney(player.getUniqueId().toString(), 35000);
+                                player.sendMessage(ChatColor.GREEN + "You bought " + ChatColor.GOLD + 1 + ChatColor.GREEN + " slot ticket and now own " + ChatColor.GOLD + slotTickets + ChatColor.GREEN + " slot ticket(s).");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$35,000 " + ChatColor.RED + "to buy a backpack slot ticket.");
+                        }
+                    } else if (args[1].equalsIgnoreCase("check")) {
+                        int slotTickets = backPackCfg.getInt(player.getUniqueId() + ".slotTickets");
+                        player.sendMessage(ChatColor.GREEN + "You currently own " + ChatColor.GOLD + slotTickets + ChatColor.GREEN + " slot tickets.");
+                    }
+                }
+//                else if (args[0].equalsIgnoreCase("player") && player.getName().equalsIgnoreCase("latch93") && args[1] != null){
+//                    try {
+//                        Player playerBPToOpen = Api.getPlayerFromOfflinePlayer(args[1]);
+//                        Objects.requireNonNull(player.getPlayer()).openInventory(Inventories.setBackpackInventoryWhenOpened(playerBPToOpen, playerBPFile, backPackCfg.getInt(player.getUniqueId() + ".size"), invTitle, playerBPToOpen.getName()));
+//                    } catch (IOException e) {
+//                        Main.log.warning(e.getMessage());
+//                    }
+//                }
+            }
             try {
-                backPackCfg.save(Api.getConfigFile(YmlFileNames.YML_BACK_PACK_FILE_NAME));
+                backPackCfg.save(playerBPFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

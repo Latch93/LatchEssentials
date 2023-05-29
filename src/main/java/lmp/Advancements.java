@@ -18,7 +18,7 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:adventure/summon_iron_golem", "Hired Help", "Summon an iron golem."));
         advancements.add(new Advancement("minecraft:adventure/throw_trident", "A Throwaway Joke", "Hit a mob with a thrown trident."));
         advancements.add(new Advancement("minecraft:adventure/totem_of_undying", "Postmortal", "Activate a totem of undying by taking fatal damage."));
-        advancements.add(new Advancement("minecraft:adventure/trade_at_world_height", "What a Deal", "Trade with a Villager at the build height limit."));
+        advancements.add(new Advancement("minecraft:adventure/trade_at_world_height", "Sky Trader", "Trade with a Villager at the build height limit."));
         advancements.add(new Advancement("minecraft:adventure/very_very_frightening", "Very Very Frightening", "Hit a villager with lightning created by a trident with the Channeling enchantment."));
         advancements.add(new Advancement("minecraft:end/dragon_breath", "You Need a Mint", "Have a bottle of dragon's breath in your inventory."));
         advancements.add(new Advancement("minecraft:end/dragon_egg", "The Next Generation", "Have a dragon egg in your inventory."));
@@ -76,7 +76,6 @@ public class Advancements {
         advancements.add(new Advancement("minecraft:adventure/ol_betsy", "Ol' Betsy", "Shoot a crossbow."));
         advancements.add(new Advancement("minecraft:adventure/lightning_rod_with_villager_no_fire", "Surge Protector", "Be within 30 blocks of a lightning strike that doesn't set any blocks on fire, while an unharmed villager is within or up to six blocks above a 30×30×30 volume centered on the lightning strike."));
         advancements.add(new Advancement("minecraft:adventure/fall_from_world_height", "Caves & Cliffs", "Free fall from the top of the world (build limit) to the bottom of the world and survive."));
-        advancements.add(new Advancement("minecraft:adventure/kill_mob_near_sculk_catalyst", "It spreads", "Kill a mob near a sculk catalyst."));
         advancements.add(new Advancement("minecraft:nether/find_bastion", "Those Were the Days", "Enter a Bastion Remnant."));
         advancements.add(new Advancement("minecraft:nether/obtain_ancient_debris", "Hidden in the Depths", "Obtain Ancient Debris."));
         advancements.add(new Advancement("minecraft:nether/obtain_crying_obsidian", "Who is Cutting Onions?", "Obtain Crying Obsidian."));

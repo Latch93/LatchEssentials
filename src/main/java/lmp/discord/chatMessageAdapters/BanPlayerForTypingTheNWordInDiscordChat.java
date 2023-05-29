@@ -14,7 +14,7 @@ public class BanPlayerForTypingTheNWordInDiscordChat extends ListenerAdapter {
         // If a user says the n word, then ban them
         if (message.replace(" ", "").contains("nigger") || message.replace(" ", "").contains("nigga")) {
             e.getMessage().delete().queue();
-            Objects.requireNonNull(e.getMember()).ban(30, TimeUnit.DAYS).queue();
+            Objects.requireNonNull(e.getMember()).ban(30, TimeUnit.DAYS).reason("Typed the n-word").queue();
         }
     }
 }

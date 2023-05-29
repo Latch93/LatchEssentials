@@ -1,15 +1,13 @@
 package lmp;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 public class ExperienceManager {
 
-    public static int getPlayerLevel(PlayerInteractEvent event, float xpToSubtract) {
-        Player player = event.getPlayer();
+    public static int getPlayerLevel(Player player, float xpToSubtract) {
         double playerLevel = player.getLevel();
         double totalXpRequiredForNextLevel = getTotalXpRequiredForNextLevel(playerLevel);
-        double xpLevel = event.getPlayer().getExp();
+        double xpLevel = player.getExp();
         xpToSubtract = (int) (xpToSubtract / totalXpRequiredForNextLevel);
         int finalPlayerLevel = player.getLevel();
         if (xpToSubtract > xpLevel) {
@@ -18,8 +16,7 @@ public class ExperienceManager {
         return finalPlayerLevel;
     }
 
-    public static float getPlayerXP(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+    public static float getPlayerXP(Player player) {
         double playerLevel = player.getLevel();
         float totalXpRequiredForNextLevel = (float) getTotalXpRequiredForNextLevel(playerLevel);
         float xpLevel = player.getExp();

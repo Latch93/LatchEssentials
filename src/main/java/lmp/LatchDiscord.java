@@ -104,7 +104,7 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
     public static Message getMessage(){return message;}
 
-    public static String convertDiscordMessageToServer(Member member, String message, String senderName, Boolean isReply, Message repliedMessage) {
+    public static String convertDiscordMessageToServer(Member member, String message, String senderName, Boolean isReply, Message repliedMessage, Boolean staffMessage) {
         int count = 0;
         String highestRole = "Member";
         ChatColor colorCode;
@@ -126,13 +126,21 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             colorCode = ChatColor.GREEN;
         }
         String finalMessage;
-        if (isReply) {
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
-                    ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+        if (staffMessage){
+            if (isReply) {
+                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.AQUA + message;
+            } else {
+                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " - " + ChatColor.GRAY + "» " + ChatColor.AQUA + message;
+            }
         } else {
-            finalMessage = ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.WHITE + "] " + senderName + " » " + message;
+            if (isReply) {
+                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+            } else {
+                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " - " + ChatColor.GRAY + "» " + ChatColor.WHITE + message;
+            }
         }
-
         return finalMessage;
     }
 
@@ -215,9 +223,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                 // get the
                 if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && !e.getAuthor().getId().equals(lmp.Constants.LATCH93BOT_USER_ID))) {
                     if (e.getMessage().getReferencedMessage() != null) {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage()));
+                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), false));
                     } else {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
+                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, false));
                     }
                 }
                 if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) || messageChannel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID))) {
@@ -340,9 +348,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.jr-mod")) {
                     if (e.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage()));
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true));
                     } else {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
+                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true));
                     }
                 }
             }
@@ -351,9 +359,9 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.admin")) {
                     if (e.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage()));
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true));
                     } else {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin-Chat" + ChatColor.WHITE + "]-" + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null));
+                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true));
                     }
                 }
             }

@@ -80,14 +80,14 @@ public class PlayerShops {
                 ims.setItemMeta(im);
                 int itemCost = playerShopCfg.getInt(offlineSeller.getUniqueId() + ".itemWorth." + ims);
                 ims.setAmount(itemAmount);
-                if (e.getClick().toString().equalsIgnoreCase("LEFT")) {
+                if (e.isLeftClick()) {
                     leftClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
-                } else if (e.getClick().toString().equalsIgnoreCase("RIGHT")) {
+                } else if (e.isRightClick()) {
                     rightClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
                 }
-//                else if (e.getClick().toString().equalsIgnoreCase("MIDDLE")){
-//                    middleClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
-//                }
+                else if (e.isShiftClick()){
+                    middleClickPurchase(e, econ, player, offlineBuyer, offlineSeller, econ.getBalance(offlineBuyer), itemCost);
+                }
             } else {
                 e.setCancelled(true);
             }
@@ -111,7 +111,7 @@ public class PlayerShops {
     private static void rightClickPurchase(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double buyerBalance, int itemCost) throws ExecutionException, InterruptedException {
         e.setCancelled(true);
         if (Objects.requireNonNull(e.getCurrentItem()).getAmount() >= 10) {
-            int itemTotalAmount = e.getCurrentItem().getAmount();
+            int itemTotalAmount = 10;
             int itemTotalCost = itemCost * itemTotalAmount;
             if (buyerBalance < itemTotalCost) {
                 player.sendMessage(ChatColor.RED + "Not enough money to buy these " + itemTotalAmount + " items.");
@@ -119,7 +119,7 @@ public class PlayerShops {
                 if ((Boolean.FALSE.equals(Api.doesPlayerHavePermission(offlineSeller.getUniqueId().toString(), "ignoreshop")) && Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString())) != null)) {
                     Member seller = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(offlineSeller.getUniqueId().toString()));
                     assert seller != null;
-                    seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought " + itemTotalAmount + " " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));
+                    seller.getUser().openPrivateChannel().queue((privateChannel -> privateChannel.sendMessage(offlineBuyer.getName() + " has bought 10 " + Objects.requireNonNull(e.getCurrentItem()).getType() + " for $" + itemTotalCost).queue()));
                 }
                 setBuyerAndSellerInventories(e, econ, player, offlineBuyer, offlineSeller, itemCost, itemTotalAmount);
             }
@@ -145,7 +145,7 @@ public class PlayerShops {
         e.setCancelled(true);
     }
 
-    private static void setBuyerAndSellerInventories(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, int itemCost, int amountSold) {
+    private static void setBuyerAndSellerInventories(InventoryClickEvent e, Economy econ, Player player, OfflinePlayer offlineBuyer, OfflinePlayer offlineSeller, double itemCost, int amountSold) {
         ItemStack itemStack = e.getCurrentItem();
         ItemStack test = e.getCurrentItem();
         assert itemStack != null;
@@ -154,6 +154,7 @@ public class PlayerShops {
         assert test != null;
         test.setAmount(amountSold);
         player.getInventory().addItem(test);
+        itemCost = itemCost *  amountSold;
         econ.withdrawPlayer(offlineBuyer, itemCost);
         econ.depositPlayer(offlineSeller, itemCost);
         player.updateInventory();

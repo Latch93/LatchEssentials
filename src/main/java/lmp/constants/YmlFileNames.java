@@ -30,4 +30,11 @@ public class YmlFileNames {
     public static final String YML_XP_FARM_FILE_NAME = "xpFarm";
     public static final String YML_PLAYER_BED_LOCATION_FILE_NAME = "playerBedLocation";
     public static final String YML_CREATIVE_FILE_NAME = "creative";
+    public static final String YML_SPAWN_STOPPER_FILE_NAME = "spawnStopper";
+    public static final String YML_FLY_LIST_FILE_NAME = "flyList";
+    public static final String YML_CLASSIC_FILE_NAME = "classic";
+
+    public static final String YML_ONEBLOCK_FILE_NAME = "oneBlock";
+    public static final String YML_SKYBLOCK_FILE_NAME = "skyBlock";
+    public static final String YML_HUB_FILE_NAME = "hub";
 }

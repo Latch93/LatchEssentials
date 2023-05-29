@@ -13,6 +13,7 @@ public class BackpackTabComplete implements TabCompleter {
         List<String> backpackCommandList = new ArrayList<>();
         backpackCommandList.add("buy");
         backpackCommandList.add("open");
+        backpackCommandList.add("ticket");
         backpackCommandList.add("upgrade");
         return StringUtil.copyPartialMatches(args[0], backpackCommandList, new ArrayList<>());
     }

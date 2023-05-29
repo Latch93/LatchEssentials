@@ -32,6 +32,27 @@ public class SetPlayerLocationOnAnarchy implements Listener {
                 e.setRespawnLocation(playerAnarchyBedLocation);
             }
         }
+        if (Objects.requireNonNull(whitelistCfg.getString(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".lastDeathWorld")).equals("classic") || Objects.requireNonNull(whitelistCfg.getString(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".lastDeathWorld")).equals("classic_the_end")){
+            Location playerClassicBedLocation = playerBedLocationCfg.getLocation(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".classic.location");
+            if (playerClassicBedLocation == null || !playerClassicBedLocation.getBlock().getType().toString().contains("BED")){
+                Location classicSpawnLocation = new Location(Bukkit.getWorld("classic"), 0, 92, 0, (float) -3.000, (float) 92.10);
+                e.setRespawnLocation(classicSpawnLocation);
+            } else {
+                e.setRespawnLocation(playerClassicBedLocation);
+            }
+        }
+        if (Objects.requireNonNull(whitelistCfg.getString(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".lastDeathWorld")).equals("classic_nether")){
+            Location playerClassicNetherBedLocation = playerBedLocationCfg.getLocation(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".classic_nether.location");
+            Location playerClassicBedLocation = playerBedLocationCfg.getLocation(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + ".classic.location");
+            if (playerClassicNetherBedLocation != null){
+                e.setRespawnLocation(playerClassicNetherBedLocation);
+            } else if (playerClassicBedLocation != null){
+                e.setRespawnLocation(playerClassicBedLocation);
+            } else {
+                Location classicSpawnLocation = new Location(Bukkit.getWorld("anarchy"), 0, 92, 0, (float) -3.000, (float) 92.10);
+                e.setRespawnLocation(classicSpawnLocation);
+            }
+        }
     }
 
 }

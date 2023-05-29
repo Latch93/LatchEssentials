@@ -1,5 +1,6 @@
 package lmp.discord.chatMessageAdapters;
 
+import lmp.Constants;
 import lmp.Main;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
@@ -18,6 +19,11 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -46,8 +52,6 @@ public class TestChannelChatEvent extends ListenerAdapter {
             assert byebyeDiscordChat != null;
             String filePath = Api.getMainPlugin().getDataFolder().getPath();
             String folderName = "/gifs";
-
-
             int gifCount = Objects.requireNonNull(new File(filePath + folderName).list()).length;
             Random rand = new Random();
             int n = rand.nextInt(gifCount);
@@ -179,6 +183,29 @@ public class TestChannelChatEvent extends ListenerAdapter {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+        }
+        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.contains("twitch")) {
+
+            // Format for String Date 2022-11-16T18:00:30
+            String[] message = messageContents.split(" ");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            LocalDateTime datetime = LocalDateTime.parse(message[1], dtf);
+            ZonedDateTime zoned = datetime.atZone(ZoneId.of("America/Chicago"));
+            OffsetDateTime startTime = zoned.toOffsetDateTime();
+            OffsetDateTime endTime = startTime.plusHours(Long.parseLong(message[2]));
+            Objects.requireNonNull(getJDA().getGuildById(Constants.GUILD_ID)).createScheduledEvent("Latch is Streaming", "https://www.twitch.tv/latch93", startTime, endTime).queue();
+        }
+        if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.contains("createEvent")) {
+            // Format for String Date 2022-11-16T18:00:30
+            String[] message = messageContents.split(" ");
+            String eventName = message[1];
+            String location = message[2];
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            LocalDateTime datetime = LocalDateTime.parse(message[3], dtf);
+            ZonedDateTime zoned = datetime.atZone(ZoneId.of("America/Chicago"));
+            OffsetDateTime startTime = zoned.toOffsetDateTime();
+            OffsetDateTime endTime = startTime.plusHours(Long.parseLong(message[4]));
+            Objects.requireNonNull(getJDA().getGuildById(Constants.GUILD_ID)).createScheduledEvent(eventName, location, startTime, endTime).queue();
         }
         if (messageChannel.getId().equals(lmp.Constants.TEST_CHANNEL_ID) && messageContents.contains("cong")) {
             e.getAuthor().openPrivateChannel().flatMap(dm -> dm.sendMessage("""

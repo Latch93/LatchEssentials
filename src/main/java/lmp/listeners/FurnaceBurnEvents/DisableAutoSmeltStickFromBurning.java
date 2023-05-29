@@ -12,8 +12,10 @@ public class DisableAutoSmeltStickFromBurning implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void disableAutoSmeltAndBrewStickFromBurning(FurnaceBurnEvent e){
-        if (e.getFuel().getItemMeta() != null && e.getFuel().getItemMeta().hasEnchants()){
-            e.setCancelled(true);
+        if (e.getFuel().getItemMeta() != null && e.getFuel().getItemMeta().hasLore()){
+            if (e.getFuel().getItemMeta().getLore().get(0).equalsIgnoreCase("QuickSmelt")) {
+                e.setCancelled(true);
+            }
         }
     }
 }

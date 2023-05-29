@@ -1,6 +1,7 @@
 package lmp.discord.channelCommands;
 
 import lmp.Constants;
+import lmp.LatchDiscord;
 import lmp.Main;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
@@ -13,11 +14,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static lmp.LatchDiscord.*;
-import static lmp.LatchDiscord.senderDiscordMember;
 
 public class GeneralDiscordCommands extends ListenerAdapter {
 
@@ -49,6 +52,71 @@ public class GeneralDiscordCommands extends ListenerAdapter {
                 messageChannel.sendMessage(senderDiscordUsername + " --- Check your Discord for a private message from my bot containing your link command. <:LatchPOG:957363669388386404>").queue();
                 if (doesDiscordMemberHasRole(senderDiscordMember, Constants.MEMBER_ROLE_ID) == null){
                     Objects.requireNonNull(jda.getGuildById(lmp.Constants.GUILD_ID)).addRoleToMember(UserSnowflake.fromId(senderDiscordUserID), Objects.requireNonNull(jda.getRoleById(lmp.Constants.MEMBER_ROLE_ID))).queue();
+                }
+            }
+            if (messageContents.equalsIgnoreCase("!linkTwitch")) {
+                messageChannel.sendMessage(senderDiscordUsername + " --- Type the following command into Latch's Twitch chat to connect your accounts -> !lmp link " + senderDiscordUser.getId()).queue();
+            }
+            if (messageContents.contains("!findusers")) {
+                ArrayList<String> membersWithRole = new ArrayList<>();
+                String[] splitArr = messageContents.split(" ");
+                String roleID = splitArr[1];
+                String roleName = LatchDiscord.getJDA().getRoleById(roleID).getName();
+                for (Member member : LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMembersWithRoles()){
+                    for (Role role : member.getRoles()){
+                        if (role.getId().equals(roleID)){
+                            Main.log.info(member.getEffectiveAvatarUrl());
+                            if (Api.getMinecraftIdFromDCid(member.getId()) != null) {
+                                membersWithRole.add(member.getEffectiveName());
+                                try {
+                                    URL url = new URL(member.getEffectiveAvatarUrl());
+                                    InputStream in = new BufferedInputStream(url.openStream());
+                                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                    byte[] buf = new byte[1024];
+                                    int n = 0;
+                                    while (-1 != (n = in.read(buf))) {
+                                        out.write(buf, 0, n);
+                                    }
+                                    out.close();
+                                    in.close();
+                                    byte[] response = out.toByteArray();
+                                    FileOutputStream fos = new FileOutputStream("E:\\Test Server\\plugins\\LatchEssentials\\profiles\\" + member.getEffectiveName() + ".png");
+                                    fos.write(response);
+                                    fos.close();
+                                } catch (RuntimeException | IOException error) {
+                                    Main.log.warning(error.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+                Main.log.info("Role Name: " + roleName);
+                Main.log.info(membersWithRole.toString());
+            }
+            if (messageContents.contains("!getAllLinkedUsers")) {
+                Main.log.info(Api.getDiscordNamesOfLinkedPlayersStillInDiscord().toString());
+            }
+            if (messageContents.contains("!getProfilePicture")) {
+                String[] splitArr = messageContents.split(" ");
+                String memberID = splitArr[1];
+                Member member = LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID).getMemberById(memberID);
+                try {
+                    URL url = new URL(member.getEffectiveAvatarUrl());
+                    InputStream in = new BufferedInputStream(url.openStream());
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    byte[] buf = new byte[1024];
+                    int n = 0;
+                    while (-1 != (n = in.read(buf))) {
+                        out.write(buf, 0, n);
+                    }
+                    out.close();
+                    in.close();
+                    byte[] response = out.toByteArray();
+                    FileOutputStream fos = new FileOutputStream("E:\\Test Server\\plugins\\LatchEssentials\\profiles\\" + member.getEffectiveName() + ".png");
+                    fos.write(response);
+                    fos.close();
+                } catch (RuntimeException | IOException error) {
+                    Main.log.warning(error.getMessage());
                 }
             }
             if (!messageContents.equalsIgnoreCase("!link") && senderDiscordMember != null && doesDiscordMemberHasRole(senderDiscordMember, Constants.MEMBER_ROLE_ID) == null) {

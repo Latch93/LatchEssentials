@@ -6,14 +6,17 @@ import lmp.constants.Constants;
 import lmp.constants.YmlFileNames;
 import lmp.listeners.playerJoinEvents.BankLoginEvent;
 import lmp.listeners.playerQuitEvents.BankLogoutEvent;
-import lmp.runnable.LMPTimer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.types.InheritanceNode;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.command.Command;
@@ -21,15 +24,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -91,9 +94,17 @@ public class LMPCommand implements CommandExecutor {
         try {
             if (args[0] != null) {
                 if (args[0].equalsIgnoreCase("stat")) {
-                    sender.sendMessage(ChatColor.GREEN + "Total deaths: " + ChatColor.GOLD + player.getStatistic(Statistic.DEATHS));
-                    sender.sendMessage(ChatColor.GREEN + "Total mobs killed: " + ChatColor.GOLD + player.getStatistic(Statistic.MOB_KILLS));
-                    sender.sendMessage(ChatColor.GREEN + "Number of times jumped: " + ChatColor.GOLD + player.getStatistic(Statistic.JUMP));
+                    sender.sendMessage(ChatColor.GREEN + "Deaths: " + ChatColor.GOLD + player.getStatistic(Statistic.DEATHS));
+                    sender.sendMessage(ChatColor.GREEN + "Mobs Killed: " + ChatColor.GOLD + player.getStatistic(Statistic.MOB_KILLS));
+                    sender.sendMessage(ChatColor.GREEN + "Times Jumped: " + ChatColor.GOLD + player.getStatistic(Statistic.JUMP));
+                    sender.sendMessage(ChatColor.GREEN + "Damage Dealt: " + ChatColor.GOLD + player.getStatistic(Statistic.DAMAGE_DEALT));
+                    sender.sendMessage(ChatColor.GREEN + "Damage Taken: " + ChatColor.GOLD + player.getStatistic(Statistic.DAMAGE_TAKEN));
+                    sender.sendMessage(ChatColor.GREEN + "Animals Bred: " + ChatColor.GOLD + player.getStatistic(Statistic.ANIMALS_BRED));
+                    sender.sendMessage(ChatColor.GREEN + "Traded with Villager: " + ChatColor.GOLD + player.getStatistic(Statistic.TRADED_WITH_VILLAGER));
+                    sender.sendMessage(ChatColor.GREEN + "Slept in Bed: " + ChatColor.GOLD + player.getStatistic(Statistic.SLEEP_IN_BED));
+                    sender.sendMessage(ChatColor.GREEN + "Damage Blocked by Shield: " + ChatColor.GOLD + player.getStatistic(Statistic.DAMAGE_BLOCKED_BY_SHIELD));
+                    sender.sendMessage(ChatColor.GREEN + "Raids Won: " + ChatColor.GOLD + player.getStatistic(Statistic.RAID_WIN));
+
                 } else if (args[0].equalsIgnoreCase("rtp")) {
                     RandomTeleport.randomTp(player);
                 } else if (args[0].equalsIgnoreCase("lotto")) {
@@ -103,72 +114,89 @@ public class LMPCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + "Invalid command. Please use this command as follows -> " + ChatColor.AQUA + "[/dt lotto check] [/dt lotto buyin] [/dt lotto total]");
                     }
                 } else if (args[0].equalsIgnoreCase("withdraw")) {
-                    double amount = Double.parseDouble(args[1]);
-                    if (amount > 499) {
-                        if (amount <= Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player))) {
-                            Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
-                            ItemStack paper = new ItemStack(Material.PAPER, 1);
-                            ItemMeta im = paper.getItemMeta();
-                            assert im != null;
-                            im.setDisplayName("MoneyOrder - " + player.getName() + " - " + amount);
-                            im.setLore(Collections.singletonList("MoneyOrder - " + player.getName() + " - " + amount));
-                            paper.setItemMeta(im);
-                            World world = player.getWorld();
-                            Location dropLocation = player.getLocation();
-                            world.dropItem(dropLocation, paper);
-                            player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
-                            FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
-                            Date date = new Date();
-                            moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
-                            moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
-                            moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
-                            moneyOrderLogCfg.save(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
+                    List<String> enabledWithdrawWorlds = new ArrayList<>();
+                    enabledWithdrawWorlds.add("world");
+                    enabledWithdrawWorlds.add("world_nether");
+                    enabledWithdrawWorlds.add("world_the_end");
+                    if (enabledWithdrawWorlds.contains(player.getWorld().getName())) {
+                        double amount = Double.parseDouble(args[1]);
+                        if (amount > 249) {
+                            if (amount <= Api.getEconomy().getBalance(Api.getOfflinePlayerFromPlayer(player))) {
+                                Api.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
+                                ItemStack paper = new ItemStack(Material.PAPER, 1);
+                                ItemMeta im = paper.getItemMeta();
+                                assert im != null;
+                                im.setDisplayName("MoneyOrder - " + player.getName() + " - " + amount);
+                                im.setLore(Collections.singletonList("MoneyOrder - " + player.getName() + " - " + amount));
+                                paper.setItemMeta(im);
+                                World world = player.getWorld();
+                                Location dropLocation = player.getLocation();
+                                world.dropItem(dropLocation, paper);
+                                player.sendMessage(ChatColor.GREEN + "You have withdrawn " + ChatColor.GOLD + "$" + amount);
+                                FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
+                                Date date = new Date();
+                                moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
+                                moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "withdraw");
+                                moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
+                                moneyOrderLogCfg.save(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
+                            } else {
+                                player.sendMessage(ChatColor.RED + "Can't withdraw more than your current balance.");
+                            }
                         } else {
-                            player.sendMessage(ChatColor.RED + "Can't withdraw more than your current balance.");
+                            player.sendMessage(ChatColor.RED + "Can't withdraw less than $250.");
                         }
                     } else {
-                        player.sendMessage(ChatColor.RED + "Can't withdraw less than $500.");
+                        player.sendMessage(ChatColor.RED + "You can only use this command in " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
                     }
+
                 } else if (args[0].equalsIgnoreCase("deposit")) {
-                    Inventory playerInv = player.getInventory();
-                    int count = 0;
-                    File essentialsFile = new File("plugins/Essentials", "config.yml");
-                    for (ItemStack is : playerInv) {
-                        if (is != null) {
-                            ItemMeta im = is.getItemMeta();
-                            if (im != null && im.getLore() != null && im.getLore().get(0).contains("MoneyOrder")) {
-                                String[] lore = im.getLore().get(0).split(" - ");
-                                String playerName = lore[1];
-                                double amount = Double.parseDouble(lore[2]) * is.getAmount();
-                                double maxAmount = YamlConfiguration.loadConfiguration(essentialsFile).getDouble("max-money");
-                                double playerBalance = Api.getEconomy().getBalance(player);
-                                double sumOfBalanceAndAmount = Double.sum(playerBalance, amount);
-                                if (Double.compare(sumOfBalanceAndAmount, maxAmount) <= 0) {
-                                    Api.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
-                                    player.sendMessage(ChatColor.GREEN + "Deposited " + ChatColor.GOLD + "$" + amount + ChatColor.GREEN + " from " + ChatColor.GOLD + playerName);
-                                    is.setAmount(0);
-                                    player.getInventory().setItem(count, is);
-                                    FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
-                                    Date date = new Date();
-                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
-                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".from", playerName);
-                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "deposit");
-                                    moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
-                                    moneyOrderLogCfg.save(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "Can't deposit more MoneyOrders because it will exceed the server's maximum amount.");
+                    List<String> enabledDepositWorlds = new ArrayList<>();
+                    enabledDepositWorlds.add("world");
+                    enabledDepositWorlds.add("world_nether");
+                    enabledDepositWorlds.add("world_the_end");
+                    if (enabledDepositWorlds.contains(player.getWorld().getName())) {
+                        Inventory playerInv = player.getInventory();
+                        int count = 0;
+                        File essentialsFile = new File("plugins/Essentials", "config.yml");
+                        for (ItemStack is : playerInv) {
+                            if (is != null) {
+                                ItemMeta im = is.getItemMeta();
+                                if (im != null && im.getLore() != null && im.getLore().get(0).contains("MoneyOrder")) {
+                                    String[] lore = im.getLore().get(0).split(" - ");
+                                    String playerName = lore[1];
+                                    double amount = Double.parseDouble(lore[2]) * is.getAmount();
+                                    double maxAmount = YamlConfiguration.loadConfiguration(essentialsFile).getDouble("max-money");
+                                    double playerBalance = Api.getEconomy().getBalance(player);
+                                    double sumOfBalanceAndAmount = Double.sum(playerBalance, amount);
+                                    if (Double.compare(sumOfBalanceAndAmount, maxAmount) <= 0) {
+                                        Api.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()), amount);
+                                        player.sendMessage(ChatColor.GREEN + "Deposited " + ChatColor.GOLD + "$" + amount + ChatColor.GREEN + " from " + ChatColor.GOLD + playerName);
+                                        is.setAmount(0);
+                                        player.getInventory().setItem(count, is);
+                                        FileConfiguration moneyOrderLogCfg = Api.getFileConfiguration(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME);
+                                        Date date = new Date();
+                                        moneyOrderLogCfg.set(player.getUniqueId().toString() + ".playerName", player.getName());
+                                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".from", playerName);
+                                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".type", "deposit");
+                                        moneyOrderLogCfg.set(player.getUniqueId().toString() + "." + date + ".amount", amount);
+                                        moneyOrderLogCfg.save(Api.getConfigFile(YmlFileNames.YML_MONEY_ORDER_LOG_FILE_NAME));
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "Can't deposit more MoneyOrders because it will exceed the server's maximum amount.");
+                                    }
                                 }
                             }
+                            count++;
                         }
-                        count++;
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only use this command in " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
                     }
                 } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("switch") && args[1] != null) {
                     FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
                     Inventory playerInventory = player.getInventory();
-                    Location creativeChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("creativeChest.x"), configCfg.getDouble("creativeChest.y"), configCfg.getDouble("creativeChest.z"));
+                    Location creativeChestLocation = new Location(Bukkit.getWorld("season6"), configCfg.getDouble("creativeChest.x"), configCfg.getDouble("creativeChest.y"), configCfg.getDouble("creativeChest.z"));
                     Block creativeChestBlock = creativeChestLocation.getBlock();
                     Chest creativeChest = (Chest) creativeChestBlock.getState();
-                    Location survivalChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("survivalChest.x"), configCfg.getDouble("survivalChest.y"), configCfg.getDouble("survivalChest.z"));
+                    Location survivalChestLocation = new Location(Bukkit.getWorld("season6"), configCfg.getDouble("survivalChest.x"), configCfg.getDouble("survivalChest.y"), configCfg.getDouble("survivalChest.z"));
                     Block survivalChestBlock = survivalChestLocation.getBlock();
                     Chest survivalChest = (Chest) survivalChestBlock.getState();
                     if (args[1].equalsIgnoreCase("creative") && player.getGameMode().equals(GameMode.SURVIVAL)) {
@@ -223,52 +251,73 @@ public class LMPCommand implements CommandExecutor {
                             }
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("clearBoss") && args[1] != null) {
-                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
-                    bossCfg.set("bossEnabled", false);
-                    player.sendMessage(ChatColor.GREEN + "Boss has been terminated.");
-                    try {
-                        bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("killBoss")) {
-                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
-                    try {
-                        Objects.requireNonNull(Bukkit.getEntity(UUID.fromString(Objects.requireNonNull(bossCfg.getString("bossUUID"))))).remove();
-                        bossCfg.set("bossEnabled", false);
-                        player.sendMessage(ChatColor.GREEN + "Boss has been terminated.");
-                        try {
-                            bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NullPointerException ignored) {
-
-                    }
-                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("removeHomes")) {
+                }
+//                else if (args[0].equalsIgnoreCase("clearBoss") && args[1] != null) {
+//                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
+//                    bossCfg.set("bossEnabled", false);
+//                    player.sendMessage(ChatColor.GREEN + "Boss has been terminated.");
+//                    try {
+//                        bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("killBoss")) {
+//                    FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
+//                    try {
+//                        Objects.requireNonNull(Bukkit.getEntity(UUID.fromString(Objects.requireNonNull(bossCfg.getString("bossUUID"))))).remove();
+//                        bossCfg.set("bossEnabled", false);
+//                        player.sendMessage(ChatColor.GREEN + "Boss has been terminated.");
+//                        try {
+//                            bossCfg.save(Api.getConfigFile(YmlFileNames.YML_BOSS_FILE_NAME));
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } catch (NullPointerException ignored) {
+//
+//                    }
+//                }
+                else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("removeHomes")) {
                     for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
                         FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
                         if (conf.isSet("homes")) {
-                            conf.set("homes", null);
+                            for (String homeName : Objects.requireNonNull(conf.getConfigurationSection("homes")).getKeys(false)){
+                                ArrayList<String> homeWorldsToDelete = new ArrayList<>();
+                                homeWorldsToDelete.add("world");
+                                homeWorldsToDelete.add("world_nether");
+                                homeWorldsToDelete.add("world_the_end");
+                                Main.log.info(conf.getString("homes." + homeName + ".world-name"));
+                                if (homeWorldsToDelete.contains(conf.getString("homes." + homeName + ".world-name"))){
+                                    conf.set("homes." + homeName, null);
+                                }
+                            }
                         }
-                        if (conf.isSet("logoutlocation")) {
-                            conf.set("logoutlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
-                            conf.set("logoutlocation.x", -189.5);
-                            conf.set("logoutlocation.y", 159.0);
-                            conf.set("logoutlocation.z", -106.7);
-                            conf.set("logoutlocation.yaw", -91.05023193359375);
-                            conf.set("logoutlocation.pitch", 23.699981689453125);
-                            conf.set("logoutlocation.world-name", "world");
+                        if (conf.isSet("money")){
+                            double balance = Double.parseDouble(Objects.requireNonNull(conf.getString("money")));
+                            if (balance > 500000){
+                                conf.set("money", "500000.00");
+                            }
                         }
-                        if (conf.isSet("lastlocation")) {
-                            conf.set("lastlocation.world", "cee8accb-f717-4b88-be30-a688b2a195ea");
-                            conf.set("lastlocation.x", -189.5);
-                            conf.set("lastlocation.y", 159.0);
-                            conf.set("lastlocation.z", -106.7);
-                            conf.set("lastlocation.yaw", -91.05023193359375);
-                            conf.set("lastlocation.pitch", 23.699981689453125);
-                            conf.set("lastlocation.world-name", "world");
+                        if (conf.isSet("logoutlocation") && conf.isSet("logoutlocation.world") && Objects.requireNonNull(conf.getString("logoutlocation.world")).equalsIgnoreCase("cee8accb-f717-4b88-be30-a688b2a195ea")) {
+                            if (conf.isSet("logoutlocation")) {
+                                conf.set("logoutlocation.world", "0ccd6fce-b9c3-44ff-9225-9c2f63c3ceb6");
+                                conf.set("logoutlocation.x", -153.4098660271217);
+                                conf.set("logoutlocation.y", 118.0);
+                                conf.set("logoutlocation.z", 86.11922280135366);
+                                conf.set("logoutlocation.yaw", 89.55033874511719);
+                                conf.set("logoutlocation.pitch", -5.250002384185791);
+                                conf.set("logoutlocation.world-name", "world");
+                            }
+                        }
+                        if (conf.isSet("lastlocation") && conf.isSet("logoutlocation.world") && Objects.requireNonNull(conf.getString("lastlocation.world")).equalsIgnoreCase("cee8accb-f717-4b88-be30-a688b2a195ea")) {
+                            if (conf.isSet("lastlocation")) {
+                                conf.set("lastlocation.world", "0ccd6fce-b9c3-44ff-9225-9c2f63c3ceb6");
+                                conf.set("lastlocation.x", -153.4098660271217);
+                                conf.set("lastlocation.y", 118.0);
+                                conf.set("lastlocation.z", 86.11922280135366);
+                                conf.set("lastlocation.yaw", 89.55033874511719);
+                                conf.set("lastlocation.pitch", -5.250002384185791);
+                                conf.set("lastlocation.world-name", "world");
+                            }
                         }
                         try {
                             conf.save(file);
@@ -277,8 +326,6 @@ public class LMPCommand implements CommandExecutor {
                             e.printStackTrace();
                         }
                     }
-                } else if (args[0].equalsIgnoreCase("createDonationClaimList")){
-                    DonationClaimRewards.createDonationUserFile();
                 }
                 else if (args[0].equalsIgnoreCase("link") && args[1] != null) {
                     Member discordMember = null;
@@ -322,7 +369,7 @@ public class LMPCommand implements CommandExecutor {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            DonationClaimRewards.addNewPlayerToDonationFile(player);
+                            DonationClaimRewards.createNewPlayerToDonationFile(player);
                             whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
                             player.sendMessage(ChatColor.GREEN + "You are now linked up and have perms. Happy Mining!!!");
                             whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
@@ -338,19 +385,21 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("help")) {
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("spectate")) {
-                    spectateInsideRandomPlayer(player);
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("resetAllBalances")) {
-                    resetPlayerBalances(Api.getAllMinecraftIDOfLinkedPlayers());
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("bmstart")) {
-                    LMPTimer.startBloodmoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("easybm")) {
-                    LMPTimer.setEasyBloodMoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("mediumbm")) {
-                    LMPTimer.setMediumBloodMoon();
-                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("hardbm")) {
-                    LMPTimer.setHardBloodMoon();
-                } else if (args[0].equalsIgnoreCase("xpDeposit")) {
+                }
+//                else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("spectate")) {
+//                    spectateInsideRandomPlayer(player);
+//                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("resetAllBalances")) {
+//                    resetPlayerBalances(Api.getAllMinecraftIDOfLinkedPlayers());
+//                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("bmstart")) {
+//                    LMPTimer.startBloodmoon();
+//                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("easybm")) {
+//                    LMPTimer.setEasyBloodMoon();
+//                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("mediumbm")) {
+//                    LMPTimer.setMediumBloodMoon();
+//                } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("hardbm")) {
+//                    LMPTimer.setHardBloodMoon();
+//                }
+                else if (args[0].equalsIgnoreCase("xpDeposit")) {
                     if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))) {
                         if (args[1] != null) {
                             if (Api.getPlayerExp(player) >= Integer.parseInt(args[1])) {
@@ -382,6 +431,10 @@ public class LMPCommand implements CommandExecutor {
                     } else {
                         player.sendMessage(ChatColor.RED + "You must be holding an experience storage bottle.");
                     }
+                } else if (args[0].equalsIgnoreCase("hub")) {
+                    FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
+                    Location hubLocation = new Location(Bukkit.getWorld(Objects.requireNonNull(configCfg.getString("hub.world-name"))), configCfg.getDouble("hub.x"), configCfg.getDouble("hub.y"), configCfg.getDouble("hub.z"));
+                    player.teleport(hubLocation);
                 } else if (args[0].equalsIgnoreCase("xpWithdraw")) {
                     if (Boolean.TRUE.equals(isPlayerHoldingXPStorageBottle(player))) {
                         String xpAmountString = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
@@ -420,30 +473,256 @@ public class LMPCommand implements CommandExecutor {
                     ItemStack itemToAdd = player.getInventory().getItemInMainHand();
                     Bukkit.getScheduler().runTaskAsynchronously(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> {
                         try {
-                            DonationClaimRewards.addItemToClaim(itemToAdd);
+                            DonationClaimRewards.addItemToClaimToAll(itemToAdd);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     });
                     player.sendMessage(ChatColor.GREEN + "You have added " + ChatColor.GOLD + itemToAdd.getAmount() + " " +itemToAdd.getType() + ChatColor.GREEN + " to the claim list.");
-                } else if (player.getUniqueId().toString().equals(Constants.SERVER_OWNER_MINECRAFT_ID) && args[0].equalsIgnoreCase("createClaimFile")) {
+                } else if (player.getUniqueId().toString().equals(Constants.SERVER_OWNER_MINECRAFT_ID) && args[0].equalsIgnoreCase("createClaimFiles")) {
                     Bukkit.getScheduler().runTaskAsynchronously(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> {
                         try {
-                            DonationClaimRewards.createDonationUserFile();
+                            DonationClaimRewards.createDonationClaimFiles();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     });
 
-                } else if (args[0].equalsIgnoreCase("creative")) {
-                    if (!player.getWorld().getName().contains("creative")){
+                } else if (player.getUniqueId().toString().equals(Constants.SERVER_OWNER_MINECRAFT_ID) && args[0].equalsIgnoreCase("addItemToPlayerClaim") ) {
+                    try {
+                        ItemStack is = player.getInventory().getItemInMainHand();
+                        String minecraftId = Api.getMinecraftIdFromMinecraftName(args[1]);
+                        DonationClaimRewards.addItemToClaimToPlayer(minecraftId, is);
+                        player.sendMessage(ChatColor.GREEN + "Added " + ChatColor.GOLD + is.getAmount() + " " + is.getType() + ChatColor.GREEN + " to " + ChatColor.GOLD + player.getName() + "'s " + ChatColor.GREEN + "player claim file.");
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        player.sendMessage(ChatColor.RED + "Player Name not given as parameter.");
+                    }
+                 }
+                else if (args[0].equalsIgnoreCase("creative")) {
+                    List<String> enabledCreativeWarpWorlds = new ArrayList<>();
+                    enabledCreativeWarpWorlds.add("world");
+                    enabledCreativeWarpWorlds.add("world_nether");
+                    enabledCreativeWarpWorlds.add("world_the_end");
+                    if (enabledCreativeWarpWorlds.contains(player.getWorld().getName())) {
+                        if (!player.getWorld().getName().contains("creative")) {
                             Api.teleportCreativePlayerToLastLocation(player);
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP Creative when you are already there.");
+                        }
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP Creative when you are already there.");
+                        player.sendMessage(ChatColor.RED + "You can only use this command in " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
+                    }
+                } else if (args[0].equalsIgnoreCase("giveaway")){
+                    FileConfiguration playerLogCfg = Api.getFileConfiguration("playerLog");
+                    ArrayList<String> linkedInDiscordPlayers = Api.getMinecraftIDOfLinkedPlayersInDiscord();
+                    ArrayList<String> minecraftIDList = new ArrayList<>(playerLogCfg.getConfigurationSection("players").getKeys(false));
+                    for (String id : minecraftIDList){
+                        if (linkedInDiscordPlayers.contains(id)){
+                            Main.log.info(Api.getDiscordNameFromMCid(id));
+                        }
                     }
                 } else if (args[0].equalsIgnoreCase("money")) {
                     BankLogoutEvent.setPlayerSessionTime(player);
                     BankLoginEvent.setPlayerLoginTime(player);
+                } else if (args[0].equalsIgnoreCase("cr")) {
+                    Inventory customRecipeInventory = Bukkit.createInventory(null, 27, ChatColor.GOLD + "Custom Recipes");
+                    ItemStack grayPane = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
+                    customRecipeInventory.setItem(0, grayPane);
+                    customRecipeInventory.setItem(1, grayPane);
+                    customRecipeInventory.setItem(2, grayPane);
+                    customRecipeInventory.setItem(6, grayPane);
+                    customRecipeInventory.setItem(7, grayPane);
+                    customRecipeInventory.setItem(8, grayPane);
+                    customRecipeInventory.setItem(9, grayPane);
+                    customRecipeInventory.setItem(10, grayPane);
+                    customRecipeInventory.setItem(11, grayPane);
+                    customRecipeInventory.setItem(15, grayPane);
+                    customRecipeInventory.setItem(17, grayPane);
+                    customRecipeInventory.setItem(18, grayPane);
+                    customRecipeInventory.setItem(19, grayPane);
+                    customRecipeInventory.setItem(20, grayPane);
+                    customRecipeInventory.setItem(24, grayPane);
+                    customRecipeInventory.setItem(25, grayPane);
+                    customRecipeInventory.setItem(26, grayPane);
+                    player.openInventory(customRecipeInventory);
+                } else if (args[0].equalsIgnoreCase("combine")){
+                    ItemStack chestplate = player.getInventory().getItemInOffHand();
+                    if (chestplate.getType().equals(Material.NETHERITE_CHESTPLATE)){
+                        ItemStack elytra = player.getInventory().getItemInMainHand();
+                        if (elytra.getType().equals(Material.ELYTRA)){
+                            int playerLevel = player.getLevel();
+                            if (playerLevel >= 50){
+                                Map<Enchantment, Integer> chestplateEnchantments = chestplate.getEnchantments();
+                                Map<Enchantment, Integer> elytraEnchantments = elytra.getEnchantments();
+                                Map<Enchantment, Integer> finalEnchantments = new HashMap<>();
+                                for (Map.Entry<Enchantment, Integer> chestplateEnchant : chestplateEnchantments.entrySet()) {
+                                    for (Map.Entry<Enchantment, Integer> elytraEnchant : elytraEnchantments.entrySet()) {
+                                        if (chestplateEnchant.getKey().equals(elytraEnchant.getKey())) {
+                                            if (chestplateEnchant.getValue() > elytraEnchant.getValue()) {
+                                                finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
+                                            } else {
+                                                finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
+                                            }
+                                        }
+                                        if (!chestplateEnchantments.containsKey(elytraEnchant.getKey())) {
+                                            finalEnchantments.put(elytraEnchant.getKey(), elytraEnchant.getValue());
+                                        }
+                                    }
+                                    if (!elytraEnchantments.containsKey(chestplateEnchant.getKey())) {
+                                        finalEnchantments.put(chestplateEnchant.getKey(), chestplateEnchant.getValue());
+                                    }
+                                }
+
+                                ItemStack upgradedElytra = new ItemStack(Material.ELYTRA, 1);
+                                upgradedElytra.addUnsafeEnchantments(finalEnchantments);
+                                ItemMeta elytraIM = null;
+                                if (upgradedElytra.getItemMeta() != null){
+                                    elytraIM = upgradedElytra.getItemMeta();
+                                    elytraIM.setAttributeModifiers(Objects.requireNonNull(chestplate.getItemMeta()).getAttributeModifiers());
+                                    elytraIM.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(), "generic.armorToughness", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                                    elytraIM.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "generic.armor", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                                    elytraIM.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(UUID.randomUUID(), "generic.knockbackResistance", .1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                                    upgradedElytra.setItemMeta(elytraIM);
+                                    player.getInventory().setItemInOffHand(new ItemStack(Material.AIR, 0));
+                                    player.getInventory().setItemInMainHand(upgradedElytra);
+                                    player.setLevel(ExperienceManager.getPlayerLevel(player, 3965));
+                                    player.sendMessage(ChatColor.GREEN + "Your chestplate and elytra have been combined!!!");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You must have at least 50 experience levels to combine these items.");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Item in offhand must be an elytra.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Item in offhand must be a netherite chestplate.");
+                    }
+
+                } else if (args[0].equalsIgnoreCase("afk")){
+                    List<String> enabledAFKWorlds = new ArrayList<>();
+                    enabledAFKWorlds.add("world");
+                    enabledAFKWorlds.add("world_nether");
+                    enabledAFKWorlds.add("world_the_end");
+                    enabledAFKWorlds.add("classic");
+                    enabledAFKWorlds.add("classic_nether");
+                    enabledAFKWorlds.add("classic_the_end");
+                    if (enabledAFKWorlds.contains(player.getWorld().getName())) {
+                        BankLogoutEvent.setPlayerSessionTime(player);
+                        BankLoginEvent.setPlayerLoginTime(player);
+                        Api.givePlayerLuckPermPermission(player, "essentials.afk.kickexempt");
+                        Api.givePlayerLuckPermPermission(player, "essentials.sleepingignored");
+                        BankLogoutEvent.setPlayerSessionTime(player);
+                        Api.setBankSessionToAFK(true, player);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only use this command in " + ChatColor.GOLD + "LMP Community " + ChatColor.RED + "or " + ChatColor.GOLD + "LMP Classic " + ChatColor.RED + "servers." );
+                    }
+                } else if (args[0].equalsIgnoreCase("fly")){
+                    List<String> enabledFlyWorlds = new ArrayList<>();
+                    enabledFlyWorlds.add("world");
+                    enabledFlyWorlds.add("world_nether");
+                    enabledFlyWorlds.add("world_the_end");
+                    if (enabledFlyWorlds.contains(player.getWorld().getName())) {
+                        double balance = Api.getEconomy().getBalance(Bukkit.getOfflinePlayer(player.getUniqueId()));
+                        double flyCost = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getDouble("flyCommandCost");
+                        int commandLength = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getInt("flyCommandLength");
+                        if (balance >= flyCost){
+                            String playerUUID = player.getUniqueId().toString();
+                            Api.takePlayerMoney(player.getUniqueId().toString(), flyCost);
+                            Api.givePlayerLuckPermPermission(player, "essentials.fly");
+                            DateTime dateOne = new DateTime();
+                            DecimalFormat df = new DecimalFormat("0.00");
+                            FileConfiguration flyListCfg = Api.getFileConfiguration(YmlFileNames.YML_FLY_LIST_FILE_NAME);
+                            flyListCfg.set(lmp.Constants.YML_PLAYERS + playerUUID + ".playerName", player.getName());
+                            flyListCfg.set(lmp.Constants.YML_PLAYERS + playerUUID + ".fly.enabled", true);
+                            flyListCfg.set(lmp.Constants.YML_PLAYERS + playerUUID + ".fly.commandTime", dateOne.getMillis());
+                            player.setAllowFlight(true);
+                            player.setFlying(true);
+                            flyListCfg.save(Api.getConfigFile(YmlFileNames.YML_FLY_LIST_FILE_NAME));
+                            int totalFlyTime = (commandLength / 1000) / 60;
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + lmp.Constants.YML_YOUR_NEW_BALANCE_IS + ChatColor.GOLD + "$" + df.format(Api.getEconomy().getBalance(player))));
+                            player.sendMessage(ChatColor.GREEN + "You been given access to the " + ChatColor.GOLD + "/fly " + ChatColor.GREEN + "command for " + ChatColor.GOLD + totalFlyTime + ChatColor.GREEN + " minutes.");
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You need at least " + ChatColor.GOLD + "$" + flyCost + ChatColor.RED + " to use this command.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only use this command in " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
+                    }
+                } else if (args[0].equalsIgnoreCase("classic")) {
+                    List<String> enabledClassicWarpWorlds = new ArrayList<>();
+                    enabledClassicWarpWorlds.add("world");
+                    enabledClassicWarpWorlds.add("world_nether");
+                    enabledClassicWarpWorlds.add("world_the_end");
+                    if (enabledClassicWarpWorlds.contains(player.getWorld().getName())) {
+                        FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_CLASSIC_FILE_NAME);
+                        String playerUUID = player.getUniqueId().toString();
+                        if (!player.getWorld().getName().contains("classic")) {
+                            if (!classicCfg.isSet(playerUUID)) {
+                                Location classicSpawnLocation = new Location(Bukkit.getWorld("classic"), 0, 92, 0, (float) -3.000, (float) 92.10);
+                                classicCfg.set(playerUUID + ".uuid", playerUUID);
+                                classicCfg.set(playerUUID + ".name", player.getName());
+                                classicCfg.set(playerUUID + ".lastLocation", classicSpawnLocation);
+                                player.teleport(classicSpawnLocation);
+                                classicCfg.save(Api.getConfigFile(YmlFileNames.YML_CLASSIC_FILE_NAME));
+                            } else {
+                                Api.teleportClassicPlayerToLastLocation(player);
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP Classic when you are already there.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only warp to " + ChatColor.GOLD + "LMP Classic " + ChatColor.RED + "from the " + ChatColor.GOLD + "LMP Community " + ChatColor.RED + "server.");
+                    }
+                } else if (args[0].equalsIgnoreCase("OneBlock")) {
+                    List<String> enabledOneBlockWarpWorlds = new ArrayList<>();
+                    enabledOneBlockWarpWorlds.add("world");
+                    enabledOneBlockWarpWorlds.add("world_nether");
+                    enabledOneBlockWarpWorlds.add("world_the_end");
+                    if (enabledOneBlockWarpWorlds.contains(player.getWorld().getName())) {
+                        FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_ONEBLOCK_FILE_NAME);
+                        String playerUUID = player.getUniqueId().toString();
+                        if (!player.getWorld().getName().contains("OneBlock")) {
+                            if (!classicCfg.isSet(playerUUID)) {
+                                Location oneBlockSpawnLocation = new Location(Bukkit.getWorld("OneBlock"), 11.5, 64, -1.5, (float) -3.000, (float) 92.10);
+                                classicCfg.set(playerUUID + ".uuid", playerUUID);
+                                classicCfg.set(playerUUID + ".name", player.getName());
+                                classicCfg.set(playerUUID + ".lastLocation", oneBlockSpawnLocation);
+                                player.teleport(oneBlockSpawnLocation);
+                                classicCfg.save(Api.getConfigFile(YmlFileNames.YML_ONEBLOCK_FILE_NAME));
+                            } else {
+                                Api.teleportOneBlockPlayerToLastLocation(player);
+                            }
+                            player.performCommand("/ob progress_bar true");
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP OneBlock when you are already there.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only warp to " + ChatColor.GOLD + "LMP OneBlock " + ChatColor.RED + "from the " + ChatColor.GOLD + "LMP Community " + ChatColor.RED + "server.");
+                    }
+                } else if (args[0].equalsIgnoreCase("SkyBlock")) {
+                    List<String> enabledOneBlockWarpWorlds = new ArrayList<>();
+                    enabledOneBlockWarpWorlds.add("world");
+                    enabledOneBlockWarpWorlds.add("world_nether");
+                    enabledOneBlockWarpWorlds.add("world_the_end");
+                    if (enabledOneBlockWarpWorlds.contains(player.getWorld().getName())) {
+                        FileConfiguration skyblockCfg = Api.getFileConfiguration(YmlFileNames.YML_SKYBLOCK_FILE_NAME);
+                        String playerUUID = player.getUniqueId().toString();
+                        if (!player.getWorld().getName().contains("SkyBlock")) {
+                            if (!skyblockCfg.isSet(playerUUID)) {
+                                Location skyBlockSpawnLocation = new Location(Bukkit.getWorld("IridiumSkyblock"), 107, 93, -1.5, (float) -3.000, (float) 92.10);
+                                skyblockCfg.set(playerUUID + ".uuid", playerUUID);
+                                skyblockCfg.set(playerUUID + ".name", player.getName());
+                                skyblockCfg.set(playerUUID + ".lastLocation", skyBlockSpawnLocation);
+                                player.teleport(skyBlockSpawnLocation);
+                                skyblockCfg.save(Api.getConfigFile(YmlFileNames.YML_SKYBLOCK_FILE_NAME));
+                            } else {
+                                Api.teleportSkyBlockPlayerToLastLocation(player);
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You can't warp to LMP SkyBlock when you are already there.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only warp to " + ChatColor.GOLD + "LMP SkyBlock " + ChatColor.RED + "from the " + ChatColor.GOLD + "LMP Community " + ChatColor.RED + "server.");
+                    }
                 } else if (args[0].equalsIgnoreCase("gift")) {
                     if (args[1] != null){
                         List<String> potentialGiftPlayerNameList = new ArrayList<>();
@@ -466,7 +745,7 @@ public class LMPCommand implements CommandExecutor {
                                         if (playerToGift != null) {
                                             playerToGift.getWorld().dropItem(playerToGift.getLocation(), itemToGift);
                                             player.sendMessage(ChatColor.GREEN + "You gifted an item to " + ChatColor.GOLD + playerToGift.getName());
-                                            playerToGift.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " gifted you an item!!!");
+                                            playerToGift.sendMessage(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " gifted you " + ChatColor.GOLD + itemToGift.getAmount() + " " + itemToGift.getType() + ChatColor.GREEN + " !!!");
                                             player.getInventory().setItemInMainHand(null);
                                             player.updateInventory();
                                         } else {
@@ -487,20 +766,28 @@ public class LMPCommand implements CommandExecutor {
                             player.sendMessage(ChatColor.YELLOW + "You have to be on LMP Community to gift another an item.");
                         }
                     }
-                }
-                else if (args[0].equalsIgnoreCase("online")) {
+                } else if (args[0].equalsIgnoreCase("online")) {
                     StringBuilder communityWorldList = new StringBuilder();
-                    communityWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "LMP" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    communityWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Community" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder classicWorldList = new StringBuilder();
+                    classicWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Classic" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
                     StringBuilder anarchyWorldList = new StringBuilder();
                     anarchyWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Anarchy" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
                     StringBuilder hardcoreWorldList = new StringBuilder();
                     hardcoreWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Hardcore" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
                     StringBuilder creativeWorldList = new StringBuilder();
                     creativeWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "Creative" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder oneBlockWorldList = new StringBuilder();
+                    oneBlockWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "OneBlock" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
+                    StringBuilder skyBlockWorldList = new StringBuilder();
+                    skyBlockWorldList.append(ChatColor.GRAY + "[" + ChatColor.AQUA + "SkyBlock" + ChatColor.GRAY + "]" + ChatColor.WHITE + " - ");
                     int communityCount = 0;
                     int hardcoreCount = 0;
                     int anarchyCount = 0;
                     int creativeCount = 0;
+                    int classicCount = 0;
+                    int oneBlockCount = 0;
+                    int skyBlockCount = 0;
                     for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()){
                         if (!Api.isPlayerInvisible(onlinePlayer.getUniqueId().toString())){
                             if (onlinePlayer.getWorld().getName().contains("anarchy")){
@@ -512,6 +799,15 @@ public class LMPCommand implements CommandExecutor {
                             } else if (onlinePlayer.getWorld().getName().contains("creative")) {
                                 creativeWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
                                 creativeCount++;
+                            } else if (onlinePlayer.getWorld().getName().contains("classic")) {
+                                classicWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                classicCount++;
+                            } else if (onlinePlayer.getWorld().getName().contains("OneBlock")) {
+                                oneBlockWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                oneBlockCount++;
+                            } else if (onlinePlayer.getWorld().getName().contains("Skyblock")) {
+                                skyBlockWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
+                                skyBlockCount++;
                             } else {
                                 communityWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
                                 communityCount++;
@@ -530,12 +826,27 @@ public class LMPCommand implements CommandExecutor {
                     if (creativeCount == 0){
                         creativeWorldList.append(ChatColor.RED + "None");
                     }
-                    String finalCommunityMessage = String.valueOf(communityWorldList);
+                    if (classicCount == 0){
+                        classicWorldList.append(ChatColor.RED + "None");
+                    }
+                    if (oneBlockCount == 0){
+                        oneBlockWorldList.append(ChatColor.RED + "None");
+                    }
+                    if (skyBlockCount == 0){
+                        skyBlockWorldList.append(ChatColor.RED + "None");
+                    }
                     String finalAnarchyMessage = String.valueOf(anarchyWorldList);
-                    String finalHardcoreMessage = String.valueOf(hardcoreWorldList);
+                    String finalClassicMessage = String.valueOf(classicWorldList);
+                    String finalCommunityMessage = String.valueOf(communityWorldList);
                     String finalCreativeMessage = String.valueOf(creativeWorldList);
+                    String finalHardcoreMessage = String.valueOf(hardcoreWorldList);
+                    String finalOneBlockMessage = String.valueOf(oneBlockWorldList);
+                    String finalSkyBlockMessage = String.valueOf(skyBlockWorldList);
                     if (finalCommunityMessage.contains("|")){
                         finalCommunityMessage = StringUtils.substring(finalCommunityMessage, 0, finalCommunityMessage.length() - 4);
+                    }
+                    if (finalClassicMessage.contains("|")){
+                        finalClassicMessage = StringUtils.substring(finalClassicMessage, 0, finalClassicMessage.length() - 4);
                     }
                     if (finalAnarchyMessage.contains("|")){
                         finalAnarchyMessage = StringUtils.substring(finalAnarchyMessage, 0, finalAnarchyMessage.length() - 4);
@@ -543,14 +854,22 @@ public class LMPCommand implements CommandExecutor {
                     if (finalHardcoreMessage.contains("|")){
                         finalHardcoreMessage = StringUtils.substring(finalHardcoreMessage, 0, finalHardcoreMessage.length() - 4);
                     }
+                    if (finalOneBlockMessage.contains("|")){
+                        finalOneBlockMessage = StringUtils.substring(finalOneBlockMessage, 0, finalOneBlockMessage.length() - 4);
+                    }
+                    if (finalSkyBlockMessage.contains("|")){
+                        finalSkyBlockMessage = StringUtils.substring(finalSkyBlockMessage, 0, finalSkyBlockMessage.length() - 4);
+                    }
                     if (finalCreativeMessage.contains("|")){
                         finalCreativeMessage = StringUtils.substring(finalCreativeMessage, 0, finalCreativeMessage.length() - 4);
-
                     }
-                    player.sendMessage(finalCommunityMessage);
                     player.sendMessage(finalAnarchyMessage);
-                    player.sendMessage(finalHardcoreMessage);
+                    player.sendMessage(finalClassicMessage);
+                    player.sendMessage(finalCommunityMessage);
                     player.sendMessage(finalCreativeMessage);
+                    player.sendMessage(finalHardcoreMessage);
+                    player.sendMessage(finalOneBlockMessage);
+                    player.sendMessage(finalSkyBlockMessage);
                 }
                 if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("uncraft")) {
                     ItemStack item = player.getInventory().getItemInMainHand();
@@ -589,26 +908,139 @@ public class LMPCommand implements CommandExecutor {
                         count++;
                     }
                 } else if (args[0].equalsIgnoreCase("claim")) {
-                    player.sendMessage(ChatColor.GREEN + "Checking if you have unclaimed items. Please wait one moment...");
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), new Runnable() {
-                        public void run() {
+                    List<String> enabledClaimWorlds = new ArrayList<>();
+                    enabledClaimWorlds.add("world");
+                    enabledClaimWorlds.add("world_nether");
+                    enabledClaimWorlds.add("world_the_end");
+                    if (enabledClaimWorlds.contains(player.getWorld().getName())){
+                        player.sendMessage(ChatColor.GREEN + "Checking if you have unclaimed items. Please wait one moment...");
+                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
                             try {
                                 DonationClaimRewards.claimItems(player);
                             } catch (IOException | ClassNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
+                        }, 100);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only claim items in " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
+                    }
+                } else if (args[0].equalsIgnoreCase("anarchy")){
+                    File anarchyFile = Api.getConfigFile(YmlFileNames.YML_ANARCHY_FILE_NAME);
+                    FileConfiguration anarchyCfg = Api.getFileConfiguration(YmlFileNames.YML_ANARCHY_FILE_NAME);
+                    String playerUUID = player.getUniqueId().toString();
+                    if (!anarchyCfg.isSet(playerUUID)){
+                        Location anarchySpawnLocation = new Location(Bukkit.getWorld("anarchy"), 13.5, 63, -25.5, (float) -3.000, (float) 92.10);
+                        anarchyCfg.set(playerUUID + ".uuid", playerUUID);
+                        anarchyCfg.set(playerUUID + ".name", player.getName());
+                        anarchyCfg.set(playerUUID + ".lastLocation", anarchySpawnLocation);
+                        player.teleport(anarchySpawnLocation);
+                        anarchyCfg.save(anarchyFile);
+                    }
+                    else {
+                        Api.teleportAnarchyPlayerToLastLocation(player);
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("saveSeason7Home")) {
+                    FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+                    if (player.getWorld().getUID().equals(UUID.fromString("cee8accb-f717-4b88-be30-a688b2a195ea"))){
+                        whitelistCfg.set("players." + player.getUniqueId().toString() + ".season7warp", player.getLocation());
+                        player.sendMessage(ChatColor.GREEN + "Your Season 7 home warp has been saved.");
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You must be in the Season 7 overworld to set your Season 6 home warp.");
+                    }
+                    whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+                }
+                else if (args[0].equalsIgnoreCase("season6warp")) {
+                    List<String> enabledSeason6WarpWorlds = new ArrayList<>();
+                    enabledSeason6WarpWorlds.add("world");
+                    enabledSeason6WarpWorlds.add("world_nether");
+                    enabledSeason6WarpWorlds.add("world_the_end");
+                    if (enabledSeason6WarpWorlds.contains(player.getWorld().getName())) {
+                        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+                        if (whitelistCfg.isSet("players." + player.getUniqueId().toString() + ".season6warp")) {
+                            if (player.getWorld().getUID().equals(UUID.fromString("e784f96f-9862-439b-971c-4157f532ed4a"))) {
+                                Location playerSeason6Warp = whitelistCfg.getLocation("players." + player.getUniqueId().toString() + ".season6warp");
+                                if (playerSeason6Warp != null) {
+                                    player.teleport(playerSeason6Warp);
+                                    player.sendMessage(ChatColor.GREEN + "You were warped to your Season 6 home warp.");
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "An error has occurred. Please message Latch the issue and he will help as soon as he can..");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You must be in the Season 7 overworld to warp to your Season 6 home warp");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You don't have a Season 6 home warp set.");
                         }
-                    }, 100);
-
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only warp to your Season 6 home from " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("season7warp")) {
+                    List<String> enabledSeason7WarpWorlds = new ArrayList<>();
+                    enabledSeason7WarpWorlds.add("world");
+                    enabledSeason7WarpWorlds.add("world_nether");
+                    enabledSeason7WarpWorlds.add("world_the_end");
+                    if (enabledSeason7WarpWorlds.contains(player.getWorld().getName())) {
+                        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+                        if (whitelistCfg.isSet("players." + player.getUniqueId().toString() + ".season7warp")) {
+                            if (player.getWorld().getUID().equals(UUID.fromString("e784f96f-9862-439b-971c-4157f532ed4a"))) {
+                                Location playerSeason7Warp = whitelistCfg.getLocation("players." + player.getUniqueId().toString() + ".season7warp");
+                                if (playerSeason7Warp != null) {
+                                    player.teleport(playerSeason7Warp);
+                                    player.sendMessage(ChatColor.GREEN + "You were warped to your Season 7 home warp.");
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "An error has occurred. Please message Latch the issue and he will help as soon as he can..");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You must be in the Season 8 overworld to warp to your Season 7 home warp");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You don't have a Season 7 home warp set.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You can only warp to your Season 7 home from " + ChatColor.GOLD + "LMP Community" + ChatColor.RED + ".");
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("shop")) {
+                    player.performCommand("bossshop");
+                }
+//                else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("camel")){
+//                    player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.CAMEL_SPAWN_EGG, 1));
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("sign")){
+//                    player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.BAMBOO_HANGING_SIGN, 1));
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("raft")){
+//                    player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.BAMBOO_RAFT, 1));
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("deleteLink")){
+//                    Api.deleteUnlinkedEssentialAccountsFiles();
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("bpCheck")){
+//                    Api.removeIllegalItemsFromBackpacks();
+//                } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("transfer")){
+//                    Api.transferBackpackContents();
+//                }
+                else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("att")){
+                    ItemStack is = player.getInventory().getItemInMainHand();
+                    ItemMeta im = is.getItemMeta();
+                    assert im != null;
+                    im.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(), "generic.armorToughness", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                    im.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "generic.armor", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                    im.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(UUID.randomUUID(), "generic.knockbackResistance", .1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                    is.setItemMeta(im);
+                    player.updateInventory();
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             player.sendMessage(ChatColor.RED + "An error has occurred. Please review your command and try again.");
-        } catch (NullPointerException | NumberFormatException e) {
-            player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+//        catch (NullPointerException | NumberFormatException e) {
+//
+//            player.sendMessage(ChatColor.RED + "An error has occurred. Please try your command again or let Latch and other players know you are having an issue.");
+//            Main.log.warning(e.getCause().toString());
+//        }
+        catch (IOException e) {
+            Main.log.warning(e.getCause().toString());
         } catch (ExecutionException | InterruptedException e) {
+            Main.log.warning(e.getCause().toString());
             throw new RuntimeException(e);
         }
 

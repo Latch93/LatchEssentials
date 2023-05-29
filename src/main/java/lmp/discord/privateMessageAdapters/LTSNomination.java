@@ -28,13 +28,12 @@ public class LTSNomination extends ListenerAdapter {
         if (event.getAuthor().getIdLong() != this.authorId) return;
         if (event.getChannel().getIdLong() != this.channelId) return;
         List<String> ltsNominationQuestions = new LinkedList<>();
-        ltsNominationQuestions.add("1.) What is your Custom Head Nomination? Please paste the URL Link.");
-        ltsNominationQuestions.add("2.) What category of Overpowered item do you nominate? Armor/Tool/Weapon");
-        ltsNominationQuestions.add("3.) What type of item is your nomination? Chestplate/Bow/Pickaxe");
-        ltsNominationQuestions.add("4.) What enchantments would you like to see on your item?");
-        ltsNominationQuestions.add("5.) What is the name of your Overpowered nomination?");
-        ltsNominationQuestions.add("6.) What block do you nominate?");
-        ltsNominationQuestions.add("7.) What additional block or head do you nominate, if any?");
+         ltsNominationQuestions.add("1.) What category of Overpowered item do you nominate? Armor/Tool/Weapon?");
+        ltsNominationQuestions.add("2.) What type of item is your nomination? Chestplate/Bow/Pickaxe?");
+        ltsNominationQuestions.add("3.) What enchantments would you like to see on your item?");
+        ltsNominationQuestions.add("4.) What is the name of your Overpowered nomination?");
+        ltsNominationQuestions.add("5.) What block do you nominate?");
+        ltsNominationQuestions.add("6.) What additional block or head do you nominate, if any? (Type 'None' if none)");
         nominationAnswers.add(event.getMessage().getContentRaw());
         if (counter <= ltsNominationQuestions.size() - 1) {
             event.getChannel().sendMessage(ltsNominationQuestions.get(counter)).queue();

@@ -16,15 +16,23 @@ import java.util.List;
 public class LMPCommandTabComplete implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> lmpCommandTabList = new ArrayList<>();
+        lmpCommandTabList.add("anarchy");
         lmpCommandTabList.add("claim");
+        lmpCommandTabList.add("classic");
+        lmpCommandTabList.add("combine");
         lmpCommandTabList.add("creative");
         lmpCommandTabList.add("deposit");
+        lmpCommandTabList.add("fly");
         lmpCommandTabList.add("gift");
         lmpCommandTabList.add("help");
+        lmpCommandTabList.add("hub");
         lmpCommandTabList.add("lotto");
         lmpCommandTabList.add("money");
+        lmpCommandTabList.add("oneblock");
         lmpCommandTabList.add("online");
         lmpCommandTabList.add("rtp");
+        lmpCommandTabList.add("skyblock");
+        lmpCommandTabList.add("shop");
         lmpCommandTabList.add("stat");
         lmpCommandTabList.add("withdraw");
         lmpCommandTabList.add("xp");

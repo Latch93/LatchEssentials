@@ -49,8 +49,6 @@ public class XPFarm {
                     playerDataCfg.set("lastlocation.y", xpFarmLocationY);
                     playerDataCfg.set("lastlocation.z", xpFarmLocationZ);
                     playerDataCfg.save(playerDataFile);
-                    Location lastLocation = new Location(Bukkit.getWorld("world"), playerDataCfg.getDouble("lastlocation.x"), playerDataCfg.getDouble("lastlocation.y"), playerDataCfg.getDouble("lastlocation.z"));
-
                     Location xpFarmLocation = new Location(Bukkit.getWorld("world"), xpFarmLocationX, xpFarmLocationY, xpFarmLocationZ);
                     player.teleport(xpFarmLocation);
                     Api.getEconomy().withdrawPlayer(olp, farmCost);

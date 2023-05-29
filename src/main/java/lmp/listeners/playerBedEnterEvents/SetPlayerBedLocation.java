@@ -22,6 +22,4 @@ public class SetPlayerBedLocation implements Listener {
         FileConfiguration playerBedLocationCfg = Api.getFileConfiguration(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME);
         playerBedLocationCfg.set(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + "." + e.getPlayer().getWorld().getName() + ".location", e.getBed().getLocation());
         playerBedLocationCfg.save(Api.getConfigFile(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME));
-    }
-
-}
+    }}

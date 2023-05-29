@@ -29,8 +29,7 @@ public class PlayerShopsTabComplete implements TabCompleter {
             commandText = args[0];
         } else {
             for (String minecraftId : playerShopCfg.getKeys(false)) {
-                if (playerShopCfg.isSet(minecraftId + ".slots") && playerShopCfg.getString(minecraftId + ".slots") != null) {
-
+                if (playerShopCfg.isSet(minecraftId + ".slots") && playerShopCfg.getInt(minecraftId + ".slots") != 0) {
                     tabList.add(Bukkit.getOfflinePlayer(UUID.fromString(minecraftId)).getName());
                 }
             }

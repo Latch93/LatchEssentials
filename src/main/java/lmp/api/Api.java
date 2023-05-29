@@ -13,11 +13,16 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeEqualityPredicate;
+import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.InheritanceNode;
+import net.luckperms.api.node.types.PermissionNode;
 import net.luckperms.api.util.Tristate;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -31,7 +36,11 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +53,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -146,12 +157,16 @@ public class Api {
         return new File(getMainPlugin().getDataFolder(), fileName + ".yml");
     }
 
-    public static FileConfiguration getFileConfiguration(String fileName){
+    public static FileConfiguration getFileConfiguration(String fileName) {
         return YamlConfiguration.loadConfiguration(getConfigFile(fileName));
     }
 
     public static FileConfiguration loadConfig(String fileName) {
         return YamlConfiguration.loadConfiguration(getConfigFile(fileName));
+    }
+
+    public static FileConfiguration getFileConfigurationFromFile(File file) {
+        return YamlConfiguration.loadConfiguration(file);
     }
 
     public static void messageInConsole(String message) {
@@ -163,7 +178,15 @@ public class Api {
     }
 
     public static void cancelEventsInPreviousSeason(String worldName, String player, BlockBreakEvent blockBreakEvent, BlockPlaceEvent blockPlaceEvent, InventoryClickEvent inventoryClickEvent, PlayerPortalEvent playerPortalEvent) {
-        if (worldName.equalsIgnoreCase("season1") || worldName.equalsIgnoreCase("season4") || worldName.equalsIgnoreCase("season5")) {
+        ArrayList<String> deniedWorlds = new ArrayList<>();
+        deniedWorlds.add("season1");
+        deniedWorlds.add("season3");
+        deniedWorlds.add("season4");
+        deniedWorlds.add("season5");
+        deniedWorlds.add("season6");
+        deniedWorlds.add("season7");
+
+        if (deniedWorlds.contains(worldName)) {
             if (player == null || !player.equalsIgnoreCase("Latch93")) {
                 if (blockBreakEvent != null) {
                     blockBreakEvent.setCancelled(true);
@@ -309,7 +332,7 @@ public class Api {
         }
     }
 
-    public static String getPlayerChatWorldPrefix(String worldName){
+    public static String getPlayerChatWorldPrefix(String worldName) {
         String worldPrefix = "[LMP] - ";
         if (worldName.contains("hardcore")) {
             worldPrefix = "[Hardcore] - ";
@@ -422,6 +445,7 @@ public class Api {
         return overworldPlayer;
     }
 
+
     public static void denyBackIntoXPFarm(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
@@ -474,11 +498,38 @@ public class Api {
         }
     }
 
+    public static void spawnStopper(EntitySpawnEvent e) {
+        FileConfiguration spawnStopperCfg = Api.getFileConfiguration(YmlFileNames.YML_SPAWN_STOPPER_FILE_NAME);
+        List<String> mobsToStopSpawningList = spawnStopperCfg.getStringList("denySpawnList");
+        if (mobsToStopSpawningList.contains(e.getEntity().getType().toString())) {
+            List<String> mobLocationList = new ArrayList<>();
+            if (!spawnStopperCfg.getStringList("locations").isEmpty()) {
+                mobLocationList = spawnStopperCfg.getStringList("locations");
+            }
+            for (int i = 0; i < mobLocationList.size(); i++) {
+                String spawnStopperLocationString = mobLocationList.get(i);
+                String[] firstMobArr = spawnStopperLocationString.split(",");
+                String[] xMobLocationArr = firstMobArr[1].split("=");
+                String[] yMobLocationArr = firstMobArr[2].split("=");
+                String[] zMobLocationArr = firstMobArr[3].split("=");
+                double xMobLocation = Double.parseDouble(xMobLocationArr[1]);
+                double yMobLocation = Double.parseDouble(yMobLocationArr[1]);
+                double zMobLocation = Double.parseDouble(zMobLocationArr[1]);
+                double distance = Math.sqrt(Math.pow(xMobLocation - e.getLocation().getBlockX(), 2) +
+                        Math.pow(yMobLocation - e.getLocation().getBlockY(), 2) +
+                        Math.pow(zMobLocation - e.getLocation().getBlockZ(), 2));
+                if (distance <= 250) {
+                    e.setCancelled(true);
+                }
+
+            }
+        }
+    }
+
     public static void denyCommandUseInXPFarm(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         ArrayList<String> playerBypassList = new ArrayList<>();
         String message = e.getMessage().toLowerCase();
-        playerBypassList.add("7c1acf27-d21b-41a7-96b7-5b14e364ea0e");
         playerBypassList.add("f4c77e52-de47-4174-8282-0d962d089301");
         ArrayList<String> commandBypassList = new ArrayList<>();
         commandBypassList.add("/bal");
@@ -515,9 +566,9 @@ public class Api {
         long timerLimit = xpFarmCfg.getLong("timer");
         if (timeDifference > timerLimit) {
             Player playerAtFarm = Bukkit.getPlayer(UUID.fromString(Objects.requireNonNull(xpFarmCfg.getString("playerIDUsingFarm"))));
-            double spawnX = xpFarmCfg.getDouble("spawnLocationX");
-            double spawnY = xpFarmCfg.getDouble("spawnLocationY");
-            double spawnZ = xpFarmCfg.getDouble("spawnLocationZ");
+            double spawnX = xpFarmCfg.getDouble("spawnX");
+            double spawnY = xpFarmCfg.getDouble("spawnY");
+            double spawnZ = xpFarmCfg.getDouble("spawnZ");
             Location spawnLocation = new Location(Bukkit.getWorld("world"), spawnX, spawnY, spawnZ);
             assert playerAtFarm != null;
             playerAtFarm.teleport(spawnLocation);
@@ -527,12 +578,36 @@ public class Api {
         }
     }
 
+    public static void removeFlyCommand() throws IOException {
+        FileConfiguration flyListCfg = Api.getFileConfiguration(YmlFileNames.YML_FLY_LIST_FILE_NAME);
+        for (String mcID : flyListCfg.getConfigurationSection("players").getKeys(false)) {
+            if (flyListCfg.getBoolean(lmp.Constants.YML_PLAYERS + mcID + ".fly.enabled")){
+                Long timeStartedCommand = flyListCfg.getLong(lmp.Constants.YML_PLAYERS + mcID + ".fly.commandTime");
+                long timerLimit = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getLong("flyCommandLength");
+                DateTime dateOne = new DateTime();
+                Long currentTime = dateOne.getMillis();
+                long timeDifference = currentTime - timeStartedCommand;
+                if (timeDifference > timerLimit) {
+                    Player player = Bukkit.getPlayer(UUID.fromString(mcID));
+                    if (player != null) {
+                        Api.removePlayerLuckPermPermission(player, "essentials.fly");
+                        player.sendMessage(ChatColor.GREEN + "You're time is up. Fly privileges have been revoked. Thank you for flying " + ChatColor.GOLD + "Air Latch" +ChatColor.GREEN + ".");
+                        player.setFlying(false);
+                        player.setAllowFlight(false);
+                        flyListCfg.set(lmp.Constants.YML_PLAYERS + mcID + ".fly.enabled", false);
+                        flyListCfg.save(Api.getConfigFile(YmlFileNames.YML_FLY_LIST_FILE_NAME));
+                    }
+                }
+            }
+        }
+    }
+
     public static void stopDiscordBot() {
         LatchDiscord.getJDA().shutdown();
     }
 
     public static void placeBlockLog(BlockPlaceEvent event) throws IOException {
-        if ((event.getBlock().getLocation().getWorld().getName().equalsIgnoreCase("world")) && (event.getBlock().getType().equals(Material.TNT) || event.getBlock().getType().equals(Material.END_CRYSTAL))) {
+        if ((Objects.requireNonNull(event.getBlock().getLocation().getWorld()).getName().equalsIgnoreCase("world")) && (event.getBlock().getType().equals(Material.TNT) || event.getBlock().getType().equals(Material.END_CRYSTAL))) {
             FileConfiguration blockPlaceLogCfg = Api.getFileConfiguration(YmlFileNames.YML_BLOCK_PLACE_LOG_FILE_NAME);
             Date date = new Date();
             Player player = event.getPlayer();
@@ -617,12 +692,24 @@ public class Api {
 
                     ItemStack elytra = new ItemStack(Material.ELYTRA, 1);
                     elytra.addUnsafeEnchantments(finalEnchantments);
+                    ItemMeta elytraIM = null;
+                    if (elytra.getItemMeta() != null){
+                        elytraIM = elytra.getItemMeta();
+                        elytraIM.setAttributeModifiers(Objects.requireNonNull(leftSideItem.getItemMeta()).getAttributeModifiers());
+                        elytraIM.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(), "generic.armorToughness", 3, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                        elytraIM.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(), "generic.armor", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                        elytraIM.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE, new AttributeModifier(UUID.randomUUID(), "generic.knockbackResistance", .1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST));
+                        elytra.setItemMeta(elytraIM);
+                    }
+
                     Bukkit.getServer().getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> e.getInventory().setRepairCost(50));
                     e.setResult(elytra);
                 }
             }
         }
     }
+
+
 
     public static void denyOpenChestDuringBossBattle(PlayerInteractEvent e) {
         FileConfiguration bossCfg = Api.getFileConfiguration(YmlFileNames.YML_BOSS_FILE_NAME);
@@ -678,6 +765,17 @@ public class Api {
         return minecraftID;
     }
 
+    public static String getMinecraftNameFromMinecraftId(String minecraftID) {
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+        String minecraftName = "";
+        for (String mcID : whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS).getKeys(false)) {
+            if (minecraftID.equalsIgnoreCase(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".minecraftId"))) {
+                minecraftName = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".minecraftName");
+            }
+        }
+        return minecraftName;
+    }
+
     public static String getDiscordNameFromMCid(String minecraftID) {
         return Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(minecraftID))).getUser().getName();
     }
@@ -715,14 +813,24 @@ public class Api {
     }
 
     public static ArrayList<String> getMinecraftIDOfLinkedPlayersInDiscord() {
-        ArrayList<String> whitelistedPlayerIDSNotInDiscord = new ArrayList<>();
+        ArrayList<String> whitelistedPlayerIDSInDiscord = new ArrayList<>();
         FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
         for (String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
             if (Boolean.TRUE.equals(whitelistCfg.getBoolean(lmp.Constants.YML_PLAYERS + user + ".isPlayerInDiscord"))) {
-                whitelistedPlayerIDSNotInDiscord.add(user);
+                whitelistedPlayerIDSInDiscord.add(user);
             }
         }
-        return whitelistedPlayerIDSNotInDiscord;
+        return whitelistedPlayerIDSInDiscord;
+    }
+    public static ArrayList<String> getDiscordNamesOfLinkedPlayersStillInDiscord() {
+        ArrayList<String> whitelistedPlayerDiscordNames = new ArrayList<>();
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+        for (String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
+            if (Boolean.TRUE.equals(whitelistCfg.getBoolean(lmp.Constants.YML_PLAYERS + user + ".isPlayerInDiscord"))) {
+                whitelistedPlayerDiscordNames.add(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".discordName"));
+            }
+        }
+        return whitelistedPlayerDiscordNames;
     }
 
     public static ArrayList<String> getListOfMinecraftIDPlayersNotInDiscordOrLinked() {
@@ -732,6 +840,16 @@ public class Api {
         ArrayList<String> listOfPlayersNotHereAnymore = new ArrayList<>();
 //        for (String idNotInDiscord : )
         return listOfPlayersNotHereAnymore;
+    }
+
+    public static void deleteUnlinkedEssentialAccountsFiles() {
+        ArrayList<String> linkedPlayersInDiscord = getMinecraftIDOfLinkedPlayersInDiscord();
+        for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
+            String[] splitArr = file.getName().split("\\.");
+            if (!linkedPlayersInDiscord.contains(splitArr[0])) {
+                file.delete();
+            }
+        }
     }
 
     public static void removePlayerFromDonationList(ArrayList<String> minecraftIDListToRemove) throws IOException {
@@ -776,19 +894,19 @@ public class Api {
 
     public static boolean denyCommandInMultiverseWorlds(@NotNull PlayerCommandPreprocessEvent e) {
         boolean denyCommand = true;
-        ArrayList<String> allowedCommandList = new ArrayList<>();
-        allowedCommandList.add("/mv spawn");
-        allowedCommandList.add("/dtsc");
-        allowedCommandList.add("/adsc");
-        allowedCommandList.add("/spawn");
-        allowedCommandList.add("/msg ");
-        allowedCommandList.add("/r");
-        allowedCommandList.add("/v");
-        allowedCommandList.add("/op");
-        allowedCommandList.add("/hardcore afk");
-        allowedCommandList.add("/anarchy afk");
-        allowedCommandList.add("/lmp online");
-        allowedCommandList.add("/lmp money");
+        FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
+        List<String> globalAllowedCommandList = configCfg.getStringList("globalAllowedCommandList");
+        List<String> oneblockAllowedCommandList = configCfg.getStringList("oneblockAllowedCommandList");
+        List<String> skyblockAllowedCommandList = configCfg.getStringList("skyblockAllowedCommandList");
+
+        List<String> allowedCommandList = globalAllowedCommandList;
+
+        if (e.getPlayer().getWorld().getName().contains("OneBlock")){
+            allowedCommandList = Stream.concat(allowedCommandList.stream(), oneblockAllowedCommandList.stream()).toList();
+        }
+        if (e.getPlayer().getWorld().getName().contains("Skyblock")){
+            allowedCommandList = Stream.concat(allowedCommandList.stream(), skyblockAllowedCommandList.stream()).toList();
+        }
         String command = e.getMessage().toLowerCase();
         for (String commandToCheck : allowedCommandList) {
             if (command.contains(commandToCheck)) {
@@ -802,6 +920,22 @@ public class Api {
         return denyCommand;
     }
 
+    public static boolean denyAdditionalCommandsInOneBlockWorld(@NotNull PlayerCommandPreprocessEvent e) {
+        boolean denyCommand = true;
+        ArrayList<String> allowedCommandList = new ArrayList<>();
+        allowedCommandList.add("/ob join");
+        String command = e.getMessage().toLowerCase();
+        for (String commandToCheck : allowedCommandList) {
+            if (command.contains(commandToCheck)) {
+                denyCommand = false;
+                break;
+            }
+        }
+        if (Boolean.TRUE.equals(denyCommand)) {
+            e.getPlayer().sendMessage(ChatColor.RED + "You can't use that command in this world.");
+        }
+        return denyCommand;
+    }
     public static boolean denyInteractInHardcore(Player p) {
         boolean denyInteract = true;
         FileConfiguration hardcoreCfg = Api.getFileConfiguration(YmlFileNames.YML_HARDCORE_FILE_NAME);
@@ -846,11 +980,56 @@ public class Api {
         creativeCfg.save(Api.getConfigFile(YmlFileNames.YML_CREATIVE_FILE_NAME));
     }
 
+    public static void setClassicPlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_CLASSIC_FILE_NAME);
+        String uuid = e.getPlayer().getUniqueId().toString();
+        classicCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        classicCfg.save(Api.getConfigFile(YmlFileNames.YML_CLASSIC_FILE_NAME));
+    }
+
+    public static void setOneBlockPlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration oneBlockCfg = Api.getFileConfiguration(YmlFileNames.YML_ONEBLOCK_FILE_NAME);
+        String uuid = e.getPlayer().getUniqueId().toString();
+        oneBlockCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        oneBlockCfg.save(Api.getConfigFile(YmlFileNames.YML_ONEBLOCK_FILE_NAME));
+    }
+
+    public static void setSkyBlockPlayerLocation(PlayerCommandPreprocessEvent e) throws IOException {
+        FileConfiguration skyBlockCfg = Api.getFileConfiguration(YmlFileNames.YML_SKYBLOCK_FILE_NAME);
+        String uuid = e.getPlayer().getUniqueId().toString();
+        skyBlockCfg.set(uuid + ".lastLocation", e.getPlayer().getLocation());
+        skyBlockCfg.save(Api.getConfigFile(YmlFileNames.YML_SKYBLOCK_FILE_NAME));
+    }
+
     public static void teleportHardcorePlayerToLastLocation(Player player) {
         FileConfiguration hardcoreCfg = Api.getFileConfiguration(YmlFileNames.YML_HARDCORE_FILE_NAME);
         String uuid = player.getUniqueId().toString();
         if (hardcoreCfg.getLocation(uuid + ".lastLocation") != null) {
             player.teleport(Objects.requireNonNull(hardcoreCfg.getLocation(uuid + ".lastLocation")));
+        }
+    }
+
+    public static void teleportClassicPlayerToLastLocation(Player player) {
+        FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_CLASSIC_FILE_NAME);
+        String uuid = player.getUniqueId().toString();
+        if (classicCfg.getLocation(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(classicCfg.getLocation(uuid + ".lastLocation")));
+        }
+    }
+
+    public static void teleportOneBlockPlayerToLastLocation(Player player) {
+        FileConfiguration oneBlockCfg = Api.getFileConfiguration(YmlFileNames.YML_ONEBLOCK_FILE_NAME);
+        String uuid = player.getUniqueId().toString();
+        if (oneBlockCfg.getLocation(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(oneBlockCfg.getLocation(uuid + ".lastLocation")));
+        }
+    }
+
+    public static void teleportSkyBlockPlayerToLastLocation(Player player) {
+        FileConfiguration skyBlockCfg = Api.getFileConfiguration(YmlFileNames.YML_SKYBLOCK_FILE_NAME);
+        String uuid = player.getUniqueId().toString();
+        if (skyBlockCfg.getLocation(uuid + ".lastLocation") != null) {
+            player.teleport(Objects.requireNonNull(skyBlockCfg.getLocation(uuid + ".lastLocation")));
         }
     }
 
@@ -872,10 +1051,91 @@ public class Api {
         }
     }
 
-    public static void givePlayerLuckPermPermission(Player player, String permission){
+    public static void teleportPlayerToWorldFromHub(PlayerInteractEvent e) throws IOException {
+        FileConfiguration hubCfg = Api.getFileConfiguration(YmlFileNames.YML_HUB_FILE_NAME);
+        Player player = e.getPlayer();
+        String worldName = "";
+        if (e.getClickedBlock() != null) {
+            for (String world : hubCfg.getKeys(false)) {
+                int buttonX = hubCfg.getInt(world + ".x");
+                int buttonY = hubCfg.getInt(world + ".y");
+                int buttonZ = hubCfg.getInt(world + ".z");
+                int buttonClickedX = e.getClickedBlock().getX();
+                int buttonClickedY = e.getClickedBlock().getY();
+                int buttonClickedZ = e.getClickedBlock().getZ();
+                if (buttonX == buttonClickedX && buttonY == buttonClickedY && buttonZ == buttonClickedZ ){
+                    worldName = world;
+                }
+            }
+            if (worldName.equalsIgnoreCase("anarchy")){
+                File anarchyFile = Api.getConfigFile(YmlFileNames.YML_ANARCHY_FILE_NAME);
+                FileConfiguration anarchyCfg = Api.getFileConfiguration(YmlFileNames.YML_ANARCHY_FILE_NAME);
+                String playerUUID = player.getUniqueId().toString();
+                if (!anarchyCfg.isSet(playerUUID)){
+                    Location anarchySpawnLocation = new Location(Bukkit.getWorld("anarchy"), 13.5, 63, -25.5, (float) -3.000, (float) 92.10);
+                    anarchyCfg.set(playerUUID + ".uuid", playerUUID);
+                    anarchyCfg.set(playerUUID + ".name", player.getName());
+                    anarchyCfg.set(playerUUID + ".lastLocation", anarchySpawnLocation);
+                    player.teleport(anarchySpawnLocation);
+                    anarchyCfg.save(anarchyFile);
+                }
+                else {
+                    Api.teleportAnarchyPlayerToLastLocation(player);
+                }
+            }
+            if (worldName.equalsIgnoreCase("creative")){
+                Api.teleportCreativePlayerToLastLocation(player);
+            }
+            if (worldName.equalsIgnoreCase("oneblock")) {
+                FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_ONEBLOCK_FILE_NAME);
+                String playerUUID = player.getUniqueId().toString();
+                if (!classicCfg.isSet(playerUUID)) {
+                    Location oneBlockSpawnLocation = new Location(Bukkit.getWorld("OneBlock"), 11.5, 64, -1.5, (float) -3.000, (float) 92.10);
+                    classicCfg.set(playerUUID + ".uuid", playerUUID);
+                    classicCfg.set(playerUUID + ".name", player.getName());
+                    classicCfg.set(playerUUID + ".lastLocation", oneBlockSpawnLocation);
+                    player.teleport(oneBlockSpawnLocation);
+                    classicCfg.save(Api.getConfigFile(YmlFileNames.YML_ONEBLOCK_FILE_NAME));
+                } else {
+                    Api.teleportOneBlockPlayerToLastLocation(player);
+                }
+                player.performCommand("/ob progress_bar true");
+            }
+            if (worldName.equalsIgnoreCase("skyblock")) {
+                FileConfiguration skyblockCfg = Api.getFileConfiguration(YmlFileNames.YML_SKYBLOCK_FILE_NAME);
+                String playerUUID = player.getUniqueId().toString();
+                if (!skyblockCfg.isSet(playerUUID)) {
+                    Location skyBlockSpawnLocation = new Location(Bukkit.getWorld("IridiumSkyblock"), 107, 93, -1.5, (float) -3.000, (float) 92.10);
+                    skyblockCfg.set(playerUUID + ".uuid", playerUUID);
+                    skyblockCfg.set(playerUUID + ".name", player.getName());
+                    skyblockCfg.set(playerUUID + ".lastLocation", skyBlockSpawnLocation);
+                    player.teleport(skyBlockSpawnLocation);
+                    skyblockCfg.save(Api.getConfigFile(YmlFileNames.YML_SKYBLOCK_FILE_NAME));
+                } else {
+                    Api.teleportSkyBlockPlayerToLastLocation(player);
+                }
+            }
+            if (worldName.equalsIgnoreCase("classic")) {
+                FileConfiguration classicCfg = Api.getFileConfiguration(YmlFileNames.YML_CLASSIC_FILE_NAME);
+                String playerUUID = player.getUniqueId().toString();
+                if (!classicCfg.isSet(playerUUID)) {
+                    Location classicSpawnLocation = new Location(Bukkit.getWorld("classic"), 0, 92, 0, (float) -3.000, (float) 92.10);
+                    classicCfg.set(playerUUID + ".uuid", playerUUID);
+                    classicCfg.set(playerUUID + ".name", player.getName());
+                    classicCfg.set(playerUUID + ".lastLocation", classicSpawnLocation);
+                    player.teleport(classicSpawnLocation);
+                    classicCfg.save(Api.getConfigFile(YmlFileNames.YML_CLASSIC_FILE_NAME));
+                } else {
+                    Api.teleportClassicPlayerToLastLocation(player);
+                }
+            }
+        }
+    }
+
+    public static void givePlayerLuckPermPermission(Player player, String permission) {
         // Add the permission
         net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
-        if (user != null){
+        if (user != null) {
             user.data().add(Node.builder(permission).build());
             // Now we need to save changes.
             Main.getLuckPerms().getUserManager().saveUser(user);
@@ -883,15 +1143,25 @@ public class Api {
         }
     }
 
-    public static void removePlayerLuckPermPermission(Player player, String permission){
+    public static void removePlayerLuckPermPermission(Player player, String permission) {
         // Remove the permission
         net.luckperms.api.model.user.User user = Main.luckPerms.getUserManager().getUser(player.getUniqueId());
-        if (user != null){
-            user.data().remove(Node.builder(permission).build());
-            // Now we need to save changes.
-            Main.getLuckPerms().getUserManager().saveUser(user);
-            player.sendMessage(ChatColor.GREEN + "You were revoked " + ChatColor.AQUA + permission + ChatColor.GREEN + " permission.");
+        if (user != null) {
+            if (getPlayerPermissions(player.getUniqueId()).contains(permission)) {
+                user.data().remove(Node.builder(permission).build());
+                // Now we need to save changes.
+                Main.getLuckPerms().getUserManager().saveUser(user);
+                player.sendMessage(ChatColor.GREEN + "You were revoked " + ChatColor.AQUA + permission + ChatColor.GREEN + " permission.");
+            }
         }
+    }
+
+    public static Set<String> getPlayerPermissions(UUID uuid) {
+        return Objects.requireNonNull(Main.getLuckPerms().getUserManager().getUser(uuid)).getNodes().stream()
+                .filter(NodeType.PERMISSION::matches)
+                .map(NodeType.PERMISSION::cast)
+                .map(PermissionNode::getPermission)
+                .collect(Collectors.toSet());
     }
 
     public static void setBankSessionToAFK(Boolean isPlayerAFKExempt, Player player) throws IOException {
@@ -917,5 +1187,128 @@ public class Api {
             }
         }
         return minecraftID;
+    }
+    public static void transferBackpackContents() throws IOException {
+        FileConfiguration backpackCfg = Api.getFileConfiguration(YmlFileNames.YML_BACK_PACK_FILE_NAME);
+        for (String mcID : backpackCfg.getKeys(false)) {
+            File playerBPFile = new File(getMainPlugin().getDataFolder() + "/playerBackpacks/", mcID + ".yml");
+            FileConfiguration playerBPCfg = YamlConfiguration.loadConfiguration(playerBPFile);
+            if (backpackCfg.isSet(mcID + ".size")) {
+                playerBPCfg.set(mcID + ".size", backpackCfg.getInt(mcID + ".size"));
+            }
+            if (backpackCfg.isSet(mcID + ".isOpen")) {
+                playerBPCfg.set(mcID + ".isOpen", backpackCfg.getBoolean(mcID + ".isOpen"));
+            }
+            if (backpackCfg.isSet(mcID + ".name")) {
+                playerBPCfg.set(mcID + ".name", backpackCfg.getString(mcID + ".name"));
+            }
+            if (backpackCfg.isSet(mcID + ".slotTickets")) {
+                playerBPCfg.set(mcID + ".slotTickets", backpackCfg.getInt(mcID + ".slotTickets"));
+            }
+            if (backpackCfg.isSet(mcID + ".slots")) {
+                for (String slotNumber : Objects.requireNonNull(backpackCfg.getConfigurationSection(mcID + ".slots")).getKeys(false)) {
+                    playerBPCfg.set(mcID + ".slots." + slotNumber, backpackCfg.getItemStack(mcID + ".slots." + slotNumber));
+                }
+            }
+            playerBPCfg.save(playerBPFile);
+        }
+    }
+
+    public static void removeIllegalItemsFromBackpacks() throws IOException {
+        int shulkerCount = 0;
+        int totalItemCount = 0;
+        int paperCount = 0;
+        int enchantedBookCount = 0;
+        ArrayList<String> linkedPlayerIDList = Api.getAllMinecraftIDOfLinkedPlayers();
+        ArrayList<String> bpContainingMoneyOrders = new ArrayList<>();
+        ArrayList<String> bpContainingMendingBooks = new ArrayList<>();
+        ArrayList<String> playersWithSlotTickets = new ArrayList<>();
+        for (File file : Objects.requireNonNull(new File(getMainPlugin().getDataFolder() + "/playerBackpacks/").listFiles())) {
+            int slotCount = 0;
+            boolean doesPlayerHaveBPSlotTickets = false;
+            String mcID = file.getName().split(".yml")[0];
+            FileConfiguration backpackCfg = YamlConfiguration.loadConfiguration(file);
+            if (backpackCfg.isSet(mcID + ".slotTickets")){
+                doesPlayerHaveBPSlotTickets = true;
+                playersWithSlotTickets.add(backpackCfg.getString(mcID + ".name"));
+            }
+            if (backpackCfg.isSet(mcID + ".slots")) {
+                for (String slotNumber : Objects.requireNonNull(backpackCfg.getConfigurationSection(mcID + ".slots")).getKeys(false)) {
+                    slotCount++;
+                    ItemStack is = backpackCfg.getItemStack(mcID + ".slots." + slotNumber);
+                    assert is != null;
+                    if (is.getType().equals(Material.PAPER)){
+                        if (is.getItemMeta() != null && is.getItemMeta().hasLore()){
+                            if (Objects.requireNonNull(is.getItemMeta().getLore()).get(0).contains("MoneyOrder")){
+//                                Main.log.info(backpackCfg.getString(mcID + ".name") + "--- Money Order --- Default Slot: " + slotNumber);
+                                bpContainingMoneyOrders.add(backpackCfg.getString(mcID + ".name"));
+                                paperCount++;
+                            }
+                        }
+                    }
+                    if (is.getItemMeta() != null && is.getItemMeta() instanceof EnchantmentStorageMeta &&  is.getType().equals(Material.ENCHANTED_BOOK)){
+                        EnchantmentStorageMeta enchantmentMeta = (EnchantmentStorageMeta) is.getItemMeta();
+                        if (enchantmentMeta.getStoredEnchants().toString().toLowerCase().contains("mending")){
+//                            Main.log.info(backpackCfg.getString(mcID + ".name") + "--- Mending Book --- Default Slot: " + slotNumber);
+                            bpContainingMendingBooks.add(backpackCfg.getString(mcID + ".name"));
+                        }
+                        enchantedBookCount++;
+                    }
+                    if (is.getType().toString().contains("SHULKER")){
+                        shulkerCount++;
+                        totalItemCount++;
+                        if(is.getItemMeta() instanceof BlockStateMeta) {
+                            BlockStateMeta im = (BlockStateMeta) is.getItemMeta();
+                            ShulkerBox sb = (ShulkerBox) im.getBlockState();
+                            for (ItemStack boxIS : sb.getInventory()) {
+                                if (boxIS != null) {
+                                    if (boxIS.getType().equals(Material.PAPER)) {
+                                        if (is.getItemMeta() != null && is.getItemMeta().hasLore()){
+                                            if (Objects.requireNonNull(is.getItemMeta().getLore()).get(0).contains("MoneyOrder")){
+                                                bpContainingMoneyOrders.add(backpackCfg.getString(mcID + ".name"));
+//                                                Main.log.info(backpackCfg.getString(mcID + ".name") + "--- Money Order in Shulker --- Default Slot: " + slotNumber);
+                                                paperCount++;
+                                            }
+                                        }
+                                    }
+                                    if (boxIS.getItemMeta() != null && boxIS.getType().equals(Material.ENCHANTED_BOOK)){
+                                        EnchantmentStorageMeta enchantmentMeta = (EnchantmentStorageMeta) boxIS.getItemMeta();
+                                        if (enchantmentMeta.getStoredEnchants().toString().toLowerCase().contains("mending")){
+                                            bpContainingMendingBooks.add(backpackCfg.getString(mcID + ".name"));
+//                                            Main.log.info(backpackCfg.getString(mcID + ".name") + "--- Mending Book in Shulker --- Default Slot: " + slotNumber);
+                                        }
+                                        enchantedBookCount++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    totalItemCount++;
+                }
+            }
+            if (slotCount < 10){
+                backpackCfg.set(mcID + ".size", 9);
+            }
+            if (backpackCfg.getInt(mcID + ".size") > 18){
+                backpackCfg.set(mcID + ".size", 18);
+            }
+            if (Boolean.FALSE.equals(doesPlayerHaveBPSlotTickets)){
+                file.delete();
+            }
+            if (!linkedPlayerIDList.contains(mcID)) {
+                file.delete();
+            }
+            backpackCfg.save(file);
+            Main.log.info(backpackCfg.getString(mcID + ".name") + "has " + slotCount + " backpack slots and a backpack size of " + backpackCfg.getInt(mcID + ".size") + " and DoesOwnBackPackSlots: " + doesPlayerHaveBPSlotTickets);
+        }
+//        Main.log.info("Shulker Count: " + shulkerCount);
+//        Main.log.info("Paper Count: " + paperCount);
+//        Main.log.info("Total Item Count: " + totalItemCount);
+//        Main.log.info("Enchanted Book Count: " + enchantedBookCount);
+//        Object[] moArr = Arrays.stream(bpContainingMoneyOrders.toArray()).distinct().toArray(Object[]::new);
+//        Object[] mendArr = Arrays.stream(bpContainingMendingBooks.toArray()).distinct().toArray(Object[]::new);
+//        Main.log.info("Players with MoneyOrders in their backpack: " + Arrays.toString(moArr));
+//        Main.log.info("Players with Mending Books in their backpack: " + Arrays.toString(mendArr));
+//        Main.log.info("Players with Back Pack Slots: " + playersWithSlotTickets);
     }
 }

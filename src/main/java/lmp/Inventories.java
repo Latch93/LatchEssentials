@@ -55,6 +55,7 @@ public class Inventories {
     }
 
 
+
     @Nullable
     public static ItemMeta setItemLore(InventoryCloseEvent e, int i, boolean isPlayerShop) {
         ItemMeta im = null;
@@ -133,9 +134,31 @@ public class Inventories {
                 }
             }
         } else if (invTitle.toLowerCase().contains("backpack")) {
+            Main.log.info("test 1");
             player.sendMessage(ChatColor.RED + "You need to purchase a backpack before you use this command");
         } else {
             inv = Bukkit.createInventory(player, 27, invTitle);
+        }
+        return inv;
+    }
+
+    public static Inventory setBackpackInventoryWhenOpened(Player player, File file, int slots, String invTitle) throws IOException {
+        FileConfiguration inventoryConfig = YamlConfiguration.loadConfiguration(file);
+        Inventory inv = null;
+        String playerName = "";
+        String playerId = player.getUniqueId().toString();
+        if (inventoryConfig.get(playerId + Constants.YML_SIZE) != null) {
+            inv = Bukkit.createInventory(null, slots, invTitle);
+            if ((inventoryConfig.get(playerId + ".slots") != null)) {
+                for (String users : inventoryConfig.getConfigurationSection(playerId + ".slots").getKeys(false)) {
+                    inventoryConfig.set(playerId + ".isOpen", true);
+                    inventoryConfig.save(file);
+                    ItemStack is = inventoryConfig.getItemStack(playerId + Constants.YML_SLOTS + users);
+                    inv.setItem(Integer.parseInt(users), is);
+                }
+            }
+        } else {
+            player.sendMessage(ChatColor.RED + "You must purchase a backpack.");
         }
         return inv;
     }

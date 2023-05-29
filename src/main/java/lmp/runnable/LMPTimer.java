@@ -35,26 +35,30 @@ public class LMPTimer extends BukkitRunnable {
     }
 
     public static void broadcastLotto() {
-        Bukkit.broadcastMessage(ChatColor.GOLD + "Daily Lottery occurs every day. To buy in, type -> " + ChatColor.AQUA + "/lmp lotto buyin  " + ChatColor.GOLD +
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Buy into the Daily Lottery. Type -> " + ChatColor.AQUA + "/lmp lotto buyin  " + ChatColor.GOLD +
                 "See the total Lottery Prize with -> " + ChatColor.AQUA + "/lmp lotto total");
     }
 
     public static void broadcastInvite() {
-        Bukkit.broadcastMessage(ChatColor.GOLD + "You can invite your friends to the server. Copy and send this link -> " + ChatColor.AQUA + "https://discord.gg/NCDVnRsu3X");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "You can invite your friends to the server and get an in-game referral bonus of $50k when your friend joins the server and links their account. Copy and send this link -> " + ChatColor.AQUA + "https://discord.gg/NCDVnRsu3X");
     }
 
     public static void broadcastStaffApply() {
         Bukkit.broadcastMessage(ChatColor.GOLD + "Do you want to help moderate players?\nDo you want to help grow this server?\nDo you want to watch over new players and vet them?\nWell you can apply for staff in discord. Look for the " + ChatColor.AQUA + "#apply-for-staff " + ChatColor.GOLD + "channel.");
     }
 
-    public static void broadcastQuests() {
-        Bukkit.broadcastMessage(ChatColor.GOLD + "Suggest Quests in " + ChatColor.AQUA + "#suggestions");
+    public static void subscriptionGiveaway() {
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Subscribe to Twitch or Discord for a chance to win the monthly giveaway. Winner gets a $10 Amazon e-Gift Card.");
     }
-
     public static void broadcastLTS() {
         Bukkit.broadcastMessage(ChatColor.GOLD + "Nominate items for the Limited Time Shop in discord. Shop resets every week.");
     }
-
+    public static void broadcastForum() {
+        Bukkit.broadcastMessage(ChatColor.GOLD + "Check out our new Forum in Discord and make a post!!!");
+    }
+    public static void forceBackupInventory(){
+        Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "irp forcebackup all"));
+    }
     public static void setEasyBloodMoon() throws IOException {
         File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
         FileConfiguration bloodmoonCfg = YamlConfiguration.loadConfiguration(bloodmoonFile);
@@ -128,7 +132,6 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Medium Bloodmoon");
         bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
     }
-
     public static void setHardBloodMoon() throws IOException {
         File bloodmoonFile = new File("plugins/Bloodmoon/world", "config.yml");
         FileConfiguration bloodmoonCfg = YamlConfiguration.loadConfiguration(bloodmoonFile);
@@ -174,7 +177,6 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonLocalesCfg.set("BloodMoonTitleBar", "Hard Bloodmoon");
         bloodmoonLocalesCfg.save(bloodmoonLocalesFile);
     }
-
     public static void startBloodmoon() throws IOException {
         Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bloodmoon start world"));
         File bloodmoonLocalesFile = new File("plugins/Bloodmoon", "locales.yml");
@@ -185,7 +187,6 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonCfg.save(bloodmoonFile);
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage(bloodmoonLocalesCfg.getString("BloodMoonTitleBar") + " has started!").queue();
     }
-
     public static void stopBloodmoon() throws IOException {
 //        FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
 //        configCfg.set("deathBalancePercentage", configCfg.getDouble("defaultDeathBalancePercentage"));
@@ -207,21 +208,19 @@ public class LMPTimer extends BukkitRunnable {
 //        }
 //        bloodmoonLMPCfg.set("hordeMobs", null);
     }
-
     public static void broadcastEasyBloodmoon() throws IOException {
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage("Easy Bloodmoon starts in 30 minutes.").queue();
         Bukkit.broadcastMessage(ChatColor.RED + "Easy Bloodmoon starts in 30 minutes.");
     }
-
     public static void broadcastMediumBloodmoon() throws IOException {
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage("Medium Bloodmoon starts in 30 minutes.").queue();
         Bukkit.broadcastMessage(ChatColor.RED + "Medium Bloodmoon starts in 30 minutes.");
     }
-
     public static void broadcastHardBloodmoon() throws IOException {
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage("Hard Bloodmoon starts in 30 minutes.").queue();
         Bukkit.broadcastMessage(ChatColor.RED + "Hard Bloodmoon starts in 30 minutes.");
     }
+
 
     @Override
     public void run() {
@@ -232,6 +231,12 @@ public class LMPTimer extends BukkitRunnable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        try {
+            Api.removeFlyCommand();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         // creating a Calendar object
         Calendar c1 = Calendar.getInstance();
@@ -254,74 +259,21 @@ public class LMPTimer extends BukkitRunnable {
             }
             if (hourOfDay == 0) {
                 if (minuteOfHour == 0) {
-                    broadcastStaffApply();
                     broadcastLTS();
                 }
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-//                            try {
-//                                setHardBloodMoon();
-//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Config.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-//                                startBloodmoon();
-//                            } catch (NullPointerException | IOException ignored) {
-//
-//                            }
-//                        }
-//                    }
-
-//                else if (minuteOfHour == 13){
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            stopBloodmoon();
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 1) {
                 if (minuteOfHour == 0) {
-                    broadcastLotto();
+                    broadcastForum();
                 }
             } else if (hourOfDay == 2) {
                 if (minuteOfHour == 0) {
-//                    broadcastTwitch();
-                    broadcastLTS();
+                    broadcastTwitch();
                 }
-//                else if (minuteOfHour == 30) {
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            broadcastMediumBloodmoon();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 3) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                     broadcastLTS();
                 }
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-//                            try {
-//                                setMediumBloodMoon();
-//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Config.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-//                                startBloodmoon();
-//                            } catch (NullPointerException | IOException ignored) {
-//
-//                            }
-//                        }
-//                    }
-
-//                if (minuteOfHour == 13){
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            stopBloodmoon();
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 4) {
                 if (minuteOfHour == 0) {
                     broadcastLotto();
@@ -330,144 +282,50 @@ public class LMPTimer extends BukkitRunnable {
                 if (minuteOfHour == 0) {
                     broadcastStaffApply();
                 }
-//                else if (minuteOfHour == 30) {
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            broadcastEasyBloodmoon();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 6) {
                 if (minuteOfHour == 0) {
-                    broadcastInvite();
-                    broadcastLTS();
+                    broadcastForum();
                 }
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-//                            try {
-//                                setEasyBloodMoon();
-//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Config.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-//                                startBloodmoon();
-//                            } catch (NullPointerException | IOException ignored) {
-//
-//                            }
-//                        }
-//                    }
-//                if (minuteOfHour == 13){
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            stopBloodmoon();
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 7) {
                 if (minuteOfHour == 0) {
-                    broadcastLTS();
-                    broadcastLotto();
+                    broadcastInvite();
                 }
             } else if (hourOfDay == 8) {
                 if (minuteOfHour == 0) {
-                    broadcastLTS();
-//                    broadcastTwitch();
+                    broadcastTwitch();
+                    forceBackupInventory();
                 }
             } else if (hourOfDay == 9) {
                 if (minuteOfHour == 0) {
                     broadcastLTS();
-                    broadcastInvite();
                 }
             } else if (hourOfDay == 10) {
                 if (minuteOfHour == 0) {
-                    broadcastStaffApply();
+                    broadcastForum();
                 }
             } else if (hourOfDay == 11) {
                 if (minuteOfHour == 0) {
-                    broadcastInvite();
-                    broadcastLTS();
+                    broadcastTwitch();
                 }
-//                else if (minuteOfHour == 30) {
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            broadcastMediumBloodmoon();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 12) {
                 if (minuteOfHour == 0) {
-                    broadcastLotto();
                     broadcastStaffApply();
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-//                            try {
-//                                setMediumBloodMoon();
-//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Config.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-//                                startBloodmoon();
-//                            } catch (NullPointerException | IOException ignored) {
-//
-//                            }
-//                        }
-//                    }
                 }
-//                if (minuteOfHour == 13){
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            stopBloodmoon();
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 13) {
                 if (minuteOfHour == 0) {
                     broadcastInvite();
                 }
             } else if (hourOfDay == 14) {
                 if (minuteOfHour == 0) {
-//                    broadcastTwitch();
-                    broadcastLTS();
+                    broadcastTwitch();
                 }
-//                else if (minuteOfHour == 30) {
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            broadcastHardBloodmoon();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 15) {
                 if (minuteOfHour == 0) {
-                    broadcastInvite();
-                    broadcastStaffApply();
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        if (Boolean.TRUE.equals(Api.arePlayersOnline())) {
-//                            try {
-//                                setHardBloodMoon();
-//                                Bukkit.getScheduler().runTask(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Config.PLUGIN_NAME)), () -> Api.getOnlinePlayer().performCommand("bloodmoon reload"));
-//                                startBloodmoon();
-//                            } catch (NullPointerException | IOException ignored) {
-//
-//                            }
-//                        }
+                    broadcastForum();
                 }
-//                if (minuteOfHour == 13){
-//                    if (dayOfWeek == 1 || dayOfWeek == 4 || dayOfWeek == 6) {
-//                        try {
-//                            stopBloodmoon();
-//                        } catch (IOException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                }
             } else if (hourOfDay == 16) {
                 if (minuteOfHour == 0) {
                     broadcastLotto();
-                    broadcastLTS();
                 }
             } else if (hourOfDay == 17) {
                 if (minuteOfHour == 0) {
@@ -475,8 +333,8 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 18) {
                 if (minuteOfHour == 0) {
-                    broadcastLotto();
                     broadcastLTS();
+                    forceBackupInventory();
                 }
             } else if (hourOfDay == 19) {
                 if (minuteOfHour == 0) {
@@ -484,8 +342,7 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 20) {
                 if (minuteOfHour == 0) {
-//                    broadcastTwitch();
-                    broadcastLTS();
+                    broadcastTwitch();
                 }
             } else if (hourOfDay == 21) {
                 if (minuteOfHour == 0) {
@@ -493,8 +350,7 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 22) {
                 if (minuteOfHour == 0) {
-                    broadcastLotto();
-                    broadcastLTS();
+                    broadcastForum();
                     try {
                         Lottery.executeLotto();
                     } catch (IOException e) {
@@ -503,18 +359,8 @@ public class LMPTimer extends BukkitRunnable {
                 }
             } else if (hourOfDay == 23) {
                 if (minuteOfHour == 0) {
-                    broadcastInvite();
+                    broadcastLTS();
                 }
-                //                else if (minuteOfHour == 30) {
-                //                    if (dayOfWeek == 0 || dayOfWeek == 3 || dayOfWeek == 5) {
-                //                        try {
-                //                            broadcastHardBloodmoon();
-                //                        } catch (IOException e) {
-                //                            e.printStackTrace();
-                //                        }
-                //                    }
-                //                }
-                //            }
             }
         }
     }

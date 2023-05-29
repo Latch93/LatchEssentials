@@ -27,8 +27,8 @@ public class QuickBrew {
                 } else {
                     brewingStand.setBrewingTime(1);
                     brewingStand.update(true);
-                    player.setLevel(ExperienceManager.getPlayerLevel(event, 35));
-                    player.setExp(ExperienceManager.getPlayerXP(event));
+                    player.setLevel(ExperienceManager.getPlayerLevel(player, 35));
+                    player.setExp(ExperienceManager.getPlayerXP(event.getPlayer()));
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "Your potion(s) are brewed. Remaining XP: " + ChatColor.GOLD + (totalPlayerXPCalculated - 35)));
                 }
             } else {

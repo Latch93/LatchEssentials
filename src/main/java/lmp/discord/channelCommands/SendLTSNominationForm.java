@@ -26,10 +26,8 @@ public class SendLTSNominationForm extends ListenerAdapter {
                     jda.addEventListener(new LTSNomination(privateChannel, senderDiscordUser, applicationSubmittedChannel));
                     return privateChannel.sendMessage("""
                             Please enter your nominations line by line.\s
-                            URL Link to Custom Mob Heads -> https://minecraft-heads.com/custom-heads
-                            Copy and paste the URL link to the head you want to nominate for the first response.
                             Press enter after each question response.
-                            1.) What is your Custom Head Nomination? Please paste the URL Link.""");
+                            1.) What category of Overpowered item do you nominate? Armor/Tool/Weapon?""");
                 }).queue();
             }
         }

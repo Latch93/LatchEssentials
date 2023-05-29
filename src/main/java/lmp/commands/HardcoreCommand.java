@@ -81,6 +81,7 @@ public class HardcoreCommand implements CommandExecutor {
                         BankLogoutEvent.setPlayerSessionTime(player);
                         BankLoginEvent.setPlayerLoginTime(player);
                         Api.givePlayerLuckPermPermission(player, "essentials.afk.kickexempt");
+                        Api.givePlayerLuckPermPermission(player, "essentials.sleepingignored");
                         BankLogoutEvent.setPlayerSessionTime(player);
                         Api.setBankSessionToAFK(true, player);
                     } else {

@@ -33,7 +33,7 @@ public class DiscordAdminChatCommand implements CommandExecutor {
                         String[] messageArr = convertedMessage.split(" » ");
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             if (p.hasPermission("group.admin")) {
-                                p.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + ChatColor.GOLD + player.getDisplayName() + ChatColor.WHITE + " » " + ChatColor.AQUA + messageArr[1]);
+                                p.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + player.getDisplayName() + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " » " + ChatColor.AQUA + messageArr[1]);
                             }
                         }
                         adminChannel.sendMessage("[Admin Chat] - " + convertedMessage).queue();

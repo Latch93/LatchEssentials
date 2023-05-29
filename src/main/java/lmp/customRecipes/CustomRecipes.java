@@ -10,6 +10,9 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -22,6 +25,7 @@ public class CustomRecipes {
         addBundleRecipe();
         addLatchAppleRecipe();
         addExperienceStorageBottleRecipe();
+        addHastePotion();
     }
 
     public static void addRottenFleshToLeatherSmelt() {
@@ -54,6 +58,22 @@ public class CustomRecipes {
         bundleRecipe.setIngredient('R', Material.RABBIT_HIDE);
         bundleRecipe.setIngredient('X', Material.AIR);
         Bukkit.addRecipe(bundleRecipe);
+    }
+
+    public static void addHastePotion() {
+        ItemStack hastePotion = new ItemStack(Material.POTION);
+        NamespacedKey hastePotionKey = new NamespacedKey(Objects.requireNonNull(Bukkit.getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), "POTION");
+        PotionMeta meta = (PotionMeta) hastePotion.getItemMeta();
+        assert meta != null;
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 600, 10), true);
+        hastePotion.setItemMeta(meta);
+        ShapedRecipe hastePotionRecipe = new ShapedRecipe(hastePotionKey, hastePotion);
+        hastePotionRecipe.shape("CAC", "RER", "CAC");
+        hastePotionRecipe.setIngredient('R', Material.RABBIT_HIDE);
+        hastePotionRecipe.setIngredient('E', Material.EXPERIENCE_BOTTLE);
+        hastePotionRecipe.setIngredient('C',Material.COPPER_BLOCK);
+        hastePotionRecipe.setIngredient('A',Material.AIR);
+        Bukkit.addRecipe(hastePotionRecipe);
     }
 
     public static void addLatchAppleRecipe() {
@@ -98,4 +118,5 @@ public class CustomRecipes {
         xpStorageBottleRecipe.setIngredient('A', Material.ANCIENT_DEBRIS);
         Bukkit.addRecipe(xpStorageBottleRecipe);
     }
+
 }

@@ -4,6 +4,8 @@ import lmp.api.Api;
 import lmp.constants.YmlFileNames;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,7 @@ public class RandomItem {
         List<String> items = randomItemGenCfg.getStringList("items1");
         OfflinePlayer op = Bukkit.getOfflinePlayer(player.getUniqueId());
         Location leverLocation = new Location(event.getPlayer().getWorld(), randomItemGenCfg.getInt("randomItemGen1.buttonLocation.x"), randomItemGenCfg.getInt("randomItemGen1.buttonLocation.y"), randomItemGenCfg.getInt("randomItemGen1.buttonLocation.z"));
+        DecimalFormat df = new DecimalFormat("0.00");
         if (event.getClickedBlock() != null && event.getClickedBlock().getLocation().equals(leverLocation)) {
             Block block = event.getClickedBlock();
             assert block != null;
@@ -56,6 +60,7 @@ public class RandomItem {
                         TextChannel randomItemLogChannel = LatchDiscord.jda.getTextChannelById(Constants.RANDOM_ITEM_LOG_CHANNEL_ID);
                         assert randomItemLogChannel != null;
                         randomItemLogChannel.sendMessageEmbeds(eb.build()).queue();
+                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.GREEN + "New Balance: " + ChatColor.GOLD + "$" + df.format(econ.getBalance(op))));
                     } catch (IllegalArgumentException e) {
                         Api.messageInConsole(ChatColor.RED + "Can't give air in Random Item " + e);
                         player.sendMessage(ChatColor.RED + "An error occurred. Please click for a random item again :)");
@@ -63,7 +68,7 @@ public class RandomItem {
 
                 } else {
                     player.sendMessage(ChatColor.GREEN + "The cost of getting a random item is " + ChatColor.GOLD + "$" + randomItemCost);
-                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + econ.getBalance(op));
+                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + df.format(econ.getBalance(op)));
                 }
             }
         }
@@ -76,6 +81,7 @@ public class RandomItem {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         Economy econ;
         assert rsp != null;
+        DecimalFormat df = new DecimalFormat("0.00");
         econ = rsp.getProvider();
         Player player = event.getPlayer();
         List<String> items = randomItemGenCfg.getStringList("items2");
@@ -113,7 +119,7 @@ public class RandomItem {
 
                 } else {
                     player.sendMessage(ChatColor.GREEN + "The cost of getting a random item is " + ChatColor.GOLD + "$" + randomItemCost);
-                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + econ.getBalance(op));
+                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + df.format(econ.getBalance(op)));
                 }
             }
         }
@@ -127,6 +133,7 @@ public class RandomItem {
         Economy econ;
         assert rsp != null;
         econ = rsp.getProvider();
+        DecimalFormat df = new DecimalFormat("0.00");
         Player player = event.getPlayer();
         List<String> items = randomItemGenCfg.getStringList("items3");
         OfflinePlayer op = Bukkit.getOfflinePlayer(player.getUniqueId());
@@ -163,7 +170,7 @@ public class RandomItem {
 
                 } else {
                     player.sendMessage(ChatColor.GREEN + "The cost of getting a random item is " + ChatColor.GOLD + "$" + randomItemCost);
-                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + econ.getBalance(op));
+                    player.sendMessage(ChatColor.RED + "Your available balance is only " + ChatColor.GOLD + "$" + df.format(econ.getBalance(op)));
                 }
             }
         }

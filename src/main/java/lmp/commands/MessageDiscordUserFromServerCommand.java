@@ -37,7 +37,6 @@ public class MessageDiscordUserFromServerCommand implements CommandExecutor {
                                 .handle(ErrorResponse.CANNOT_SEND_TO_USER,
                                         (ex) -> Main.log.info("Cannot send message to " + Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(Constants.GUILD_ID)).getMemberById(offlineDiscordUserID)).getUser().getName())));
                     } else {
-
                         player.sendMessage(ChatColor.RED + "Maybe that player doesn't exist. Please try again using this format -> " + ChatColor.AQUA + "/dcmsg [playerMinecraftName] [message]");
                     }
 

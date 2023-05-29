@@ -20,66 +20,82 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DonationClaimRewards {
-    public static void addNewPlayerToDonationFile(Player player) throws IOException {
+import static lmp.api.Api.getMainPlugin;
 
+public class DonationClaimRewards {
+    public static void createDonationClaimFiles() throws IOException {
+        for (String minecraftID : Api.getMinecraftIDOfLinkedPlayersInDiscord()) {
+            File donationClaimFile = new File(getMainPlugin().getDataFolder() + "/donationClaimFiles/", minecraftID + ".yml");
+            FileConfiguration donationCfg = Api.getFileConfigurationFromFile(donationClaimFile);
+            String players = "players.";
+            List<String> itemsToGive = new ArrayList<>();
+            if (donationCfg.get(players + minecraftID + ".uuid") == null) {
+                donationCfg.set(players + minecraftID + ".itemsToGive", itemsToGive);
+                donationCfg.set(players + minecraftID + ".uuid", minecraftID);
+                donationCfg.set(players + minecraftID + ".playerName", Api.getMinecraftNameFromMinecraftId(minecraftID));
+                donationCfg.save(donationClaimFile);
+                Main.log.info("New player added to the donationClaim file. Name: " + Api.getMinecraftNameFromMinecraftId(minecraftID));
+            }
+        }
+    }
+
+    public static void createNewPlayerToDonationFile(Player player) throws IOException {
         String playerUUID = player.getUniqueId().toString();
         String playerName = player.getName();
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
+        File donationClaimFile = new File(getMainPlugin().getDataFolder() + "/donationClaimFiles/", playerUUID.toString() + ".yml");
+        FileConfiguration donationCfg = Api.getFileConfigurationFromFile(donationClaimFile);
         String players = "players.";
         List<String> itemsToGive = new ArrayList<>();
-        if (userDonationCfg.get(players + playerUUID + ".uuid") == null) {
-            userDonationCfg.set(players + playerUUID + ".itemsToGive", itemsToGive);
-            userDonationCfg.set(players + playerUUID + ".uuid", playerUUID);
-            userDonationCfg.set(players + playerUUID + ".playerName", playerName);
-            userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
+        if (donationCfg.get(players + playerUUID + ".uuid") == null) {
+            donationCfg.set(players + playerUUID + ".itemsToGive", itemsToGive);
+            donationCfg.set(players + playerUUID + ".uuid", playerUUID);
+            donationCfg.set(players + playerUUID + ".playerName", playerName);
+            donationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
+            donationCfg.save(donationClaimFile);
             Main.log.info("New player added to the donationClaim file. Name: " + playerName);
         }
     }
 
-    public static void createDonationUserFile() throws IOException {
 
-
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
-        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
-        for (String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
+    public static void addItemToClaimToAll(ItemStack itemToGive) throws IOException {
+        for (File file : Objects.requireNonNull(new File(getMainPlugin().getDataFolder() + "/donationClaimFiles").listFiles())) {
+            String[] splitArr = file.getName().split("\\.");
+            String playerUUID = splitArr[0];
+            File donationClaimFile = new File(getMainPlugin().getDataFolder() + "/donationClaimFiles/", playerUUID.toString() + ".yml");
+            FileConfiguration donationCfg = Api.getFileConfigurationFromFile(donationClaimFile);
             String players = "players.";
             List<String> itemsToGive = new ArrayList<>();
-            if (whitelistCfg.getBoolean(players + user + ".isPlayerInDiscord")){
-                userDonationCfg.set(players + user + ".itemsToGive", itemsToGive);
-                userDonationCfg.set(players + user + ".minecraftID", user);
-                userDonationCfg.set(players + user + ".playerName", whitelistCfg.getString(players + user + ".minecraftName"));
-                userDonationCfg.set(players + user + ".discordID", whitelistCfg.getString(players + user + ".discordId"));
-                Main.log.info("New player added to the donationClaim file. Name: " + whitelistCfg.getString(players + user + ".minecraftName"));
-            }
-        }
-        userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
-    }
-
-    public static void addItemToClaim(ItemStack itemToGive) throws IOException {
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
-        for (File file : Objects.requireNonNull(new File("plugins/Essentials/userdata").listFiles())) {
-            FileConfiguration conf = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
-            String[] temp = file.getName().split(".yml");
-            String userUUID = temp[0];
-            String players = "players.";
-            List<String> itemsToGive = new ArrayList<>();
-            if (!userDonationCfg.getStringList(players + userUUID + ".itemsToGive").isEmpty()) {
-                itemsToGive = userDonationCfg.getStringList(players + userUUID + ".itemsToGive");
+            if (!donationCfg.getStringList(players + playerUUID + ".itemsToGive").isEmpty()) {
+                itemsToGive = donationCfg.getStringList(players + playerUUID + ".itemsToGive");
             }
             itemsToGive.add(serializeItemStack(itemToGive));
-            userDonationCfg.set(players + userUUID + ".itemsToGive", itemsToGive);
+            donationCfg.set(players + playerUUID + ".itemsToGive", itemsToGive);
+            donationCfg.save(donationClaimFile);
         }
-        userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
     }
 
+    public static void addItemToClaimToPlayer(String playerUUID, ItemStack itemToGive) throws IOException {
+            File donationClaimFile = new File(getMainPlugin().getDataFolder() + "/donationClaimFiles/", playerUUID + ".yml");
+            FileConfiguration donationCfg = Api.getFileConfigurationFromFile(donationClaimFile);
+            String players = "players.";
+            List<String> itemsToGive = new ArrayList<>();
+            if (!donationCfg.getStringList(players + playerUUID + ".itemsToGive").isEmpty()) {
+                itemsToGive = donationCfg.getStringList(players + playerUUID + ".itemsToGive");
+            }
+            itemsToGive.add(serializeItemStack(itemToGive));
+            donationCfg.set(players + playerUUID + ".itemsToGive", itemsToGive);
+            donationCfg.save(donationClaimFile);
+    }
+
+
     public static void claimItems(Player player) throws IOException, ClassNotFoundException {
-        FileConfiguration userDonationCfg = Api.getFileConfiguration(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME);
-        String userUUID = player.getUniqueId().toString();
+        String playerUUID = player.getUniqueId().toString();
         String players = "players.";
+        File donationClaimFile = new File(getMainPlugin().getDataFolder() + "/donationClaimFiles/", playerUUID.toString() + ".yml");
+        FileConfiguration donationCfg = Api.getFileConfigurationFromFile(donationClaimFile);
         List<String> itemsToGive = new ArrayList<>();
-        if (!userDonationCfg.getStringList(players + userUUID + ".itemsToGive").isEmpty()) {
-            itemsToGive = userDonationCfg.getStringList(players + userUUID + ".itemsToGive");
+        if (!donationCfg.getStringList(players + playerUUID + ".itemsToGive").isEmpty()) {
+            itemsToGive = donationCfg.getStringList(players + playerUUID + ".itemsToGive");
         } else {
             player.sendMessage(ChatColor.RED + "You don't have any items to claim.");
         }
@@ -90,11 +106,11 @@ public class DonationClaimRewards {
                 Location dropLocation = player.getLocation();
                 assert item != null;
                 world.dropItem(dropLocation, item);
-                player.sendMessage(ChatColor.GREEN + "You were given " + ChatColor.GOLD + item.getAmount() + " " + item.getType());
+                player.sendMessage(ChatColor.GREEN + "You were given " + ChatColor.GOLD + item.getAmount() + " " + item.getType() + ChatColor.GREEN + " | Drop Coords: " + ChatColor.GOLD + dropLocation.getBlockX() + " / " + dropLocation.getBlockY() + " / " + dropLocation.getBlockZ());
             }
         }
-        userDonationCfg.set(players + userUUID + ".itemsToGive", null);
-        userDonationCfg.save(Api.getConfigFile(YmlFileNames.YML_USER_DONATION_REWARD_FILE_NAME));
+        donationCfg.set(players + playerUUID + ".itemsToGive", null);
+        donationCfg.save(donationClaimFile);
     }
 
     private static String serializeItemStack(ItemStack item) {

@@ -24,12 +24,19 @@ public class BroadcastDeathMessageToDiscordEvent implements Listener {
         FileConfiguration enabledEventsCfg = Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME);
         if (enabledEventsCfg.getBoolean("broadcastDeathMessageToDiscord") && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getEntity().getUniqueId().toString()))){
             EmbedBuilder eb = new EmbedBuilder();
-            String worldPrefix = "[LMP] - ";
+            String worldPrefix = "[Community] - ";
             if (e.getEntity().getWorld().getName().contains("hardcore")) {
                 worldPrefix = "[Hardcore] - ";
-            }
-            if (e.getEntity().getWorld().getName().contains("anarchy")) {
+            } else if (e.getEntity().getWorld().getName().contains("anarchy")) {
                 worldPrefix = "[Anarchy] - ";
+            } else if (e.getEntity().getWorld().getName().contains("classic")) {
+                worldPrefix = "[Classic] - ";
+            } else if (e.getEntity().getWorld().getName().contains("creative")) {
+                worldPrefix = "[Creative] - ";
+            } else if (e.getEntity().getWorld().getName().contains("OneBlock")) {
+                worldPrefix = "[OneBlock] - ";
+            } else if (e.getEntity().getWorld().getName().contains("Skyblock")) {
+                worldPrefix = "[SkyBlock] - ";
             }
             eb.setTitle(worldPrefix + e.getDeathMessage());
             eb.setColor(new Color(0xE1922E00, true));

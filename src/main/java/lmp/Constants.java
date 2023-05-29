@@ -23,6 +23,7 @@ public class Constants {
     public static final String TOGGLE_WHITELIST_COMMAND = "!whitelist";
     public static final String LTS_NOMINATION_COMMAND = "!nominate";
     public static final String ONLINE_COMMAND = "!online";
+    public static final String WORLD_LIST_COMMAND = "!worlds";
     public static final String STAT_COMMAND = "!stat";
 
     // Channel and User IDs

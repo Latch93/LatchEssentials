@@ -20,16 +20,25 @@ public class FarmMoney {
     public static void rewardMoneyFromCrops(BlockBreakEvent event, Economy econ) {
         ArrayList<String> deniedWorlds = new ArrayList<>();
         deniedWorlds.add("season1");
+        deniedWorlds.add("season3");
         deniedWorlds.add("season4");
         deniedWorlds.add("season5");
+        deniedWorlds.add("season6");
+        deniedWorlds.add("season7");
         deniedWorlds.add("hardcore");
         deniedWorlds.add("hardcore_nether");
         deniedWorlds.add("hardcore_the_end");
         deniedWorlds.add("anarchy");
         deniedWorlds.add("anarchy_nether");
         deniedWorlds.add("anarchy_the_end");
+        deniedWorlds.add("creative");
+        deniedWorlds.add("classic");
+        deniedWorlds.add("classic_nether");
+        deniedWorlds.add("classic_the_end");
+        deniedWorlds.add("IridiumSkyblock");
+        deniedWorlds.add("IridiumSkyblock_nether");
 
-        if (!deniedWorlds.contains(event.getPlayer().getWorld().getName())) {
+        if (!deniedWorlds.contains(event.getPlayer().getWorld().getName()) && !Api.isPlayerInvisible(event.getPlayer().getUniqueId().toString())) {
             FileConfiguration mainConfig = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);
             OfflinePlayer player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
             DecimalFormat df = new DecimalFormat("0.00");
