@@ -134,7 +134,6 @@ public class Inventories {
                 }
             }
         } else if (invTitle.toLowerCase().contains("backpack")) {
-            Main.log.info("test 1");
             player.sendMessage(ChatColor.RED + "You need to purchase a backpack before you use this command");
         } else {
             inv = Bukkit.createInventory(player, 27, invTitle);

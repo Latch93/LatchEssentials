@@ -1,15 +1,11 @@
 package lmp.listeners.discord;
 
-import lmp.Constants;
-import lmp.LatchDiscord;
 import lmp.Main;
 import lmp.api.Api;
 import lmp.constants.YmlFileNames;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -33,18 +29,7 @@ public class BanAndLogBanChestThief implements Listener {
                     chestMaterial = Objects.requireNonNull(event.getClickedInventory()).getType().toString();
                     if (chestMaterial.equalsIgnoreCase("CHEST") && chestLocation.equals(event.getClickedInventory().getLocation())) {
                         if (event.getCurrentItem() != null && !event.getWhoClicked().hasPermission("group.mod")) {
-                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + playerName + " 3d stole from bigboi's chest");
-                            TextChannel staffChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
-                            assert staffChatChannel != null;
-                            TextChannel banLogChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.BAN_LOG_CHANNEL_ID);
-                            assert banLogChannel != null;
-                            if (event.getCurrentItem().getType().equals(Material.BEACON)) {
-                                staffChatChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> GOT BEACON'd and will be temporarily banned for 3 days. :)- Their MC username is: " + playerName).queue();
-                                banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> | Reason: They got BEACON'D ").queue();
-                            } else {
-                                staffChatChannel.sendMessage("<@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> will be temporarily banned for 3 days. Reason: Stealing from BigBoi's Chest. They tried to steal " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType() + " :)- Their MC username is: " + playerName).queue();
-                                banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + Api.getDiscordIdFromMCid(event.getWhoClicked().getUniqueId().toString()) + "> | Reason: Stealing from spawn chest | Item(s) stolen: " + event.getCurrentItem().getAmount() + " " + event.getCurrentItem().getType()).queue();
-                            }
+                            Api.banAndLogBigBoiThief((Player) event.getWhoClicked(), event.getCurrentItem(), false);
                         }
                     }
                 }

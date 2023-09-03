@@ -31,8 +31,11 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -76,6 +79,24 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
             .enableIntents(GatewayIntent.GUILD_MEMBERS)
             .enableIntents(GatewayIntent.MESSAGE_CONTENT);
 
+
+//    public static final JDABuilder jdaBuilder =
+//            JDABuilder.createDefault(
+//                            Constants.DISCORD_BOT_TOKEN,
+//                            GatewayIntent.GUILD_MEMBERS,
+//                            GatewayIntent.GUILD_MESSAGES,
+//                            GatewayIntent.GUILD_VOICE_STATES,
+//                            GatewayIntent.MESSAGE_CONTENT
+//                    )
+//                    .disableCache(EnumSet.of(
+//                            CacheFlag.CLIENT_STATUS,
+//                            CacheFlag.ACTIVITY,
+//                            CacheFlag.EMOJI
+//                    ))
+//                    .enableCache(CacheFlag.VOICE_STATE)
+//                    .addEventListeners(new CommandListener())
+//                    .setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
+//                    .setMemberCachePolicy(MemberCachePolicy.ALL);
     public LatchDiscord() throws LoginException {
         startBot();
         jda.addEventListener(this);
@@ -104,44 +125,39 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
     }
     public static Message getMessage(){return message;}
 
-    public static String convertDiscordMessageToServer(Member member, String message, String senderName, Boolean isReply, Message repliedMessage, Boolean staffMessage) {
+    public static ComponentBuilder convertDiscordMessageToServer(Member member, String message, String senderName, Boolean isReply, Message repliedMessage, Boolean staffMessage) {
         int count = 0;
-        String highestRole = "Member";
         ChatColor colorCode;
+        Role highestRole = null;
+        String highestRoleName = null;
         for (Role role : Objects.requireNonNull(member).getRoles()) {
             if (role.getPosition() >= count) {
                 count = role.getPosition();
-                highestRole = role.getName();
+                highestRoleName = role.getName();
+                highestRole = role;
             }
         }
-        if (highestRole.equalsIgnoreCase("Owner")) {
-            colorCode = ChatColor.GOLD;
-        } else if (highestRole.toLowerCase().contains("admin")) {
-            colorCode = ChatColor.RED;
-        } else if (highestRole.toLowerCase().contains("mod")) {
-            colorCode = ChatColor.LIGHT_PURPLE;
-        } else if (highestRole.toLowerCase().contains("builder")) {
-            colorCode = ChatColor.BLUE;
-        } else {
-            colorCode = ChatColor.GREEN;
-        }
-        String finalMessage;
+        assert highestRole != null;
+        ComponentBuilder cb = new ComponentBuilder();
+        String hex = "#"+Integer.toHexString(Objects.requireNonNull(highestRole.getColor()).getRGB()).substring(2).toUpperCase();
+        BaseComponent[] messageHeader = TextComponent.fromLegacyText(ChatColor.WHITE + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | ");
+        BaseComponent[] role = TextComponent.fromLegacyText(ChatColor.of(hex) + highestRoleName);
         if (staffMessage){
             if (isReply) {
-                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
-                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.AQUA + message;
+                cb.append(messageHeader).append(role).append(ChatColor.WHITE + "] - " + senderName + ChatColor.DARK_GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.AQUA + message);
             } else {
-                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " - " + ChatColor.GRAY + "» " + ChatColor.AQUA + message;
+                cb.append(messageHeader).append(role).append(ChatColor.WHITE + "] - " +  senderName + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + message);
             }
         } else {
             if (isReply) {
-                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
-                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.GRAY + " » " + ChatColor.WHITE + message;
+                cb.append(messageHeader).append(role).append(ChatColor.WHITE + "] - " + senderName + ChatColor.GRAY + " » " + ChatColor.WHITE + "Replied to " + ChatColor.GOLD + repliedMessage.getAuthor().getName() +
+                        ChatColor.GRAY + " » " + ChatColor.GREEN + "'" + repliedMessage.getContentRaw() + "'" + ChatColor.DARK_GRAY + " » " + ChatColor.WHITE + message);
             } else {
-                finalMessage = ChatColor.DARK_GRAY + "[" + ChatColor.AQUA + "Discord" + ChatColor.WHITE + " | " + colorCode + highestRole + ChatColor.DARK_GRAY + "] " + senderName + ChatColor.GRAY + " - " + ChatColor.GRAY + "» " + ChatColor.WHITE + message;
+                cb.append(messageHeader).append(role).append(ChatColor.WHITE + "] - " + senderName  + ChatColor.DARK_GRAY + " » " + ChatColor.WHITE + message);
             }
         }
-        return finalMessage;
+        return cb;
     }
 
     public static void sendServerStoppedMessage() {
@@ -220,16 +236,17 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
 //                    FileConfiguration
 //                    clearAllUserMessages(messageChannel, messageID, userID);
 //                }
-                // get the
+
                 if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) && !e.getAuthor().getId().equals(lmp.Constants.LATCH93BOT_USER_ID))) {
                     if (e.getMessage().getReferencedMessage() != null) {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), false));
+                        Bukkit.getServer().spigot().broadcast(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), false).create());
                     } else {
-                        Bukkit.broadcastMessage(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, false));
+                        Bukkit.getServer().spigot().broadcast(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false,null, false).create());
                     }
                 }
-                if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.MINECRAFT_CHAT_CHANNEL_ID) || messageChannel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID))) {
-                    if (messageContents.toLowerCase().contains("!searchdiscord")) {
+
+                if ((messageChannel.getId().equalsIgnoreCase(lmp.Constants.TEST_CHANNEL_ID) || messageChannel.getId().equalsIgnoreCase(lmp.Constants.TEST_CHANNEL_ID))) {
+                    if (messageContents.toLowerCase().contains("!searchdiscordtest")) {
                         String[] messageArr = messageContents.split(" ");
                         try {
                             String discordUserName = Api.getDiscordNameFromMCid(Api.getMinecraftIdFromMinecraftName(messageArr[1]));
@@ -238,16 +255,34 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         } catch (IllegalArgumentException error) {
                             messageChannel.sendMessage("That player does not have a discord account linked to their minecraft account. Maybe try again.\nCommand usage: !searchDiscord [minecraftName]").queue();
                         }
-                    } else if (messageContents.toLowerCase().contains("!searchminecraft")) {
+                    } else if (messageContents.toLowerCase().contains("!searchminecrafttest")) {
                         String[] messageArr = messageContents.split(" ");
-                        try {
-
-                                if (messageArr.length > 0) {
-                                    String minecraftUsername = Bukkit.getOfflinePlayer(UUID.fromString(Api.getMinecraftIdFromDCid(messageArr[1]))).getName();
-                                    messageChannel.sendMessage(Objects.requireNonNull(jda.getUserById(messageArr[1])).getName() + "'s Minecraft username is: " + minecraftUsername).queue();
+                        int count = 0;
+                        while (count == 0) {
+                            if (messageArr[1].length() == 18) {
+                                try {
+                                    List<String> minecraftUsernames = Api.searchMinecraftNamesFromDCid(messageArr[1]);
+                                    if (!minecraftUsernames.isEmpty()) {
+                                        for (String minecraftName : minecraftUsernames) {
+                                            if (minecraftUsernames.size() == 1) {
+                                                messageChannel.sendMessage(Objects.requireNonNull(jda.getUserById(messageArr[1])).getName() + "'s Minecraft username is: " + minecraftName).queue();
+                                            } else {
+                                                messageChannel.sendMessage(Objects.requireNonNull(jda.getUserById(messageArr[1])).getName() + "'s has multiple minecraft accounts linked. One Minecraft username is: " + minecraftName).queue();
+                                            }
+                                        }
+                                        count = 1;
+                                    } else {
+                                        messageChannel.sendMessage("Log1: That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
+                                        count = 1;
+                                    }
+                                } catch (IllegalArgumentException error) {
+                                    messageChannel.sendMessage("Log2: That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
+                                    count = 1;
                                 }
-                        } catch (IllegalArgumentException error) {
-                            messageChannel.sendMessage("That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
+                            } else {
+                                messageChannel.sendMessage("Log3: That player does not have a minecraft account linked to their discord account. Maybe try again.\nCommand usage: !searchMinecraft [discordID]").queue();
+                                count = 1;
+                            }
                         }
                     }
                 }
@@ -262,12 +297,12 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                                 "1.) How old are you?");
                     }).queue();
                 }
-                if (messageChannel.getId().equals(lmp.Constants.PIXELMON_CHANNEL_ID) && messageContents.contains("!startPixelmon")) {
-                    ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "startPixelmon.bat");
-                    File dir = new File("E:\\Pixelmon");
-                    pb.directory(dir);
-                    pb.start();
-                }
+//                if (messageChannel.getId().equals(lmp.Constants.PIXELMON_CHANNEL_ID) && messageContents.contains("!startPixelmon")) {
+//                    ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "startPixelmon.bat");
+//                    File dir = new File("E:\\Pixelmon");
+//                    pb.directory(dir);
+//                    pb.start();
+//                }
                 // Sends unban request to member
                 if (messageChannel.getId().equals(lmp.Constants.UNBAN_REQUEST_CHANNEL_ID) && messageContents.equalsIgnoreCase(lmp.Constants.UNBAN_REQUEST)) {
                     messageChannel.deleteMessageById(messageID).queue();
@@ -340,17 +375,21 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
                         }
                     }
                 }
-            } catch (NullPointerException | IOException error) {
+            } catch (NullPointerException error) {
                 error.printStackTrace();
             }
         }
         if (messageChannel.getId().equalsIgnoreCase(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID) && !e.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.jr-mod")) {
+                    BaseComponent[] prefix = TextComponent.fromLegacyText("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - ");
+                    ComponentBuilder cb = new ComponentBuilder();
                     if (e.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true));
+                        cb.append(prefix).append(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true).create());
+                        player.spigot().sendMessage(cb.create());
                     } else {
-                        player.sendMessage("[" + ChatColor.LIGHT_PURPLE + "Mod Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true));
+                        cb.append(prefix).append(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true).create());
+                        player.spigot().sendMessage(cb.create());
                     }
                 }
             }
@@ -358,10 +397,14 @@ public class LatchDiscord extends ListenerAdapter implements Listener {
         if (messageChannel.getId().equalsIgnoreCase(lmp.Constants.ADMIN_CHANNEL_ID) && !e.getAuthor().getId().equalsIgnoreCase(lmp.Constants.LATCH93BOT_USER_ID)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (player.hasPermission("group.admin")) {
+                    BaseComponent[] prefix = TextComponent.fromLegacyText("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - ");
+                    ComponentBuilder cb = new ComponentBuilder();
                     if (e.getMessage().getReferencedMessage() != null) {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true));
+                        cb.append(prefix).append(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, true, e.getMessage().getReferencedMessage(), true).create());
+                        player.spigot().sendMessage(cb.create());
                     } else {
-                        player.sendMessage("[" + ChatColor.DARK_PURPLE + "Admin Chat" + ChatColor.WHITE + "] - " + convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true));
+                        cb.append(prefix).append(convertDiscordMessageToServer(senderDiscordMember, messageContents, senderDiscordUsername, false, null, true).create());
+                        player.spigot().sendMessage(cb.create());
                     }
                 }
             }

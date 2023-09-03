@@ -1,5 +1,8 @@
 package lmp;
 
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpPrincipal;
 import io.donatebot.api.DBClient;
 import lmp.api.Api;
 import lmp.commands.*;
@@ -19,6 +22,7 @@ import lmp.listeners.onInventoryOpenEvents.RemoveMendingFromVillagerTrade;
 import lmp.listeners.onLootGenerateEvents.AddMendingBookToGeneratedLoot;
 import lmp.listeners.playerAdvancementDoneEvents.PlayerAdvancementEvent;
 import lmp.listeners.playerBedEnterEvents.SetPlayerBedLocation;
+import lmp.listeners.playerBreakBlockEvents.BanThiefForBreakingBanChest;
 import lmp.listeners.playerCommandPreprocessEvents.LogPlayerBanFromServerCommandEvent;
 import lmp.listeners.playerDeathEvents.*;
 import lmp.listeners.playerFishCaughtEvents.GivePlayerMoneyWhenFishCaughtEvent;
@@ -26,6 +30,7 @@ import lmp.listeners.playerInteractEntityEvents.GiveJerryArmorEvent;
 import lmp.listeners.playerInteractEvents.*;
 import lmp.listeners.playerJoinEvents.*;
 import lmp.listeners.playerMoveEvents.DenyMoveForUnlinkedPlayerEvent;
+import lmp.listeners.playerMoveEvents.FreezeLatchOnTwitchRewardClaim;
 import lmp.listeners.playerQuitEvents.BankLogoutEvent;
 import lmp.listeners.playerQuitEvents.BroadcastPlayerQuitMessageToDiscordEvent;
 import lmp.listeners.playerQuitEvents.StopTwitchBotOnPlayerLogoutEvent;
@@ -69,6 +74,10 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -88,6 +97,7 @@ public class Main extends JavaPlugin implements Listener {
     public static DBClient dbClient;
     public static CoreProtectAPI coreProtectAPI;
     public static GitHubClient githubClient;
+
     private PluginManager pm = getServer().getPluginManager();
     @Override
     public void onEnable() {
@@ -137,6 +147,11 @@ public class Main extends JavaPlugin implements Listener {
         new RespawnAnchorSetEvent(this);
         new TeleportPlayerToWorldFromHubButtons(this);
         new DenyInteractForUnlinkedPlayerEvent(this);
+        new AutoSellChest(this);
+//        new AddBlockBrokenToDB(this);
+        new BanThiefForBreakingBanChest(this);
+        new FreezeLatchOnTwitchRewardClaim(this);
+
 //        new CustomRecipeMoveItemEvent(this);
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
@@ -159,47 +174,60 @@ public class Main extends JavaPlugin implements Listener {
         assert coreProtect != null;
         coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
         githubClient = new GitHubClient().setOAuth2Token(Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME).getString("githubOauthToken"));
-//        Connection conn = null;
+//        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
 //        try {
-//            Class.forName("com.mysql.jdbc.Driver");
-//            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/lmp?" +
-//                    "user=latch&password=admin");
-//        } catch (SQLException | ClassNotFoundException error) {
-//            Main.log.warning("asdasdassaas");
+//            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 8001), 0);
+//            server.createContext("/test", new MyHttpHandler());
+//            server.setExecutor(threadPoolExecutor);
+//            server.start();
+//            log.info(" Server started on port 8001");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
 //        }
-//        Statement stmt = null;
-//        assert conn != null;
-//
-//        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
-//        for (String user : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
-//            String minecraftID = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".minecraftId");
-//            String minecraftName = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".minecraftName");
-//            String discordID = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".discordId");
-//
-//            String discordName = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".discordName");
-//            String joinTime = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".joinTime");
-//            String ipAddress = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + user + ".ip-info.ipAddress");
-//            boolean isPlayerInDiscord = whitelistCfg.getBoolean(lmp.Constants.YML_PLAYERS + user + ".isPlayerInDiscord");
-//            String query = "insert into users (minecraftID, minecraftName, discordID, discordName, joinTime, isPlayerInDiscord, ipAddress)" +
-//                    "values (?, ?, ?, ?, ?, ?, ?)" ;
-//            PreparedStatement preparedStmt;
-//            try {
-//                preparedStmt = conn.prepareStatement(query);
-//                preparedStmt.setString(1, minecraftID);
-//                preparedStmt.setString(2, minecraftName);
-//                preparedStmt.setString(3, discordID);
-//                preparedStmt.setString(4, discordName);
-//                preparedStmt.setString(5, joinTime);
-//                preparedStmt.setBoolean(6, isPlayerInDiscord);
-//                preparedStmt.setString(7,ipAddress);
-//                preparedStmt.execute();
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            Main.log.info("Insert for " + minecraftName + " recorded.");
+//        HttpServer server = null;
+//        try {
+//            server = HttpServer.create(new InetSocketAddress(8002), 0);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
 //        }
+//        HttpContext context = server.createContext("/example");
+//        context.setHandler(Main::handleRequest);
+//        server.start();
+        try {
+            DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
 
+    private static void handleRequest(HttpExchange exchange) throws IOException {
+        URI requestURI = exchange.getRequestURI();
+        printRequestInfo(exchange);
+        String response = "This is the response at " + requestURI;
+        exchange.sendResponseHeaders(200, response.getBytes().length);
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    private static void printRequestInfo(HttpExchange exchange) {
+        System.out.println("-- headers --");
+        Headers requestHeaders = exchange.getRequestHeaders();
+        requestHeaders.entrySet().forEach(System.out::println);
+
+        System.out.println("-- principle --");
+        HttpPrincipal principal = exchange.getPrincipal();
+        System.out.println(principal);
+
+        System.out.println("-- HTTP method --");
+        String requestMethod = exchange.getRequestMethod();
+        System.out.println(requestMethod);
+
+        System.out.println("-- query --");
+        URI requestURI = exchange.getRequestURI();
+        String query = requestURI.getQuery();
+        System.out.println(query);
     }
 
     @Override
@@ -338,9 +366,11 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) throws IOException {
         if (Boolean.FALSE.equals(getIsParameterInTesting("onInteract"))) {
-            RandomItem.getRandomItem1(event);
-            RandomItem.getRandomItem2(event);
-            RandomItem.getRandomItem3(event);
+            if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.OAK_BUTTON)) {
+                RandomItem.getRandomItem1(event);
+                RandomItem.getRandomItem2(event);
+//            RandomItem.getRandomItem3(event);
+            }
             try {
                 QuickSmelt.quickSmelt(event.getPlayer(), Api.getEconomy(), event);
                 QuickBrew.quickBrew(event.getPlayer(), Api.getEconomy(), event);
@@ -352,7 +382,7 @@ public class Main extends JavaPlugin implements Listener {
             if (event.getAction().toString().equals("RIGHT_CLICK_BLOCK") && Objects.requireNonNull(event.getClickedBlock()).getType().equals(Material.CRIMSON_BUTTON)) {
                 BossBattle.startBossBattle(event);
             }
-            Api.denyOpenChestDuringBossBattle(event);
+//            Api.denyOpenChestDuringBossBattle(event);
             CustomPortals.setBlockToNetherPortal(event);
             XPFarm.teleportPlayerToXPFarm(event);
             XPFarm.teleportPlayerToSpawn(event);
@@ -379,6 +409,31 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
     }
+
+//    @EventHandler
+//    public void onRaidTriggerEvent(RaidFinishEvent e){
+//        if (e.getWorld().getName().equalsIgnoreCase("world")) {
+//            for (Player player : e.getWinners()) {
+//                String connectionUrl = "jdbc:sqlserver://DESKTOP-CQKVEGP:1433;databaseName=lmp;trustServerCertificate=true;encrypt=true;username=minecraft;password=password";
+//                Connection connection;
+//                try {
+//                    connection = DriverManager.getConnection(connectionUrl);
+//                    String insertsql = " insert into raid_wins (minecraft_id, timestamp, minecraft_name)"
+//                            + " values (?, ?, ?)";
+//                    PreparedStatement preparedStmt = connection.prepareStatement(insertsql);
+//                    preparedStmt.setString(1, player.getUniqueId().toString());
+//                    preparedStmt.setTimestamp(2, new Timestamp(new java.util.Date().getTime()));
+//                    preparedStmt.setString(3, player.getName());
+//                    preparedStmt.execute();
+//                    connection.close();
+//                } catch (SQLException err) {
+//                    throw new RuntimeException(err);
+//                }
+//                player.sendMessage(ChatColor.GREEN + "Congratulations on your Raid Win!!!");
+//                player.sendMessage(ChatColor.GREEN + "You've increased your Raid Win score by 1!!!");
+//            }
+//        }
+//    }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) throws IOException {
@@ -611,7 +666,9 @@ public class Main extends JavaPlugin implements Listener {
                                 try {
                                     assert olp != null;
                                     if (clicker.getUniqueId().equals(olp.getUniqueId())) {
-                                        ChestProtect.setApprovedAllPlayer(Api.getDiscordIdFromMCid(olp.getUniqueId().toString()), clicker.getName(), Api.getFileConfiguration(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+                                        if (Api.getFileConfiguration(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME).getStringList("players." + clicker.getUniqueId().toString() + ".approvedPlayers").isEmpty()) {
+                                            ChestProtect.setApprovedAllPlayer(Api.getDiscordIdFromMCid(olp.getUniqueId().toString()), clicker.getName(), Api.getFileConfiguration(YmlFileNames.YML_CHEST_PROTECT_FILE_NAME));
+                                        }
                                     } else {
                                         if (Boolean.FALSE.equals(Api.doesPlayerHavePermission(olp.getUniqueId().toString(), "chests"))) {
                                             boolean isApprovedPlayer = false;

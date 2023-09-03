@@ -1,5 +1,6 @@
 package lmp.runnable;
 
+import lmp.DonationClaimRewards;
 import lmp.LatchDiscord;
 import lmp.Lottery;
 import lmp.api.Api;
@@ -9,17 +10,20 @@ import lmp.constants.YmlFileNames;
 import lmp.donationBot.Donation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class LMPTimer extends BukkitRunnable {
     static int seconds = 0;
@@ -187,7 +191,7 @@ public class LMPTimer extends BukkitRunnable {
         bloodmoonCfg.save(bloodmoonFile);
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage(bloodmoonLocalesCfg.getString("BloodMoonTitleBar") + " has started!").queue();
     }
-    public static void stopBloodmoon() throws IOException {
+//    public static void stopBloodmoon() throws IOException {
 //        FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
 //        configCfg.set("deathBalancePercentage", configCfg.getDouble("defaultDeathBalancePercentage"));
 //        configCfg.save(Api.getConfigFile(YmlFileNames.YML_CONFIG_FILE_NAME));
@@ -207,7 +211,7 @@ public class LMPTimer extends BukkitRunnable {
 //            }
 //        }
 //        bloodmoonLMPCfg.set("hordeMobs", null);
-    }
+//    }
     public static void broadcastEasyBloodmoon() throws IOException {
         LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getTextChannelById(lmp.Constants.GENERAL_CHANNEL_ID).sendMessage("Easy Bloodmoon starts in 30 minutes.").queue();
         Bukkit.broadcastMessage(ChatColor.RED + "Easy Bloodmoon starts in 30 minutes.");
@@ -245,7 +249,40 @@ public class LMPTimer extends BukkitRunnable {
         int hourOfDay = dateOne.getHourOfDay();
         int minuteOfHour = dateOne.getMinuteOfHour();
         int secondOfMinute = dateOne.getSecondOfMinute();
-        int dayOfWeek = dateOne.getDayOfWeek();
+        if (hourOfDay == 1 && minuteOfHour == 0 && secondOfMinute == 0){
+            int currentMonthOfYear = dateOne.getMonthOfYear();
+            int currentDayOfMonth = dateOne.getDayOfMonth();
+            FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+            for (String mcID : whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS).getKeys(false)) {
+                if (whitelistCfg.isSet(lmp.Constants.YML_PLAYERS + mcID + ".birthday")){
+                    DateTimeFormatter dt = DateTimeFormat.forPattern("MMMM").withLocale(Locale.ENGLISH);
+                    int birthdayMonth = dt.parseDateTime(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".birthday.month")).getMonthOfYear();
+                    int birthdayDay = Integer.parseInt(Objects.requireNonNull(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".birthday.day")));
+                    if (currentMonthOfYear == birthdayMonth && currentDayOfMonth == birthdayDay){
+                        ItemStack is = new ItemStack(Material.NETHERITE_CHESTPLATE, 1);
+                        ItemMeta im = is.getItemMeta();
+                        ArrayList<String> lore = new ArrayList<>();
+                        lore.add("Birthday Gift from Latch!!!");
+                        assert im != null;
+                        im.setLore(lore);
+                        is.setItemMeta(im);
+                        is.addEnchantment(Enchantment.MENDING, 1);
+                        is.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 6);
+                        is.addUnsafeEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 6);
+                        is.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 6);
+                        is.addUnsafeEnchantment(Enchantment.PROTECTION_PROJECTILE, 6);
+                        is.addEnchantment(Enchantment.THORNS, 3);
+                        is.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+                        try {
+                            DonationClaimRewards.addItemToClaimToPlayer(mcID, is);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getNewsChannelById(lmp.Constants.ANNOUNCEMENT_CHANNEL_ID)).sendMessage("Happy Birthday <@" + Api.getDiscordIdFromMCid(mcID) + "> | Join LMP Community and type /lmp claim to get your birthday prize!!!").queue();
+                    }
+                }
+            }
+        }
         if (secondOfMinute == 0 || secondOfMinute == 15 || secondOfMinute == 30 || secondOfMinute == 45) {
             if (minuteOfHour < 61) {
                 Donation.getDonations();

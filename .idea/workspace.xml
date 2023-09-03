@@ -5,131 +5,184 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0affd6cf-3b41-47aa-8bc4-d9a699a88543" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_api_jvm_2_5_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_http_cache_api_2_5_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_api_jvm_2_5_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_jvm_2_5_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_runtime_2_5_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_tony19_named_regexp_0_2_8.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_auth_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_chat_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_client_websocket_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_common_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_eventsub_common_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_extensions_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_graphql_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_helix_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_kraken_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_messaginginterface_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_pubsub_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_util_1_13_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_core_12_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_hystrix_12_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_jackson_12_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_okhttp_12_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_slf4j_12_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_api_0_1_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_core_0_1_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_provider_caffeine_0_1_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_23_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_joml_joml_1_10_5.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__pircbot_pircbot_1_5_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/inventoryMoveItemEvents/CustomRecipeMoveItemEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/onInventoryOpenEvents/RemoveMendingFromVillagerTrade.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/onLootGenerateEvents/AddMendingBookToGeneratedLoot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/SendPlayerDeathCoordinates.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerFishCaughtEvents/GivePlayerMoneyWhenFishCaughtEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEvents/BedrockBreakerEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEvents/DenyInteractForUnlinkedPlayerEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEvents/InstaBreakGlassEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEvents/RespawnAnchorSetEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerInteractEvents/TeleportPlayerToWorldFromHubButtons.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/TextToSpeech.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/AutoSellChest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerBreakBlockEvents/BanThiefForBreakingBanChest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerMoveEvents/FreezeLatchOnTwitchRewardClaim.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/lmp/webserver/MyHttpHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_api_jvm_2_5_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_http_cache_api_2_5_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_api_jvm_2_5_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_jvm_2_5_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_runtime_2_5_13.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_auth_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_chat_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_client_websocket_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_common_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_eventsub_common_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_extensions_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_graphql_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_helix_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_kraken_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_messaginginterface_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_pubsub_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_util_1_12_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_8_9.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_10.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_7_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_11_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_31_0_1_jre.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_31_1_jre.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_core_11_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_hystrix_11_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_jackson_11_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_okhttp_11_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_slf4j_11_9_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_api_0_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_core_0_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_provider_caffeine_0_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_12_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_12_1.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_dv8tion_JDA_5_0_0_alpha_21.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_dv8tion_JDA_5_0_0_alpha_22.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_19_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_20_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_19_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_20_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_23_0_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_spigotmc_spigot_api_1_19_R0_1_SNAPSHOT.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_spigotmc_spigot_api_1_19_4_R0_1_SNAPSHOT.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_30.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_33.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__club_minnced_opus_java_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__club_minnced_opus_java_api_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__club_minnced_opus_java_natives_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_api_jvm_2_5_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_http_cache_api_2_5_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_api_jvm_2_5_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_normalized_cache_jvm_2_5_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_apollographql_apollo_apollo_runtime_2_5_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_benasher44_uuid_jvm_0_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_bucket4j_bucket4j_jdk8_core_8_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_cavariux_latchtwitch_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_12_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_13_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_13_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_12_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_MilkBowl_VaultAPI_1_7.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_ben_manes_caffeine_caffeine_2_9_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_credentialmanager_credentialmanager_0_1_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_events4j_events4j_api_0_9_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_events4j_events4j_core_0_9_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_events4j_events4j_handler_reactor_0_9_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_events4j_events4j_handler_simple_0_9_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_philippheuer_events4j_events4j_handler_spring_0_9_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_tony19_named_regexp_0_2_8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_top_gg_donatebot_java_api_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_auth_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_chat_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_client_websocket_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_common_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_eventsub_common_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_extensions_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_graphql_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_helix_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_kraken_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_messaginginterface_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_pubsub_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_twitch4j_twitch4j_util_1_13_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_findbugs_jsr305_3_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_11_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_failureaccess_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_31_1_jre.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_j2objc_j2objc_annotations_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_protobuf_protobuf_java_3_19_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_json_simple_json_simple_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_sqlserver_mssql_jdbc_11_2_1_jre17.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_neovisionaries_nv_websocket_client_2_14.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_netflix_archaius_archaius_core_0_4_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_netflix_hystrix_hystrix_core_1_5_18.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nytimes_android_cache_2_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_squareup_okhttp3_okhttp_4_9_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_squareup_okio_okio_2_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_activation_javax_activation_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_typesafe_netty_netty_reactive_streams_2_0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_configuration_commons_configuration_1_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_11_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_core_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_hystrix_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_jackson_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_okhttp_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_openfeign_feign_slf4j_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_twitch4j_streamlabs4j_streamlabs4j_0_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_api_0_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_core_0_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_github_xanthic_cache_cache_provider_caffeine_0_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_micrometer_micrometer_core_1_3_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_buffer_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_codec_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_codec_http_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_codec_socks_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_common_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_handler_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_handler_proxy_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_resolver_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_native_epoll_linux_x86_64_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_native_kqueue_osx_x86_64_4_1_48_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_native_unix_common_4_1_53_Final.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_projectreactor_addons_reactor_extra_3_3_4_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_projectreactor_reactor_core_3_3_10_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__io_reactivex_rxjava_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_annotation_jakarta_annotation_api_1_3_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__joda_time_joda_time_2_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_30.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_dv8tion_JDA_5_0_0_alpha_22.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_java_dev_jna_jna_4_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_luckperms_api_5_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_brigadier_1_0_16_SNAPSHOT.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_api_1_16_R0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_chat_1_16_R0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_config_1_16_R0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_event_1_16_R0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_protocol_1_16_R0_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sf_trove4j_core_3_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_sf_trove4j_trove4j_3_0_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_collections4_4_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_12_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_20_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_20_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_13_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_asynchttpclient_async_http_client_2_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_asynchttpclient_async_http_client_netty_utils_2_12_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_bukkit_bukkit_1_13_1_R0_1_SNAPSHOT.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_checkerframework_checker_qual_3_12_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_mylyn_github_org_eclipse_egit_github_core_2_1_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hdrhistogram_HdrHistogram_2_1_9.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_23_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_kotlin_kotlin_stdlib_1_4_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_kotlin_kotlin_stdlib_common_1_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_kotlin_kotlin_stdlib_jdk7_1_5_31.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_kotlin_kotlin_stdlib_jdk8_1_5_31.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_joml_joml_1_10_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_json_json_20200518.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_latencyutils_LatencyUtils_2_0_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_reactivestreams_reactive_streams_1_0_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_30.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_36.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_simple_1_7_21.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_spigotmc_spigot_api_1_19_4_R0_1_SNAPSHOT.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_2_3_1_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_3_1_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_3_1_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_3_1_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_2_7_RELEASE.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_33.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__pircbot_pircbot_1_5_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__se_llbit_jo_nbt_1_3_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LatchEssentials.iml" beforeDir="false" afterPath="$PROJECT_DIR$/LatchEssentials.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LatchEssentials.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Advancements.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/DonationClaimRewards.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/DonationClaimRewards.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/ExperienceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/ExperienceManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/FarmMoney.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/FarmMoney.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Inventories.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Inventories.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/LatchDiscord.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/PlayerShops.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/XPFarm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/XPFarm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/RandomTeleport.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/api/Api.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/api/Api.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/AnarchyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/AnarchyCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/BackPackCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/BackPackCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordAdminChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordAdminChatCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordStaffChatCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/DiscordStaffChatCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/HardcoreCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/HardcoreCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/LMPCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/MessageDiscordUserFromServerCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/MessageDiscordUserFromServerCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/constants/YmlFileNames.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/constants/YmlFileNames.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickBrew.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickBrew.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickSmelt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customItems/QuickSmelt.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/customRecipes/CustomRecipes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/customRecipes/CustomRecipes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/GeneralDiscordCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/GeneralDiscordCommands.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/SendLTSNominationForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/SendLTSNominationForm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/commands/LatchTwitchBotCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/commands/LatchTwitchBotCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/ShowOnlinePlayersInDiscord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/channelCommands/ShowOnlinePlayersInDiscord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/BanPlayerForTypingTheNWordInDiscordChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/BanPlayerForTypingTheNWordInDiscordChat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/TestChannelChatEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/chatMessageAdapters/TestChannelChatEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/LTSNomination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/discord/privateMessageAdapters/LTSNomination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/FurnaceBurnEvents/DisableAutoSmeltStickFromBurning.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/FurnaceBurnEvents/DisableAutoSmeltStickFromBurning.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/autosort/inventoryMoveItemEvents/SendItemToOutputChestFromMasterChestEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/BanAndLogBanChestThief.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/discord/BanAndLogBanChestThief.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/onInventoryOpenEvents/RemoveMendingFromVillagerTrade.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/onInventoryOpenEvents/RemoveMendingFromVillagerTrade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerBedEnterEvents/SetPlayerBedLocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerBedEnterEvents/SetPlayerBedLocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/BroadcastDeathMessageToDiscordEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerDeathEvents/BroadcastDeathMessageToDiscordEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BankLoginEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/BankLoginEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerMoveEvents/DenyMoveForUnlinkedPlayerEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerMoveEvents/DenyMoveForUnlinkedPlayerEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerQuitEvents/BroadcastPlayerQuitMessageToDiscordEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerRespawnEvents/SetPlayerLocationOnAnarchy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerRespawnEvents/SetPlayerLocationOnAnarchy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/UpdatePlayerWhitelistOnJoinEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/listeners/playerJoinEvents/UpdatePlayerWhitelistOnJoinEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/runnable/LMPTimer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/runnable/LMPTimer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/runnable/LatchTwitchBotRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/runnable/LatchTwitchBotRunnable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/BackpackTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/BackpackTabComplete.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/LMPCommandTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/LMPCommandTabComplete.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/PlayerShopsTabComplete.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/lmp/tabComplete/PlayerShopsTabComplete.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.2-shaded.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.3-shaded.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchEssentials-1.3-shaded.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/LatchEssentials-1.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/LatchEssentials-1.3.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancement.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancement.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/Advancements.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/AutoMiner.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/AutoMiner.class" afterDir="false" />
@@ -165,7 +218,6 @@
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordAdminChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordAdminChatCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordStaffChatCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/DiscordStaffChatCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/HardcoreCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/HardcoreCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/LMPCommand$1.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/LMPCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/LMPCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/LatchTwitchBotCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/LatchTwitchBotCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/commands/MessageDiscordUserFromServerCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/commands/MessageDiscordUserFromServerCommand.class" afterDir="false" />
@@ -202,20 +254,29 @@
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/donationBot/Donation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/donationBot/Donation.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/FurnaceBurnEvents/DisableAutoSmeltStickFromBurning.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/FurnaceBurnEvents/DisableAutoSmeltStickFromBurning.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/asyncPlayerChatEvents/BroadcastServerChatToDiscord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/autosort/inventoryMoveItemEvents/SendItemToOutputChestFromMasterChestEvent.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/bossBattle/DenyBackCommandIntoBossArenaEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/bossBattle/DenyBackCommandIntoBossArenaEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/discord/BanAndLogBanChestThief.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/discord/BanAndLogBanChestThief.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/entityDeathEvents/DisableEntityCrammingEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/entityDeathEvents/DisableEntityCrammingEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/entityDeathEvents/LogVillagerDeathEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/entityDeathEvents/LogVillagerDeathEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/inventoryMoveItemEvents/CustomRecipeMoveItemEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/inventoryMoveItemEvents/CustomRecipeMoveItemEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/onInventoryOpenEvents/RemoveMendingFromVillagerTrade.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/onInventoryOpenEvents/RemoveMendingFromVillagerTrade.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/onLootGenerateEvents/AddMendingBookToGeneratedLoot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/onLootGenerateEvents/AddMendingBookToGeneratedLoot.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerAdvancementDoneEvents/PlayerAdvancementEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerBedEnterEvents/SetPlayerBedLocation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerBedEnterEvents/SetPlayerBedLocation.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerCommandPreprocessEvents/LogPlayerBanFromServerCommandEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/BroadcastDeathMessageToDiscordEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/BroadcastDeathMessageToDiscordEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/DeathByJerryEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/DeathByJerryEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/HardcoreDeathEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/HardcoreDeathEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/SendPlayerDeathCoordinates.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/SendPlayerDeathCoordinates.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/SetPlayerWorldOfDeath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/SetPlayerWorldOfDeath.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/WithdrawPlayerMoneyOnDeathEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerDeathEvents/WithdrawPlayerMoneyOnDeathEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerFishCaughtEvents/GivePlayerMoneyWhenFishCaughtEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerFishCaughtEvents/GivePlayerMoneyWhenFishCaughtEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEntityEvents/GiveJerryArmorEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEntityEvents/GiveJerryArmorEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/BedrockBreakerEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/BedrockBreakerEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/DenyInteractForUnlinkedPlayerEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/DenyInteractForUnlinkedPlayerEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/InstaBreakGlassEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/InstaBreakGlassEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/RespawnAnchorSetEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/RespawnAnchorSetEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/TeleportPlayerToWorldFromHubButtons.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerInteractEvents/TeleportPlayerToWorldFromHubButtons.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BankLoginEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BankLoginEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/BroadcastPlayerJoinMessageToDiscordEvent.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/SendHowToLinkMessageEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/listeners/playerJoinEvents/SendHowToLinkMessageEvent.class" afterDir="false" />
@@ -241,10 +302,11 @@
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/tabComplete/PlayerShopsTabComplete.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/tabComplete/PlayerShopsTabComplete.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/twitch/LatchTwitchBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/twitch/LatchTwitchBot.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/lmp/util/PingUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/lmp/util/PingUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/original-LatchEssentials-1.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/original-LatchEssentials-1.3.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-LatchEssentials-1.3.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -257,6 +319,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -309,8 +372,10 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Projects/SpigotPlugin&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Projects/JotunnMods/ExampleRecipes&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.6183908&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
@@ -318,6 +383,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="lmp" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Latch\Desktop\DiscordText\src\main\resources" />
     </key>

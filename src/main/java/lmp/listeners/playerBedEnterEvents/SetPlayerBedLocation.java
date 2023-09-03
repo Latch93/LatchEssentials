@@ -19,7 +19,12 @@ public class SetPlayerBedLocation implements Listener {
 
     @EventHandler
     private void setPlayerBedLocation(PlayerBedEnterEvent e) throws IOException {
-        FileConfiguration playerBedLocationCfg = Api.getFileConfiguration(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME);
-        playerBedLocationCfg.set(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + "." + e.getPlayer().getWorld().getName() + ".location", e.getBed().getLocation());
-        playerBedLocationCfg.save(Api.getConfigFile(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME));
+        try {
+            FileConfiguration playerBedLocationCfg = Api.getFileConfiguration(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME);
+            playerBedLocationCfg.set(Constants.YML_PLAYERS + e.getPlayer().getUniqueId().toString() + "." + e.getPlayer().getWorld().getName() + ".location", e.getBed().getLocation());
+            playerBedLocationCfg.save(Api.getConfigFile(YmlFileNames.YML_PLAYER_BED_LOCATION_FILE_NAME));
+        } catch (IllegalArgumentException err){
+            Main.log.warning("Error on PlayerBedEnterEvent: " + err.getMessage());
+            Main.log.info("Event World: " + e.getPlayer().getWorld().getName());
+        }
     }}

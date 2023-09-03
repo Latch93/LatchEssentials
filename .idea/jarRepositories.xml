@@ -2,9 +2,19 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="maven.playpro" />
+      <option name="name" value="maven.playpro" />
+      <option name="url" value="https://maven.playpro.com/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="fren_gor" />
       <option name="name" value="fren_gor" />
       <option name="url" value="https://nexus.frengor.com/repository/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dv8tion" />
+      <option name="name" value="m2-dv8tion" />
+      <option name="url" value="https://m2.dv8tion.net/releases" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -25,6 +35,11 @@
       <option name="id" value="dmulloy2-repo" />
       <option name="name" value="dmulloy2-repo" />
       <option name="url" value="https://repo.dmulloy2.net/repository/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="central" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

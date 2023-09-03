@@ -22,7 +22,7 @@ public class UpdatePlayerWhitelistOnJoinEvent implements Listener {
     private void updatePlayerWhitelistInformation(PlayerJoinEvent e) throws IOException {
         Player player = e.getPlayer();
         FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
-        if (whitelistCfg.isSet(String.valueOf(player.getUniqueId()))) {
+        if (whitelistCfg.isSet("players." + player.getUniqueId())) {
             whitelistCfg.set(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".minecraftName", player.getName());
             String discordId = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + player.getUniqueId() + ".discordId");
             assert discordId != null;

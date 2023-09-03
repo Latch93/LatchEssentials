@@ -12,12 +12,14 @@ lmp\listeners\onInventoryOpenEvents\RemoveMendingFromVillagerTrade.class
 lmp\listeners\playerJoinEvents\BankLoginEvent.class
 lmp\commands\DiscordStaffChatCommand.class
 lmp\discord\guildRemoveAdapters\SetWhiteListOnMemberLeaveGuildEvent.class
+lmp\TextToSpeech.class
 lmp\customRecipes\CustomRecipes.class
 lmp\ExperienceManager.class
 lmp\configurations\LotteryConfig.class
 lmp\discord\SendServerStartedMessageToDiscordEvent.class
 lmp\listeners\playerQuitEvents\BroadcastPlayerQuitMessageToDiscordEvent.class
 lmp\RandomItem.class
+lmp\listeners\playerBreakBlockEvents\BanThiefForBreakingBanChest.class
 lmp\AutoMiner.class
 lmp\listeners\playerRespawnEvents\SetPlayerLocationOnAnarchy.class
 lmp\configurations\LatchTwitchBotConfig.class
@@ -50,6 +52,8 @@ lmp\tabComplete\LMPCommandTabComplete.class
 lmp\discord\privateMessageAdapters\StaffApplication.class
 lmp\listeners\asyncPlayerChatEvents\BroadcastServerChatToDiscord.class
 lmp\customItems\QuickSmelt.class
+lmp\listeners\playerMoveEvents\FreezeLatchOnTwitchRewardClaim.class
+lmp\customItems\AutoSellChest.class
 lmp\tabComplete\HardcoreTabComplete.class
 lmp\configurations\PlayerShopsInventoryConfig.class
 lmp\customItems\MobileSpawner.class
@@ -68,6 +72,7 @@ lmp\configurations\WhitelistConfig.class
 lmp\tabComplete\LatchTwitchBotTabComplete.class
 lmp\discord\chatMessageAdapters\LogGithubIssue.class
 lmp\configurations\AutoSorterConfig.class
+lmp\webserver\MyHttpHandler.class
 lmp\listeners\playerDeathEvents\SendPlayerDeathCoordinates.class
 lmp\XPFarm.class
 lmp\DonationClaimRewards.class
@@ -100,6 +105,7 @@ lmp\listeners\playerInteractEvents\RespawnAnchorSetEvent.class
 lmp\listeners\discord\BanAndLogBanChestThief.class
 lmp\twitch\LatchTwitchBot.class
 lmp\commands\MessageDiscordUserFromServerCommand.class
+lmp\listeners\playerBreakBlockEvents\AddBlockBrokenToDB.class
 lmp\listeners\playerDeathEvents\BroadcastDeathMessageToDiscordEvent.class
 lmp\tabComplete\PlayerShopsTabComplete.class
 lmp\listeners\playerJoinEvents\UpdatePlayerWhitelistOnJoinEvent.class
@@ -109,6 +115,7 @@ lmp\listeners\playerInteractEvents\BedrockBreakerEvent.class
 lmp\util\PingUtil.class
 lmp\Lottery.class
 lmp\RandomTeleport.class
+lmp\runnable\LatchTwitchBotRunnable$2.class
 lmp\discord\channelCommands\GeneralDiscordCommands.class
 lmp\discord\privateMessageAdapters\ChestProtect.class
 lmp\listeners\playerFishCaughtEvents\GivePlayerMoneyWhenFishCaughtEvent.class

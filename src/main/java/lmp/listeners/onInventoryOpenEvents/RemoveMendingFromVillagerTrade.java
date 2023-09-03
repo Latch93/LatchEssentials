@@ -1,6 +1,7 @@
 package lmp.listeners.onInventoryOpenEvents;
 
 import lmp.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -15,7 +16,9 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.ListIterator;
 
 public class RemoveMendingFromVillagerTrade implements Listener {
 
@@ -29,35 +32,45 @@ public class RemoveMendingFromVillagerTrade implements Listener {
         enabledRemoveMendingVillagerWorlds.add("world");
         enabledRemoveMendingVillagerWorlds.add("world_nether");
         enabledRemoveMendingVillagerWorlds.add("world_the_end");
-        try {
-            if (enabledRemoveMendingVillagerWorlds.contains(event.getPlayer().getWorld().getName()) && event.getView().getType() != InventoryType.MERCHANT) {
-                return;
-            }
-            Merchant merchant = ((MerchantInventory) event.getInventory()).getMerchant();
-            List<MerchantRecipe> recipes = new ArrayList<>(merchant.getRecipes());
-            MerchantRecipe swiftSneakRecipe = null;
-            if (enabledRemoveMendingVillagerWorlds.contains(event.getPlayer().getWorld().getName())) {
-                for (MerchantRecipe recipe : recipes) {
-                    if (recipe.getResult().getType() == Material.ENCHANTED_BOOK && recipe.getResult().getItemMeta() != null && recipe.getResult().getItemMeta().toString().contains("MENDING")) {
-                        ItemStack swiftSneakBook = new ItemStack(Material.ENCHANTED_BOOK);
-                        EnchantmentStorageMeta enchantmentMeta = (EnchantmentStorageMeta) swiftSneakBook.getItemMeta();
-                        assert enchantmentMeta != null;
-                        enchantmentMeta.addStoredEnchant(Enchantment.SOUL_SPEED, 3, true);
-                        ItemMeta im = swiftSneakBook.getItemMeta();
-                        assert im != null;
-                        swiftSneakBook.setItemMeta(enchantmentMeta);
-                        swiftSneakRecipe = new MerchantRecipe(swiftSneakBook, 1);
-                        List<ItemStack> ingredients = new ArrayList<>();
-                        ingredients.add(new ItemStack(Material.BOOK));
-                        ingredients.add(new ItemStack(Material.EMERALD, 32));
-                        swiftSneakRecipe.setIngredients(ingredients);
-                        recipes.removeIf(thisRecipe -> (thisRecipe.getResult().getType() == Material.ENCHANTED_BOOK && thisRecipe.getResult().getItemMeta() != null && thisRecipe.getResult().getItemMeta().toString().contains("MENDING")));
-                        recipes.add(swiftSneakRecipe);
-                        merchant.setRecipes(recipes);
+        if (event.getInventory().getType().equals(InventoryType.MERCHANT)) {
+            try {
+                if (enabledRemoveMendingVillagerWorlds.contains(event.getPlayer().getWorld().getName()) && event.getView().getType() != InventoryType.MERCHANT) {
+                    return;
+                }
+                Merchant merchant = ((MerchantInventory) event.getInventory()).getMerchant();
+                List<MerchantRecipe> recipes = new ArrayList<>(merchant.getRecipes());
+                MerchantRecipe swiftSneakRecipe = null;
+                if (enabledRemoveMendingVillagerWorlds.contains(event.getPlayer().getWorld().getName())) {
+                    for (MerchantRecipe recipe : recipes) {
+                        if (recipe.getResult().getType() == Material.ENCHANTED_BOOK && recipe.getResult().getItemMeta() != null && recipe.getResult().getItemMeta().toString().contains("MENDING")) {
+                            ItemStack swiftSneakBook = new ItemStack(Material.ENCHANTED_BOOK);
+                            EnchantmentStorageMeta enchantmentMeta = (EnchantmentStorageMeta) swiftSneakBook.getItemMeta();
+                            assert enchantmentMeta != null;
+                            enchantmentMeta.addStoredEnchant(Enchantment.SOUL_SPEED, 3, true);
+                            ItemMeta im = swiftSneakBook.getItemMeta();
+                            assert im != null;
+                            swiftSneakBook.setItemMeta(enchantmentMeta);
+                            swiftSneakRecipe = new MerchantRecipe(swiftSneakBook, 1);
+                            List<ItemStack> ingredients = new ArrayList<>();
+                            ingredients.add(new ItemStack(Material.BOOK));
+                            ingredients.add(new ItemStack(Material.EMERALD, 32));
+                            swiftSneakRecipe.setIngredients(ingredients);
+                            ListIterator<MerchantRecipe> merchantRecipe = recipes.listIterator();
+                            if (merchantRecipe.hasNext()) {
+                                MerchantRecipe item = merchantRecipe.next();
+                                if (item.getResult().getType() == Material.ENCHANTED_BOOK && item.getResult().getItemMeta() != null && item.getResult().getItemMeta().toString().contains("MENDING")) {
+                                    merchantRecipe.remove();
+                                }
+                            }
+                            //                        recipes.removeIf(thisRecipe -> (thisRecipe.getResult().getType() == Material.ENCHANTED_BOOK && thisRecipe.getResult().getItemMeta() != null && thisRecipe.getResult().getItemMeta().toString().contains("MENDING")));
+                            recipes.add(swiftSneakRecipe);
+                            merchant.setRecipes(recipes);
+                        }
                     }
                 }
+            } catch (ClassCastException | ConcurrentModificationException err) {
+                event.getPlayer().sendMessage(ChatColor.RED + "If you were given a villager with Mending, please re-roll. This is a bug <3: Latch");
             }
-        } catch (ClassCastException ignored){
         }
     }
 }

@@ -56,6 +56,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\reactionAdapters\Ad
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerMoveEvents\DenyMoveForUnlinkedPlayerEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEvents\BedrockBreakerEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\AutoMinerTabComplete.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\TextToSpeech.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Advancement.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\reactionAdapters\RemoveDiscordRoleOnMemberMessageReactEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\LTSNomination.java
@@ -68,12 +69,14 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\PlayerShopsCommand
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\guildRemoveAdapters\SetWhiteListOnMemberLeaveGuildEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\PlayerShops.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\QuickBrew.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerBreakBlockEvents\AddBlockBrokenToDB.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\RandomTeleport.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\LotteryConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\discord\BanAndLogBanChestThief.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BankConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\ShowOnlinePlayersInDiscord.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\MobileSpawner.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\AutoSellChest.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\LMPTimer.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\AutoSorterConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\customItems\QuickSmelt.java
@@ -84,6 +87,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\constants\Constants.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\BossBattle.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\PortalBlocker.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\onInventoryOpenEvents\RemoveMendingFromVillagerTrade.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerBreakBlockEvents\BanThiefForBreakingBanChest.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerBedEnterEvents\SetPlayerBedLocation.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\LatchTwitchBotCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\BackPackInventoryConfig.java
@@ -92,6 +96,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\GeneralDiscordCommands.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\chatMessageAdapters\SendAFKMessageIfMentionLatch.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\PingTabListRunnable.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\webserver\MyHttpHandler.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\inventoryMoveItemEvents\CustomRecipeMoveItemEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerFishCaughtEvents\GivePlayerMoneyWhenFishCaughtEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEntityEvents\GiveJerryArmorEvent.java

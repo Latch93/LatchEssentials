@@ -1,5 +1,5 @@
 name: LatchEssentials
-version: 1.2
+version: 1.3
 main: lmp.Main
 api-version: 1.19
 depend: [ ProtocolLib, Vault ]

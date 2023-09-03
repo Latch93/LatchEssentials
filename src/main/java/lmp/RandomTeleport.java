@@ -22,7 +22,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomTeleport {
     public static void randomTp(Player player) throws IOException, ExecutionException, InterruptedException {
-        ;
         World world = player.getWorld();
         OfflinePlayer olp = Bukkit.getOfflinePlayer(player.getUniqueId());
         double playerBalance = Api.getEconomy().getBalance(olp);
@@ -33,22 +32,30 @@ public class RandomTeleport {
         int overworldRadius = configCfg.getInt("overworldRTPRadius");
         int theEndRadius = configCfg.getInt("theEndRTPRadius");
         if (player.getWorld().getName().equalsIgnoreCase("world")) {
-            if (playerBalance >= overworldRTPCost) {
-                teleportPlayerRandomly(player, overworldRTPCost, overworldRadius);
+            if (player.hasPermission("overrideRTPTimeAndCost")){
+                teleportPlayerRandomly(player, 0, overworldRadius, true);
             } else {
-                player.sendMessage(ChatColor.RED + "You need at least $" + overworldRTPCost + " to teleport to a random location.");
+                if (playerBalance >= overworldRTPCost) {
+                    teleportPlayerRandomly(player, overworldRTPCost, overworldRadius, false);
+                } else {
+                    player.sendMessage(ChatColor.RED + "You need at least $" + overworldRTPCost + " to teleport to a random location.");
+                }
             }
         }
         if (player.getWorld().getName().equalsIgnoreCase("world_the_end")) {
-            if (playerBalance >= theEndRTPCost) {
-                teleportPlayerRandomly(player, theEndRTPCost, theEndRadius);
+            if (player.hasPermission("overrideRTPTimeAndCost")){
+                teleportPlayerRandomly(player, 0, overworldRadius, true);
             } else {
-                player.sendMessage(ChatColor.RED + "You need at least $" + theEndRTPCost + " to teleport to a random location.");
+                if (playerBalance >= theEndRTPCost) {
+                    teleportPlayerRandomly(player, theEndRTPCost, theEndRadius, false);
+                } else {
+                    player.sendMessage(ChatColor.RED + "You need at least $" + theEndRTPCost + " to teleport to a random location.");
+                }
             }
         }
     }
 
-    public static void teleportPlayerRandomly(Player player, int teleportCost, int teleportRadius) throws ExecutionException, InterruptedException, IOException {
+    public static void teleportPlayerRandomly(Player player, int teleportCost, int teleportRadius, boolean overrideTimeAndCost) throws ExecutionException, InterruptedException, IOException {
         if (Api.doesPlayerHavePermission(player.getUniqueId().toString(), "member")) {
             Date date = new Date();
             long timeMilli = date.getTime();
@@ -74,16 +81,20 @@ public class RandomTeleport {
                     int hoursOfTheDay = hours % 24;
                     int minutesOfTheHour = minutes % 60;
                     int secondsOfTheMinute = seconds % 60;
-                    if (hours > 0) {
-                        player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + hoursOfTheDay + " hours | " + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
-                    } else if (minutes > 0) {
-                        player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
-                    } else {
-                        player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + secondsOfTheMinute + " second(s)");
-
+                    if (!player.hasPermission("overrideRTPTimeAndCost")) {
+                        if (hours > 0) {
+                            player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + hoursOfTheDay + " hours | " + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
+                        } else if (minutes > 0) {
+                            player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + minutesOfTheHour + " minute(s) | " + secondsOfTheMinute + " second(s)");
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "You have to wait to teleport again. Please try again in " + ChatColor.AQUA + secondsOfTheMinute + " second(s)");
+                        }
                     }
                 }
             } else {
+                canPlayerTeleport = true;
+            }
+            if (Boolean.TRUE.equals(overrideTimeAndCost)){
                 canPlayerTeleport = true;
             }
             if (Boolean.TRUE.equals(canPlayerTeleport)) {

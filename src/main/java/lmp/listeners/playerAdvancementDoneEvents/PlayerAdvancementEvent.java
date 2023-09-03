@@ -18,7 +18,9 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public final class PlayerAdvancementEvent implements Listener {
     public PlayerAdvancementEvent(Main plugin) {
@@ -32,62 +34,53 @@ public final class PlayerAdvancementEvent implements Listener {
         FileConfiguration enabledEventsCfg = Api.getFileConfiguration(YmlFileNames.YML_ENABLED_EVENTS_FILE_NAME);
         setPlayerAdvancementOnCompletion(e);
         if (enabledEventsCfg.getBoolean("enableAdvancementBroadcast")) {
-            broadcastAdvancementInDiscord(e);
-            broadcastAdvancementOnLMP(e);
+            broadcastAdvancementInDiscordAndMinecraft(e);
         }
     }
 
-    public static void broadcastAdvancementInDiscord(PlayerAdvancementDoneEvent e) {
-        String advancement = e.getAdvancement().getKey().toString();
-        String advancementMessage = "";
-        TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
-        EmbedBuilder eb = new EmbedBuilder();
-        String worldPrefix = "[LMP] - ";
-        if (e.getPlayer().getWorld().getName().contains("hardcore")) {
-            worldPrefix = "[Hardcore] - ";
-        }
-        if (e.getPlayer().getWorld().getName().contains("anarchy")) {
-            worldPrefix = "[Anarchy] - ";
-        }
-        int playerAchievementCount = Api.loadConfig(YmlFileNames.YML_ADVANCEMENT_FILE_NAME).getInt(Constants.YML_PLAYERS + e.getPlayer().getName() + ".advancementCount");
-        for (Advancement advance : advancementList) {
-            if (advancement.equalsIgnoreCase(advance.getID()) && Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
-                eb.setTitle(worldPrefix + advance.getName() + "!");
+    public static void broadcastAdvancementInDiscordAndMinecraft(PlayerAdvancementDoneEvent e) {
+        if (Boolean.FALSE.equals(Api.isPlayerInvisible(e.getPlayer().getUniqueId().toString()))) {
+            org.bukkit.advancement.Advancement adv = e.getAdvancement();
+            String advancementMessage = "";
+            TextChannel minecraftChatChannel = LatchDiscord.getJDA().getTextChannelById(Constants.MINECRAFT_CHAT_CHANNEL_ID);
+            EmbedBuilder eb = new EmbedBuilder();
+            String worldPrefix = Api.getPlayerChatWorldPrefix(e.getPlayer().getWorld().getName());
+            int totalCount = 0;
+            int completedCount = 0;
+            for (Iterator<org.bukkit.advancement.Advancement> it = Bukkit.advancementIterator(); it.hasNext(); ) {
+                org.bukkit.advancement.Advancement a = it.next();
+                if (a.getDisplay() != null && Boolean.TRUE.equals(Objects.requireNonNull(a.getDisplay()).shouldAnnounceChat())) {
+                    totalCount++;
+                    if (e.getPlayer().getAdvancementProgress(a).getAwardedCriteria().toArray().length != 0) {
+                        completedCount++;
+                    }
+                }
+            }
+            if (adv.getDisplay() != null && Boolean.TRUE.equals(Objects.requireNonNull(adv.getDisplay()).shouldAnnounceChat())) {
+                eb.setTitle(worldPrefix + adv.getDisplay().getTitle() + "!");
                 eb.setColor(new Color(0xE1F504B9, true));
                 eb.setThumbnail("https://minotar.net/avatar/" + e.getPlayer().getName() + ".png?size=5");
-                advancementMessage = e.getPlayer().getName() + "\n" + advance.getCriteria() + "\nCompleted " + playerAchievementCount + "/" + Advancements.getAdvancements().size();
+                advancementMessage = e.getPlayer().getName() + "\n" + adv.getDisplay().getDescription() + "\nCompleted " + completedCount + "/" + totalCount;
                 eb.setDescription(advancementMessage);
                 assert minecraftChatChannel != null;
                 minecraftChatChannel.sendMessageEmbeds(eb.build()).queue();
+                broadcastAdvancementOnLMP(e.getPlayer().getName(), adv.getDisplay().getTitle(), adv.getDisplay().getDescription(), e.getPlayer().getWorld().getName());
             }
         }
     }
 
-    public static void broadcastAdvancementOnLMP(PlayerAdvancementDoneEvent e) {
-        String advancement = e.getAdvancement().getKey().toString();
-        net.md_5.bungee.api.chat.TextComponent advancementName;
+    public static void broadcastAdvancementOnLMP(String playerName,  String advancementName, String advancementDescription, String playerWorld) {
+        net.md_5.bungee.api.chat.TextComponent aName;
         HoverEvent he;
-        String worldPrefix = "[LMP] - ";
-        if (e.getPlayer().getWorld().getName().contains("hardcore")) {
-            worldPrefix = "[Hardcore] - ";
+        String worldPrefix = Api.getPlayerChatWorldPrefix(playerWorld);
+        net.md_5.bungee.api.chat.TextComponent pName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + playerName + ChatColor.WHITE + " has made the advancement ");
+        aName = new TextComponent(ChatColor.GREEN + "[" + advancementName + "]");
+        he = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + advancementDescription));
+        aName.setHoverEvent(he);
+        aName.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.spigot().sendMessage(pName, aName);
         }
-        if (e.getPlayer().getWorld().getName().contains("anarchy")) {
-            worldPrefix = "[Anarchy] - ";
-        }
-
-        net.md_5.bungee.api.chat.TextComponent playerName = new net.md_5.bungee.api.chat.TextComponent(ChatColor.GOLD + worldPrefix + ChatColor.DARK_AQUA + e.getPlayer().getName() + ChatColor.WHITE + " has made the advancement ");
-        for (Advancement advance : advancementList) {
-            if (advancement.equalsIgnoreCase(advance.getID())) {
-                advancementName = new TextComponent(ChatColor.GREEN + "[" + advance.getName() + "]");
-                he = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + advance.getCriteria()));
-                advancementName.setHoverEvent(he);
-                advancementName.setColor(net.md_5.bungee.api.ChatColor.GREEN);
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.spigot().sendMessage(playerName, advancementName);
-                }
-            }
-        }
-
     }
 
     public static void setPlayerAdvancementOnCompletion(PlayerAdvancementDoneEvent e) throws IOException {

@@ -25,6 +25,7 @@ public class FarmMoney {
         deniedWorlds.add("season5");
         deniedWorlds.add("season6");
         deniedWorlds.add("season7");
+        deniedWorlds.add("season8");
         deniedWorlds.add("hardcore");
         deniedWorlds.add("hardcore_nether");
         deniedWorlds.add("hardcore_the_end");

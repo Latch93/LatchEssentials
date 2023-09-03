@@ -185,6 +185,7 @@ public class Api {
         deniedWorlds.add("season5");
         deniedWorlds.add("season6");
         deniedWorlds.add("season7");
+        deniedWorlds.add("season8");
 
         if (deniedWorlds.contains(worldName)) {
             if (player == null || !player.equalsIgnoreCase("Latch93")) {
@@ -340,7 +341,46 @@ public class Api {
         if (worldName.contains("anarchy")) {
             worldPrefix = "[Anarchy] - ";
         }
+        if (worldName.contains("world")) {
+            worldPrefix = "[Community] - ";
+        }
+        if (worldName.contains("classic")) {
+            worldPrefix = "[Classic] - ";
+        }
+        if (worldName.contains("creative")) {
+            worldPrefix = "[Creative] - ";
+        }
+        if (worldName.contains("Skyblock")) {
+            worldPrefix = "[SkyBlock] - ";
+        }
+        if (worldName.contains("OneBlock")) {
+            worldPrefix = "[OneBlock] - ";
+        }
         return worldPrefix;
+    }
+
+    public static void banAndLogBigBoiThief(Player player, ItemStack item, boolean isBreaker){
+        String playerName = player.getName();
+        String playerUUID = player.getUniqueId().toString();
+        String discordID = Api.getDiscordIdFromMCid(playerUUID);
+        TextChannel staffChatChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.DISCORD_STAFF_CHAT_CHANNEL_ID);
+        assert staffChatChannel != null;
+        TextChannel banLogChannel = LatchDiscord.getJDA().getTextChannelById(lmp.Constants.BAN_LOG_CHANNEL_ID);
+        assert banLogChannel != null;
+        if (Boolean.FALSE.equals(isBreaker)) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + playerName + " 3d stole from bigboi's chest");
+            if (item.getType().equals(Material.BEACON)) {
+                staffChatChannel.sendMessage("<@" + discordID + "> GOT BEACON'd and will be temporarily banned for 3 days. :)- Their MC username is: " + playerName).queue();
+                banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + discordID + "> | Length: 3 days | Reason: They got BEACON'D ").queue();
+            } else {
+                staffChatChannel.sendMessage("<@" + discordID + "> will be temporarily banned for 3 days. Reason: Stealing from BigBoi's Chest. They tried to steal " + item.getAmount() + " " + item.getType() + " :)- Their MC username is: " + playerName).queue();
+                banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + discordID + "> | Length: 3 days | Reason: Stealing from spawn chest | Item(s) stolen: " + item.getAmount() + " " + item.getType()).queue();
+            }
+        } else {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tempban " + playerName + " 1d tried to break BigBoi's chest");
+            staffChatChannel.sendMessage("<@" + discordID + "> will be temporarily banned for 1 day. Reason: Trying to break BigBoi's Chest | :)- | Their MC username is: " + playerName).queue();
+            banLogChannel.sendMessage("Minecraft Username: " + playerName + " | Discord Username: <@" + discordID + "> | Length: 1 day | Reason: Trying to break BigBoi's Chest").queue();
+        }
     }
 
     public static void stopAllTwitchBots(List<LatchTwitchBotRunnable> twitchBotList) {
@@ -743,6 +783,38 @@ public class Api {
         return minecraftId;
     }
 
+    public static ArrayList<String> searchMinecraftNamesFromDCid(String discordId) {
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+        ArrayList<String> minecraftNames = new ArrayList<>();
+        for (String mcID : whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS).getKeys(false)) {
+            if (discordId.equalsIgnoreCase(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".discordId"))) {
+                minecraftNames.add(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".minecraftName"));
+            }
+        }
+        return minecraftNames;
+    }
+
+    public static void updateDiscordNamesInWhitelistFile(){
+        FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+        for (String mcID : whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS).getKeys(false)) {
+            try {
+                String discordUserID = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".discordId");
+                String oldDiscordUsername = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".discordName");
+                Main.log.info("Old Discord Username: " + oldDiscordUsername);
+                assert discordUserID != null;
+                String currentDiscordUsername = Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(discordUserID)).getUser().getName();
+                if (!currentDiscordUsername.equals(oldDiscordUsername)) {
+                    whitelistCfg.set(lmp.Constants.YML_PLAYERS + mcID + ".discordName", currentDiscordUsername);
+                    Main.log.warning("New Discord Username: " + currentDiscordUsername);
+                }
+                whitelistCfg.save(Api.getConfigFile(YmlFileNames.YML_WHITELIST_FILE_NAME));
+            } catch (NullPointerException ignore){
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public static String getDiscordIdFromMCid(String minecraftID) {
         FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
         String discordID = "";
@@ -777,14 +849,21 @@ public class Api {
     }
 
     public static String getDiscordNameFromMCid(String minecraftID) {
-        return Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(minecraftID))).getUser().getName();
+        try {
+            return Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(Api.getDiscordIdFromMCid(minecraftID))).getUser().getName();
+        } catch (IllegalArgumentException err){
+            Main.log.warning("ERROR: Api.getDiscordNameFromMCid: " + minecraftID);
+            Main.log.warning(err.getCause().getMessage());
+            return "false";
+        }
     }
 
     public static void setIsPlayerInDiscord() throws IOException {
         FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
-        for (String minecraftId : whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS).getKeys(false)) {
+        for (String minecraftId : Objects.requireNonNull(whitelistCfg.getConfigurationSection(lmp.Constants.YML_PLAYERS)).getKeys(false)) {
             String discordId = whitelistCfg.getString(lmp.Constants.YML_PLAYERS + minecraftId + ".discordId");
-            if (LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID).getMemberById(discordId) != null) {
+            assert discordId != null;
+            if (Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getMemberById(discordId) != null) {
                 whitelistCfg.set(lmp.Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", true);
             } else {
                 whitelistCfg.set(lmp.Constants.YML_PLAYERS + minecraftId + ".isPlayerInDiscord", false);
@@ -1181,6 +1260,7 @@ public class Api {
     public static String getMinecraftIDFromTwitchName(String twitchName) {
         String minecraftID = null;
         FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
+        ArrayList<String> idList = new ArrayList<>();
         for (String mcID : Objects.requireNonNull(whitelistCfg.getConfigurationSection("players")).getKeys(false)) {
             if (twitchName.equalsIgnoreCase(whitelistCfg.getString(lmp.Constants.YML_PLAYERS + mcID + ".twitchName"))) {
                 minecraftID = mcID;
@@ -1188,6 +1268,7 @@ public class Api {
         }
         return minecraftID;
     }
+
     public static void transferBackpackContents() throws IOException {
         FileConfiguration backpackCfg = Api.getFileConfiguration(YmlFileNames.YML_BACK_PACK_FILE_NAME);
         for (String mcID : backpackCfg.getKeys(false)) {

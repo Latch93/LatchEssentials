@@ -72,15 +72,19 @@ public class LatchTwitchBotCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.GREEN + "All TwitchBots have been " + ChatColor.RED + "terminated.");
             } else if (args[0].equalsIgnoreCase(ServerCommands.HELP_COMMAND)) {
                 player.sendMessage(ChatColor.WHITE + "1.) " + ChatColor.GREEN + "You need to get your Twitch oauth to use the Twitch bot.");
-                player.sendMessage(ChatColor.WHITE + "2.) " + ChatColor.GREEN + "You can get your Twitch oauth from this link -> " + ChatColor.AQUA + "https://twitchapps.com/tmi/");
-                player.sendMessage(ChatColor.WHITE + "3.) " + ChatColor.GREEN + "Copy the whole oauth token which includes the 'oauth:");
-                player.sendMessage(ChatColor.WHITE + "4.) " + ChatColor.GREEN + "To add a Twitch bot, type " + ChatColor.AQUA + "/twitch addBot [twitchUsername] [oauthToken]");
-                player.sendMessage(ChatColor.WHITE + "5.) " + ChatColor.GREEN + "To start your Twitch bot, type " + ChatColor.AQUA + "/twitch run");
-                player.sendMessage(ChatColor.WHITE + "6.) " + ChatColor.GREEN + "Before you log off the server for the day, you should stop your Twitch bot.");
-                player.sendMessage(ChatColor.WHITE + "7.) " + ChatColor.GREEN + "To do this, type " + ChatColor.AQUA + "/twitch stop");
-                player.sendMessage(ChatColor.WHITE + "8.) " + ChatColor.GREEN + "You can download a Chrome extension to get your twitch channelId. It is a string of numbers. Example: 161082218");
-                player.sendMessage(ChatColor.WHITE + "9.) " + ChatColor.GREEN + "If you want to get follow/subscriber event messages in minecraft, you need to add your channelID to your bot credentials.");
-                player.sendMessage(ChatColor.WHITE + "10.) " + ChatColor.GREEN + "To add your channelID to your bot credentials, type " + ChatColor.AQUA + "/twitch addChannelId [channelId]");
+                player.sendMessage(ChatColor.WHITE + "2.) " + ChatColor.GREEN + "You can get your Twitch oauth from this link -> " + ChatColor.AQUA + "https://twitchtokengenerator.com/");
+                player.sendMessage(ChatColor.WHITE + "3.) " + ChatColor.GREEN + "Click on " + ChatColor.AQUA + "Bot Chat Token" + ChatColor.GREEN + " button");
+                player.sendMessage(ChatColor.WHITE + "4.) " + ChatColor.GREEN + "Click the " + ChatColor.AQUA + "Authorize" + ChatColor.GREEN + " button");
+                player.sendMessage(ChatColor.WHITE + "5.) " + ChatColor.GREEN + "Scroll down to the " + ChatColor.AQUA + "Available Token Scopes" + ChatColor.GREEN + " section and click the " + ChatColor.AQUA + "Select All" + ChatColor.GREEN + " button");
+                player.sendMessage(ChatColor.WHITE + "6.) " + ChatColor.GREEN + "Click the " + ChatColor.AQUA + "Generate Token!" + ChatColor.GREEN + " button");
+                player.sendMessage(ChatColor.WHITE + "7.) " + ChatColor.GREEN + "Copy the string of characters in the " + ChatColor.AQUA + "Access Token" + ChatColor.GREEN + " box");
+                player.sendMessage(ChatColor.WHITE + "8.) " + ChatColor.GREEN + "To add a Twitch bot, type " + ChatColor.AQUA + "/twitch addBot [twitchUsername] [oauthToken]");
+                player.sendMessage(ChatColor.WHITE + "9.) " + ChatColor.GREEN + "To start your Twitch bot, type " + ChatColor.AQUA + "/twitch run");
+                player.sendMessage(ChatColor.WHITE + "10.) " + ChatColor.GREEN + "Before you log off the server for the day, you should stop your Twitch bot.");
+                player.sendMessage(ChatColor.WHITE + "11.) " + ChatColor.GREEN + "To do this, type " + ChatColor.AQUA + "/twitch stop");
+                player.sendMessage(ChatColor.WHITE + "12.) " + ChatColor.GREEN + "You can download a Chrome extension to get your twitch channelId. It is a string of numbers. Example: 161082218");
+                player.sendMessage(ChatColor.WHITE + "13.) " + ChatColor.GREEN + "If you want to get Follow/Subscriber/Bits/GoLive event messages in minecraft, you need to add your channelID to your bot credentials.");
+                player.sendMessage(ChatColor.WHITE + "14.) " + ChatColor.GREEN + "To add your channelID to your bot credentials, type " + ChatColor.AQUA + "/twitch addChannelId [channelId]");
             } else if (args[0].equalsIgnoreCase(ServerCommands.SEND_TWITCH_MESSAGE_COMMAND)) {
                 Iterator<LatchTwitchBotRunnable> iter = twitchBotList.iterator();
                 StringBuilder messageString = new StringBuilder();
@@ -96,7 +100,9 @@ public class LatchTwitchBotCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase(ServerCommands.ADD_CHANNEL_ID)) {
                 if (args[1] != null) {
                     twitchCfg.set(Constants.YML_PLAYERS + Api.getTwitchUsername(player.getName()) + ".channelID", args[1]);
-                    twitchCfg.save(YmlFileNames.YML_TWITCH_FILE_NAME);
+                    twitchCfg.save(Api.getConfigFile(YmlFileNames.YML_TWITCH_FILE_NAME));
+                    player.sendMessage(ChatColor.GREEN + "Your Twitch Channel ID has been added to your Twitch Bot. Run " + ChatColor.AQUA + "/twitch start " + ChatColor.GREEN + "to connect to your twitch chat.");
+
                 } else {
                     player.sendMessage(ChatColor.RED + "Must enter in a channelID. Use command like this -> " + ChatColor.AQUA + "/twitch addChannelId [channelId]");
                 }

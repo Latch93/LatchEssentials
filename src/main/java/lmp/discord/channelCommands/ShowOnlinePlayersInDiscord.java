@@ -165,5 +165,25 @@ public class ShowOnlinePlayersInDiscord extends ListenerAdapter {
             eb.setDescription(finalAnarchyMessage + "\n" + finalClassicMessage + "\n" + finalCommunityMessage + "\n" + finalCreativeMessage + "\n" + finalHardcoreMessage + "\n" + finalOneBlockMessage + "\n" + finalSkyBlockMessage);
             e.getChannel().sendMessageEmbeds(eb.build()).queue();
         }
+
+//        if ((messageChannelID.equalsIgnoreCase(lmp.Constants.TEST_CHANNEL_ID))) {
+//            if (e.getMessage().getContentRaw().toLowerCase().contains("!connectbot")) {
+//                AudioChannelUnion connectedChannel = Objects.requireNonNull(Objects.requireNonNull(e.getMember()).getVoiceState()).getChannel();
+//                assert connectedChannel != null;
+//                AudioManager audioManager = Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getAudioManager();
+//                audioManager.openAudioConnection(connectedChannel);
+//            }
+//            if (e.getMessage().getContentRaw().toLowerCase().contains("!disconnectbot")) {
+//                AudioChannelUnion connectedChannel = Objects.requireNonNull(Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getSelfMember().getVoiceState()).getChannel();
+//                if(connectedChannel == null) {
+//                    e.getChannel().sendMessage("The bot is not connected to a voice channel!").queue();
+//                    return;
+//                }
+//                Objects.requireNonNull(LatchDiscord.getJDA().getGuildById(lmp.Constants.GUILD_ID)).getAudioManager().closeAudioConnection();
+//                e.getChannel().sendMessage("Disconnected the bot from the voice channel!").queue();
+//            }
+//
+//        }
+
     }
 }

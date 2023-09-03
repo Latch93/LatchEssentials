@@ -30,7 +30,8 @@ public class BackPackCommand implements CommandExecutor {
         if (sender instanceof Player) {
             player = (Player) sender;
             String invTitle = player.getName() + "'s Backpack";
-            File playerBPFile = new File(getMainPlugin().getDataFolder() + "/playerBackpacks/", player.getUniqueId().toString() + ".yml");
+            File playerBPFile =
+                    new File(getMainPlugin().getDataFolder() + "/playerBackpacks/", player.getUniqueId().toString() + ".yml");
             FileConfiguration backPackCfg = YamlConfiguration.loadConfiguration(playerBPFile);
             FileConfiguration configCfg = Api.loadConfig(YmlFileNames.YML_CONFIG_FILE_NAME);
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
