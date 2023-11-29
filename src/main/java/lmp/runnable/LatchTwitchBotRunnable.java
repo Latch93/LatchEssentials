@@ -21,10 +21,7 @@ import lmp.api.Api;
 import lmp.constants.Constants;
 import lmp.constants.YmlFileNames;
 import lmp.twitch.LatchTwitchBot;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -96,7 +93,7 @@ public class LatchTwitchBotRunnable implements Runnable {
                 this.twitchClient.getEventManager().onEvent(GiftSubscriptionsEvent.class, e -> displayNewGiftSubscriptionEventMessage(e, minecraftName));
                 this.twitchClient.getEventManager().onEvent(FollowingEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW FOLLOW" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUsername() + ChatColor.GREEN + " just followed you!!!"));
                 this.twitchClient.getEventManager().onEvent(SubscriptionEvent.class, e -> displayNewSubscriptionEventMessage(e, minecraftName));
-                this.twitchClient.getEventManager().onEvent(ChannelBitsEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " + ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits."));
+                this.twitchClient.getEventManager().onEvent(ChannelBitsEvent.class, e -> processBitDonation(e, minecraftName));
                 this.twitchClient.getEventManager().onEvent(RewardRedeemedEvent.class, e -> displayChannelPointRedemptionMessage(e, minecraftName));
                 this.twitchClient.getEventManager().onEvent(DonationEvent.class, e -> Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "DONATION" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " donated " + ChatColor.GOLD + e.getAmount() + ChatColor.GREEN + " dollars. Message:" + e.getMessage()));
                 this.twitchClient.getEventManager().onEvent(ChannelGoLiveEvent.class, e -> broadcastGoLiveEvent(e, minecraftName));
@@ -177,6 +174,15 @@ public class LatchTwitchBotRunnable implements Runnable {
         Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "NEW GIFT SUB" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getUser().getName() + ChatColor.GREEN + " just gifted a subscription.!!!");
     }
 
+    public void processBitDonation(ChannelBitsEvent e, String minecraftName) {
+        int donatedBits  = e.getData().getBitsUsed();
+        if (donatedBits > 1000){
+            Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).setHealth(0);
+            Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage( ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " killed you.");
+        }
+        Objects.requireNonNull(Bukkit.getPlayer(minecraftName)).sendMessage("[" + ChatColor.DARK_PURPLE + "Twitch" + ChatColor.WHITE + " | " + ChatColor.GOLD + "BITS" + ChatColor.WHITE + "]" + ChatColor.DARK_GRAY + " » " + ChatColor.AQUA + e.getData().getUserName() + ChatColor.GREEN + " donated " + ChatColor.GOLD + e.getData().getBitsUsed() + ChatColor.GREEN + " bits.");
+    }
+
     public void displayChannelPointRedemptionMessage(RewardRedeemedEvent e, String minecraftName) {
         long delay = 0;
         if (this.minecraftName.equalsIgnoreCase("latch93")) {
@@ -193,11 +199,14 @@ public class LatchTwitchBotRunnable implements Runnable {
             if (rewardTitle.equalsIgnoreCase("Rename an item in Latch's Inventory")){
                 playRenameItemMessage(e, Bukkit.getPlayer(minecraftName));
             }
-            if (rewardTitle.equalsIgnoreCase("RSpawn Random Hostile Mob")){
+            if (rewardTitle.equalsIgnoreCase("Spawn Random Hostile Mob")){
                 spawnRandomMob(Bukkit.getPlayer(minecraftName));
             }
             if (rewardTitle.equalsIgnoreCase("$10,000 on LMP Community")) {
                 Bukkit.getScheduler().runTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> giveViewerMoney(e, 10000));
+            }
+            if (rewardTitle.equalsIgnoreCase("Latch Digs Straight Down")) {
+                Bukkit.getScheduler().runTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), this::digStraightDown);
             }
             if (rewardTitle.equalsIgnoreCase("$50,000 on LMP Community")) {
                 Bukkit.getScheduler().runTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> giveViewerMoney(e, 50000));
@@ -253,6 +262,9 @@ public class LatchTwitchBotRunnable implements Runnable {
             }
             if (rewardTitle.equalsIgnoreCase("Launch Latch in the Air")) {
                 Bukkit.getScheduler().runTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> launchLatchInTheAir(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString("f4c77e52-de47-4174-8282-0d962d089301")))));
+            }
+            if (rewardTitle.equalsIgnoreCase("x")) {
+                Bukkit.getScheduler().runTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> changeDayToNight(Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString("f4c77e52-de47-4174-8282-0d962d089301")))));
             }
         }
         getServer().getScheduler().scheduleSyncDelayedTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), new Runnable() {
@@ -388,6 +400,13 @@ public class LatchTwitchBotRunnable implements Runnable {
         player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1, 0);
     }
 
+    public void changeDayToNight(Player player){
+        World latchWorld = player.getWorld();
+        if (latchWorld.getName().equalsIgnoreCase("latch")){
+            latchWorld.setTime(14000);
+        }
+    }
+
     public void playNewSubscriberSound(Player player) {
         player.playSound(player.getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1, 0);
     }
@@ -424,6 +443,42 @@ public class LatchTwitchBotRunnable implements Runnable {
 
     }
 
+    public void digStraightDown(){
+        Player p = Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString("f4c77e52-de47-4174-8282-0d962d089301")));
+        Location playerLocation = p.getLocation();
+        double xLocation = playerLocation.getBlockX();
+        double yLocation = playerLocation.getBlockY();
+        double zLocation = playerLocation.getBlockZ();
+        Location newLocation = new Location(playerLocation.getWorld(), xLocation - .5, yLocation, zLocation - .5);
+        p.teleport(newLocation);
+        Location blockToDeleteLocation = new Location(playerLocation.getWorld(), newLocation.getBlockX(), newLocation.getBlockY() - 1, newLocation.getBlockZ());
+        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+
+//        Bukkit.getScheduler().runTaskAsynchronously(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(Constants.PLUGIN_NAME)), () -> {
+            int taskID = 0;
+            while (!blockToDeleteLocation.getBlock().getType().equals(Material.BEDROCK)) {
+                taskID = scheduler.scheduleSyncRepeatingTask(Objects.requireNonNull(getServer().getPluginManager().getPlugin(Constants.PLUGIN_NAME)), new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                }, 1L,20L);
+                Player p2 = Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString("f4c77e52-de47-4174-8282-0d962d089301")));
+                Location playerLocation2 = p2.getLocation();
+                double xLocation2 = playerLocation2.getBlockX();
+                double yLocation2 = playerLocation2.getBlockY();
+                double zLocation2 = playerLocation2.getBlockZ();
+                Location newLocation2 = new Location(playerLocation2.getWorld(), xLocation2, yLocation2, zLocation2);
+                Location blockToDeleteLocation2 = new Location(playerLocation2.getWorld(), newLocation2.getBlockX(), newLocation2.getBlockY() - 1, newLocation2.getBlockZ());
+                if (!blockToDeleteLocation2.getBlock().getType().equals(Material.BEDROCK)) {
+                    blockToDeleteLocation2.getBlock().setType(Material.AIR);
+                }
+            }
+            Bukkit.getScheduler().cancelTask(taskID);
+//        });
+
+
+    }
 //    public void outputUserEmail(ChannelMessageEvent e) {
 //        if (e.getMessage().equalsIgnoreCase("!list")) {
 //            UserList resultList = this.twitchClient.getHelix().getUsers(null, null, null).execute();

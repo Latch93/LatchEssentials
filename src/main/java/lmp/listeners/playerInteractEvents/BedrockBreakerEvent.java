@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -20,7 +21,9 @@ public class BedrockBreakerEvent implements Listener {
 
     public BedrockBreakerEvent(Main plugin) { plugin.getServer().getPluginManager().registerEvents(this, plugin);}
 
-    @EventHandler
+    @EventHandler (
+            priority = EventPriority.LOWEST
+    )
     public void BreakBedrockWithBedRockBreaker(PlayerInteractEvent event){
         if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.BEDROCK)) {
             if (Boolean.TRUE.equals(event.getPlayer().getInventory().getItemInMainHand().hasItemMeta()) && Boolean.TRUE.equals(Objects.requireNonNull(event.getPlayer().getInventory().getItemInMainHand().getItemMeta()).hasLore())) {

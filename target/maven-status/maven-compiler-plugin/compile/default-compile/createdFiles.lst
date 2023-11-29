@@ -9,7 +9,10 @@ lmp\commands\LatchTwitchBotCommand.class
 lmp\commands\BackPackCommand.class
 lmp\configurations\BankConfig.class
 lmp\listeners\onInventoryOpenEvents\RemoveMendingFromVillagerTrade.class
+lmp\listeners\playerInteractEvents\EndBoatRace.class
 lmp\listeners\playerJoinEvents\BankLoginEvent.class
+lmp\runnable\LatchTwitchBotRunnable$3.class
+lmp\listeners\playerQuitEvents\EnableBoatRaceIfActiveOnRacerLogoutEvent.class
 lmp\commands\DiscordStaffChatCommand.class
 lmp\discord\guildRemoveAdapters\SetWhiteListOnMemberLeaveGuildEvent.class
 lmp\TextToSpeech.class
@@ -57,6 +60,7 @@ lmp\customItems\AutoSellChest.class
 lmp\tabComplete\HardcoreTabComplete.class
 lmp\configurations\PlayerShopsInventoryConfig.class
 lmp\customItems\MobileSpawner.class
+lmp\listeners\playerInteractEvents\StartBoatRace.class
 lmp\commands\DiscordAdminChatCommand.class
 lmp\listeners\entityDeathEvents\DisableEntityCrammingEvent.class
 lmp\commands\AnarchyCommand.class
@@ -74,6 +78,7 @@ lmp\discord\chatMessageAdapters\LogGithubIssue.class
 lmp\configurations\AutoSorterConfig.class
 lmp\webserver\MyHttpHandler.class
 lmp\listeners\playerDeathEvents\SendPlayerDeathCoordinates.class
+lmp\listeners\vehicleExitEvents\PreventRacerFromLeavingBoat.class
 lmp\XPFarm.class
 lmp\DonationClaimRewards.class
 lmp\Inventories.class
@@ -94,6 +99,7 @@ lmp\BossBattle.class
 lmp\discord\channelCommands\LatchsConfigCommands.class
 lmp\configurations\BackPackInventoryConfig.class
 lmp\listeners\playerDeathEvents\WithdrawPlayerMoneyOnDeathEvent.class
+lmp\listeners\playerItemMendEvent\CancelMendingEXPGainEvent.class
 lmp\listeners\playerInteractEvents\InstaBreakGlassEvent.class
 lmp\discord\channelCommands\SendLTSNominationForm.class
 lmp\Constants.class
@@ -105,6 +111,7 @@ lmp\listeners\playerInteractEvents\RespawnAnchorSetEvent.class
 lmp\listeners\discord\BanAndLogBanChestThief.class
 lmp\twitch\LatchTwitchBot.class
 lmp\commands\MessageDiscordUserFromServerCommand.class
+lmp\listeners\playerCommandPreprocessEvents\CancelCommandsOfRacer.class
 lmp\listeners\playerBreakBlockEvents\AddBlockBrokenToDB.class
 lmp\listeners\playerDeathEvents\BroadcastDeathMessageToDiscordEvent.class
 lmp\tabComplete\PlayerShopsTabComplete.class

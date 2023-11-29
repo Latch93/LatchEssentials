@@ -6,7 +6,6 @@ import lmp.constants.Constants;
 import lmp.constants.YmlFileNames;
 import lmp.listeners.playerJoinEvents.BankLoginEvent;
 import lmp.listeners.playerQuitEvents.BankLogoutEvent;
-import lmp.runnable.LMPTimer;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -23,6 +22,10 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -52,6 +55,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+
+import static lmp.api.Api.getMainPlugin;
+import static org.bukkit.Bukkit.getServer;
 
 public class LMPCommand implements CommandExecutor {
     public static void resetAllNonLinkedPlayerBalances(ArrayList<String> whitelistArr) throws IOException {
@@ -274,10 +280,10 @@ public class LMPCommand implements CommandExecutor {
                 } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("switch") && args[1] != null) {
                     FileConfiguration configCfg = Api.getFileConfiguration(YmlFileNames.YML_CONFIG_FILE_NAME);
                     Inventory playerInventory = player.getInventory();
-                    Location creativeChestLocation = new Location(Bukkit.getWorld("season6"), configCfg.getDouble("creativeChest.x"), configCfg.getDouble("creativeChest.y"), configCfg.getDouble("creativeChest.z"));
+                    Location creativeChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("creativeChest.x"), configCfg.getDouble("creativeChest.y"), configCfg.getDouble("creativeChest.z"));
                     Block creativeChestBlock = creativeChestLocation.getBlock();
                     Chest creativeChest = (Chest) creativeChestBlock.getState();
-                    Location survivalChestLocation = new Location(Bukkit.getWorld("season6"), configCfg.getDouble("survivalChest.x"), configCfg.getDouble("survivalChest.y"), configCfg.getDouble("survivalChest.z"));
+                    Location survivalChestLocation = new Location(Bukkit.getWorld("world"), configCfg.getDouble("survivalChest.x"), configCfg.getDouble("survivalChest.y"), configCfg.getDouble("survivalChest.z"));
                     Block survivalChestBlock = survivalChestLocation.getBlock();
                     Chest survivalChest = (Chest) survivalChestBlock.getState();
                     if (args[1].equalsIgnoreCase("creative") && player.getGameMode().equals(GameMode.SURVIVAL)) {
@@ -312,25 +318,34 @@ public class LMPCommand implements CommandExecutor {
                     tameableEntities.add(EntityType.MULE);
                     tameableEntities.add(EntityType.DONKEY);
                     tameableEntities.add(EntityType.FOX);
-
-                    Collection<Entity> nearbyEntities = Objects.requireNonNull(player.getLocation().getWorld()).getNearbyEntities(player.getLocation(), 8, 8, 8);
-                    List<Tameable> tamedPets = new ArrayList<>();
-                    for (Entity entity : nearbyEntities) {
-                        if (tameableEntities.contains(entity.getType())) {
-                            tamedPets.add((Tameable) entity);
-                        }
-                    }
-                    if (!tamedPets.isEmpty()) {
-                        for (Tameable pet : tamedPets) {
-                            if (pet.getName().equalsIgnoreCase(args[1])) {
-                                if (pet.getOwner() == player) {
-                                    continue;
+                    try {
+                        Player transferOwner = Bukkit.getPlayer(args[2]);
+                        String petName = args[1];
+                        Collection<Entity> nearbyEntities = Objects.requireNonNull(player.getLocation().getWorld()).getNearbyEntities(player.getLocation(), 16, 16, 16);
+                        List<Tameable> tamedPets = new ArrayList<>();
+                        for (Entity entity : nearbyEntities) {
+                            if (tameableEntities.contains(entity.getType()) && Objects.requireNonNull(entity.getCustomName()).equalsIgnoreCase(petName)) {
+                                Tameable petToTransfer = (Tameable) entity;
+                                if (Objects.requireNonNull(Objects.requireNonNull(petToTransfer.getOwner()).getName()).equalsIgnoreCase(player.getName())) {
+                                    tamedPets.add(petToTransfer);
                                 }
-                                pet.setOwner(Bukkit.getPlayer(args[2]));
-                                player.sendMessage(ChatColor.GREEN + "You transferred ownership of " + ChatColor.GOLD + args[1] + ChatColor.GREEN + " to " + ChatColor.GOLD + args[2]);
-                                Objects.requireNonNull(Bukkit.getPlayer(args[2])).sendMessage(ChatColor.GREEN + "You now have ownership of " + ChatColor.GOLD + args[1]);
                             }
                         }
+                        if (!tamedPets.isEmpty()) {
+                            for (Tameable pet : tamedPets) {
+                                if (pet.getName().equalsIgnoreCase(petName)) {
+                                    if (Objects.requireNonNull(Objects.requireNonNull(pet.getOwner()).getName()).equalsIgnoreCase(player.getName())) {
+                                        pet.setOwner(transferOwner);
+                                        assert transferOwner != null;
+                                        player.sendMessage(ChatColor.GREEN + "You transferred ownership of " + ChatColor.GOLD + petName+ ChatColor.GREEN + " to " + ChatColor.GOLD + transferOwner.getName());
+                                        transferOwner.sendMessage(ChatColor.GREEN + "You now have ownership of " + ChatColor.GOLD + petName);
+                                    }
+                                }
+                            }
+                        }
+
+                    } catch (NullPointerException e){
+                        Main.log.warning("TRANSFER PET ERROR:" + e);
                     }
                 }
 //                else if (args[0].equalsIgnoreCase("clearBoss") && args[1] != null) {
@@ -429,7 +444,6 @@ public class LMPCommand implements CommandExecutor {
                             Main.luckPerms.getUserManager().saveUser(user);
 //                            File playerDataFile = new File("plugins/Essentials/userdata", player.getUniqueId() + ".yml");
 //                            FileConfiguration playerDataCfg = Api.getFileConfiguration(playerDataFile);
-//                            Main.log.info(ASDASD: " + Objects.requireNonNull(player.getAddress()).getAddress().toString());
 
                             String ipInfo = ".ip-info.";
                             FileConfiguration whitelistCfg = Api.getFileConfiguration(YmlFileNames.YML_WHITELIST_FILE_NAME);
@@ -468,7 +482,16 @@ public class LMPCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.GREEN + "View our Wiki here -> " + ChatColor.AQUA + "https://github.com/Latch93/DiscordText/wiki/LMP-Wiki");
                 }
                 else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("bmstart")) {
-                    LMPTimer.startBloodmoon();
+                    BossBar nightBar = Bukkit.createBossBar("BloodMoonTitleBar",
+                            BarColor.RED,
+                            BarStyle.SEGMENTED_12,
+                            BarFlag.CREATE_FOG,
+                            BarFlag.DARKEN_SKY
+                    );
+                    nightBar.setProgress(0.0);
+                    for (Player p : getServer().getOnlinePlayers()) {
+                        nightBar.addPlayer(p);
+                    }
                 }
 //                else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("spectate")) {
 //                    spectateInsideRandomPlayer(player);
@@ -934,7 +957,7 @@ public class LMPCommand implements CommandExecutor {
                     int classicCount = 0;
                     int oneBlockCount = 0;
                     int skyBlockCount = 0;
-                    for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()){
+                    for (Player onlinePlayer : getServer().getOnlinePlayers()){
                         if (!Api.isPlayerInvisible(onlinePlayer.getUniqueId().toString())){
                             if (onlinePlayer.getWorld().getName().contains("anarchy")){
                                 anarchyWorldList.append(onlinePlayer.getName()).append(ChatColor.GOLD + " | " + ChatColor.RESET);
@@ -1019,7 +1042,7 @@ public class LMPCommand implements CommandExecutor {
                 } else if (player.getName().equalsIgnoreCase(Constants.SERVER_OWNER_MINECRAFT_NAME) && args[0].equalsIgnoreCase("uncraft")) {
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ArrayList<ArrayList<ItemStack>> recipes = new ArrayList<>();
-                    for (Recipe recipe : Bukkit.getServer().getRecipesFor(item)) {
+                    for (Recipe recipe : getServer().getRecipesFor(item)) {
                         ArrayList<ItemStack> ingredients = new ArrayList<>();
                         if (recipe instanceof ShapedRecipe) {
                             ShapedRecipe shaped = (ShapedRecipe) recipe;
@@ -1170,7 +1193,7 @@ public class LMPCommand implements CommandExecutor {
                     enabledClaimWorlds.add("world_the_end");
                     if (enabledClaimWorlds.contains(player.getWorld().getName())){
                         player.sendMessage(ChatColor.GREEN + "Checking if you have unclaimed items. Please wait one moment...");
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
+                        getServer().getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () -> {
                             try {
                                 DonationClaimRewards.claimItems(player);
                             } catch (IOException | ClassNotFoundException e) {
@@ -1256,6 +1279,87 @@ public class LMPCommand implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("shop")) {
                     player.performCommand("bossshop");
+                } else if (args[0].equalsIgnoreCase("saveItem")){
+                    File playerSavedItemsFile = new File(getMainPlugin().getDataFolder() + "/playerSavedItems/", player.getUniqueId().toString() + ".yml");
+                    FileConfiguration playerSavedItemsCfg = YamlConfiguration.loadConfiguration(playerSavedItemsFile);
+                    int count = 0;
+                    if (playerSavedItemsCfg.getConfigurationSection(player.getUniqueId().toString() + ".items") != null) {
+                        for (String savedItem : Objects.requireNonNull(playerSavedItemsCfg.getConfigurationSection(player.getUniqueId().toString() + ".items")).getKeys(false)) {
+                            count += 1;
+                        }
+                    }
+                    try {
+                        ItemStack itemToSave = player.getInventory().getItemInMainHand();
+                        if (Boolean.FALSE.equals(itemToSave.hasItemMeta()) && Boolean.FALSE.equals(itemToSave.getItemMeta().hasLore())){
+                            player.sendMessage(ChatColor.RED + "Your are unable to save this item.");
+                        } else {
+                            boolean canAddToSavedItems = false;
+                            List<String> loreToCheck = new ArrayList<>();
+                            loreToCheck.add("birthday gift from latch!!!");
+                            loreToCheck.add("twitch");
+                            loreToCheck.add("latch");
+                            if (Boolean.TRUE.equals(Objects.requireNonNull(itemToSave.getItemMeta()).hasLore()) || itemToSave.getType().equals(Material.PLAYER_HEAD)) {
+
+                                for (String lore : Objects.requireNonNull(Objects.requireNonNull(itemToSave.getItemMeta()).getLore())) {
+                                    for (String loreChecked : loreToCheck){
+                                        if (lore.toLowerCase().contains(loreChecked)){
+                                            canAddToSavedItems = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (Boolean.TRUE.equals(canAddToSavedItems)) {
+                                    playerSavedItemsCfg.set(player.getUniqueId().toString() + ".items." + count, itemToSave);
+                                    playerSavedItemsCfg.set("claimedItems", false);
+                                    player.getInventory().setItemInMainHand(null);
+                                    player.sendMessage(ChatColor.GREEN + "Successfully added this item to your saved items. Run the following command to check your saved items:");
+                                    player.sendMessage(ChatColor.AQUA + "/lmp checkSavedItems");
+                                    playerSavedItemsCfg.save(playerSavedItemsFile);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "Your are unable to save this item.");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "Your are unable to save this item.");
+                            }
+                        }
+                    } catch (NullPointerException npe){
+                        player.sendMessage(ChatColor.RED + "You must be holding an item to save. Please hold an item in your main hand and try again.");
+                    }
+                } else if (args[0].equalsIgnoreCase("checkSavedItems")){
+                    File playerSavedItemsFile = new File(getMainPlugin().getDataFolder() + "/playerSavedItems/", player.getUniqueId().toString() + ".yml");
+                    FileConfiguration playerSavedItemsCfg = YamlConfiguration.loadConfiguration(playerSavedItemsFile);
+                    int count = 0;
+                    try {
+                        for (String savedItemSlot : Objects.requireNonNull(playerSavedItemsCfg.getConfigurationSection(player.getUniqueId().toString() + ".items")).getKeys(false)) {
+                            count += 1;
+                            ItemStack savedItem = playerSavedItemsCfg.getItemStack(player.getUniqueId().toString() + ".items." + savedItemSlot);
+                            assert savedItem != null;
+                            String savedItemMaterial = savedItem.getType().toString();
+                            List<String> savedItemLore = Objects.requireNonNull(savedItem.getItemMeta()).getLore();
+                            List<String> savedItemEnchantments = new ArrayList<>();
+                            if (savedItem.getItemMeta() != null && Boolean.TRUE.equals(savedItem.getItemMeta().hasEnchants())) {
+                                Map<Enchantment, Integer> enchants = savedItem.getItemMeta().getEnchants();
+                                for (Map.Entry<Enchantment, Integer> enchant : enchants.entrySet()) {
+                                    String enchantmentName = enchant.getKey().getKey().getKey();
+                                    String enchantmentLevel = enchant.getValue().toString();
+                                    savedItemEnchantments.add("Enchantment: " + enchantmentName + " - Level: " + enchantmentLevel);
+                                }
+                            }
+                            player.sendMessage(ChatColor.GOLD + "Item #" + count + " - " + ChatColor.GREEN + savedItemMaterial);
+                            for (String enchant : savedItemEnchantments) {
+                                player.sendMessage(ChatColor.GREEN + enchant);
+                            }
+                            int loreCount = 1;
+                            assert savedItemLore != null;
+                            for (String lore : savedItemLore) {
+                                player.sendMessage(ChatColor.GOLD + "Lore #" + loreCount + " - " + ChatColor.GREEN + lore);
+                                loreCount += 1;
+                            }
+                            player.sendMessage(ChatColor.DARK_GRAY + "_______________");
+                        }
+                    } catch (NullPointerException npe){
+                        player.sendMessage(ChatColor.RED + "You don't have any saved items.");
+                    }
                 } else if (player.getName().equalsIgnoreCase("latch93") && args[0].equalsIgnoreCase("att")){
                     ItemStack is = player.getInventory().getItemInMainHand();
                     ItemMeta im = is.getItemMeta();

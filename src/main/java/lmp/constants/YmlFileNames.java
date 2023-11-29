@@ -37,4 +37,5 @@ public class YmlFileNames {
     public static final String YML_ONEBLOCK_FILE_NAME = "oneBlock";
     public static final String YML_SKYBLOCK_FILE_NAME = "skyBlock";
     public static final String YML_HUB_FILE_NAME = "hub";
+    public static final String YML_BOAT_RACE_FILE_NAME = "boatRace";
 }

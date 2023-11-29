@@ -20,6 +20,7 @@ public class LMPCommandTabComplete implements TabCompleter {
         lmpCommandTabList.add("advbook");
         lmpCommandTabList.add("anarchy");
         lmpCommandTabList.add("biome");
+        lmpCommandTabList.add("checkSavedItems");
         lmpCommandTabList.add("claim");
         lmpCommandTabList.add("classic");
         lmpCommandTabList.add("combine");
@@ -33,7 +34,8 @@ public class LMPCommandTabComplete implements TabCompleter {
         lmpCommandTabList.add("money");
         lmpCommandTabList.add("oneblock");
         lmpCommandTabList.add("online");
-//        lmpCommandTabList.add("rtp");
+        lmpCommandTabList.add("rtp");
+        lmpCommandTabList.add("saveItem");
         lmpCommandTabList.add("skyblock");
         lmpCommandTabList.add("shop");
         lmpCommandTabList.add("stat");

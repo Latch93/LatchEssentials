@@ -14,8 +14,10 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\AutoMinerCommand.j
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\AdvancementConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\util\PingUtil.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\LatchDiscord.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEvents\EndBoatRace.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\MessageDiscordUserFromServerCommand.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\LatchsConfigCommands.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEvents\StartBoatRace.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\entityDeathEvents\LogVillagerDeathEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerJoinEvents\BroadcastPlayerJoinMessageToDiscordEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\AnarchyTabComplete.java
@@ -35,6 +37,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\guildMemberRoleRemoveAdapters\RemoveServerRoleOnGuildMemberRemove.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\WhitelistConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\commands\DiscordStaffChatCommand.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerCommandPreprocessEvents\CancelCommandsOfRacer.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\configurations\AutoMinerConfig.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\DonationClaimRewards.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\twitch\LatchTwitchBot.java
@@ -44,6 +47,7 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\runnable\LatchTwitchBotRunn
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\chatMessageAdapters\TestChannelChatEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\TurnOffXPFarmOnPlayerLogoutEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEvents\DenyInteractForUnlinkedPlayerEvent.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerQuitEvents\EnableBoatRaceIfActiveOnRacerLogoutEvent.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\api\Api.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\asyncPlayerChatEvents\BroadcastServerChatToDiscord.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\bossBattle\DenyBackCommandIntoBossArenaEvent.java
@@ -58,7 +62,9 @@ C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerInteractEve
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\tabComplete\AutoMinerTabComplete.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\TextToSpeech.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Advancement.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\playerMoveEvents\FreezeLatchOnTwitchRewardClaim.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\reactionAdapters\RemoveDiscordRoleOnMemberMessageReactEvent.java
+C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\listeners\vehicleExitEvents\PreventRacerFromLeavingBoat.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\privateMessageAdapters\LTSNomination.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\Constants.java
 C:\Users\Latch\Desktop\DiscordText\src\main\java\lmp\discord\channelCommands\SendLTSNominationForm.java

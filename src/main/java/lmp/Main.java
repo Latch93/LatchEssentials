@@ -23,6 +23,7 @@ import lmp.listeners.onLootGenerateEvents.AddMendingBookToGeneratedLoot;
 import lmp.listeners.playerAdvancementDoneEvents.PlayerAdvancementEvent;
 import lmp.listeners.playerBedEnterEvents.SetPlayerBedLocation;
 import lmp.listeners.playerBreakBlockEvents.BanThiefForBreakingBanChest;
+import lmp.listeners.playerCommandPreprocessEvents.CancelCommandsOfRacer;
 import lmp.listeners.playerCommandPreprocessEvents.LogPlayerBanFromServerCommandEvent;
 import lmp.listeners.playerDeathEvents.*;
 import lmp.listeners.playerFishCaughtEvents.GivePlayerMoneyWhenFishCaughtEvent;
@@ -31,11 +32,9 @@ import lmp.listeners.playerInteractEvents.*;
 import lmp.listeners.playerJoinEvents.*;
 import lmp.listeners.playerMoveEvents.DenyMoveForUnlinkedPlayerEvent;
 import lmp.listeners.playerMoveEvents.FreezeLatchOnTwitchRewardClaim;
-import lmp.listeners.playerQuitEvents.BankLogoutEvent;
-import lmp.listeners.playerQuitEvents.BroadcastPlayerQuitMessageToDiscordEvent;
-import lmp.listeners.playerQuitEvents.StopTwitchBotOnPlayerLogoutEvent;
-import lmp.listeners.playerQuitEvents.TurnOffXPFarmOnPlayerLogoutEvent;
+import lmp.listeners.playerQuitEvents.*;
 import lmp.listeners.playerRespawnEvents.SetPlayerLocationOnAnarchy;
+import lmp.listeners.vehicleExitEvents.PreventRacerFromLeavingBoat;
 import lmp.runnable.LMPTimer;
 import lmp.runnable.PingTabListRunnable;
 import lmp.tabComplete.*;
@@ -51,6 +50,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -151,7 +151,11 @@ public class Main extends JavaPlugin implements Listener {
 //        new AddBlockBrokenToDB(this);
         new BanThiefForBreakingBanChest(this);
         new FreezeLatchOnTwitchRewardClaim(this);
-
+        new StartBoatRace(this);
+        new PreventRacerFromLeavingBoat(this);
+        new CancelCommandsOfRacer(this);
+        new EnableBoatRaceIfActiveOnRacerLogoutEvent(this);
+        new EndBoatRace(this);
 //        new CustomRecipeMoveItemEvent(this);
         Api.setupEconomy(getServer().getPluginManager().getPlugin("Vault"));
         loadAllConfigManagers();
@@ -500,7 +504,7 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) throws IOException, ExecutionException, InterruptedException {
         event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockBreak"))) {
@@ -511,7 +515,7 @@ public class Main extends JavaPlugin implements Listener {
                 Api.blockBreakLog(event);
             }
         }
-        if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
+        if (event.getBlock().getType().equals(Material.CREEPER_HEAD) || event.getBlock().getType().equals(Material.CREEPER_WALL_HEAD)) {
             FileConfiguration creeperCfg = Api.getFileConfiguration(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME);
             String creeperHeadLocation = event.getBlock().getLocation().toString();
             List<String> creeperLocationList = new ArrayList<>();
@@ -531,7 +535,7 @@ public class Main extends JavaPlugin implements Listener {
             creeperCfg.save(Api.getConfigFile(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME));
 
         }
-        if (event.getBlock().getType().equals(Material.WITHER_SKELETON_SKULL)) {
+        if (event.getBlock().getType().equals(Material.WITHER_SKELETON_SKULL) || event.getBlock().getType().equals(Material.WITHER_SKELETON_WALL_SKULL)) {
             FileConfiguration stopSpawnerCfg = Api.getFileConfiguration(YmlFileNames.YML_SPAWN_STOPPER_FILE_NAME);
             String stopSpawnerLocation = event.getBlock().getLocation().toString();
             List<String> spawnStopperLocationList = new ArrayList<>();
@@ -583,7 +587,7 @@ public class Main extends JavaPlugin implements Listener {
         Api.spawnStopper(e);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockPlace(BlockPlaceEvent event) throws IOException {
         event.setCancelled(Api.cancelJrModEvent(event.getPlayer().getUniqueId()));
         if (Boolean.FALSE.equals(getIsParameterInTesting("onBlockPlace"))) {
@@ -591,7 +595,7 @@ public class Main extends JavaPlugin implements Listener {
             MobileSpawner.setSpawnerOnPlace(event, Api.getEconomy());
             Api.placeBlockLog(event);
         }
-        if (event.getBlock().getType().equals(Material.CREEPER_HEAD)) {
+        if (event.getBlock().getType().equals(Material.CREEPER_HEAD) || event.getBlock().getType().equals(Material.CREEPER_WALL_HEAD)) {
             if (event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getLore() != null) {
                 if (event.getItemInHand().getItemMeta().getLore().get(0).equalsIgnoreCase("Creepers BGone")) {
                     FileConfiguration creeperCfg = Api.getFileConfiguration(YmlFileNames.YML_CREEPERS_B_GONE_FILE_NAME);
